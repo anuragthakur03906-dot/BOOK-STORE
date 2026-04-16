@@ -86,22 +86,22 @@ const ManagerDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-base py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl font-bold text-text-main">
                 Manager Dashboard
               </h1>
-              <p className="text-gray-600 mt-2">
+              <p className="text-text-muted mt-2">
                 Welcome back, {user?.name}! Manage books and view reports.
               </p>
             </div>
             <button
               onClick={fetchDashboardData}
-              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              className="inline-flex items-center px-4 py-2 bg-brand text-white rounded-lg hover:bg-blue-700"
             >
               <FiRefreshCw className="mr-2" />
               Refresh
@@ -114,11 +114,11 @@ const ManagerDashboard = () => {
           <div className="card p-6">
             <div className="flex items-center">
               <div className="flex-shrink-0 bg-blue-100 p-3 rounded-lg">
-                <FiBook className="h-6 w-6 text-blue-600" />
+                <FiBook className="h-6 w-6 text-brand" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Books</p>
-                <p className="text-2xl font-semibold text-gray-900">
+                <p className="text-sm font-medium text-text-muted">Total Books</p>
+                <p className="text-2xl font-semibold text-text-main">
                   {stats.totalBooks}
                 </p>
               </div>
@@ -131,8 +131,8 @@ const ManagerDashboard = () => {
                 <FiDollarSign className="h-6 w-6 text-green-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Value</p>
-                <p className="text-2xl font-semibold text-gray-900">
+                <p className="text-sm font-medium text-text-muted">Total Value</p>
+                <p className="text-2xl font-semibold text-text-main">
                   ${stats.totalValue.toFixed(2)}
                 </p>
               </div>
@@ -145,8 +145,8 @@ const ManagerDashboard = () => {
                 <FiTrendingUp className="h-6 w-6 text-purple-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Added Today</p>
-                <p className="text-2xl font-semibold text-gray-900">
+                <p className="text-sm font-medium text-text-muted">Added Today</p>
+                <p className="text-2xl font-semibold text-text-main">
                   {stats.booksAddedToday}
                 </p>
               </div>
@@ -159,8 +159,8 @@ const ManagerDashboard = () => {
                 <FiUsers className="h-6 w-6 text-yellow-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Active Users</p>
-                <p className="text-2xl font-semibold text-gray-900">
+                <p className="text-sm font-medium text-text-muted">Active Users</p>
+                <p className="text-2xl font-semibold text-text-main">
                   {stats.activeUsers}
                 </p>
               </div>
@@ -170,7 +170,7 @@ const ManagerDashboard = () => {
 
         {/* Quick Actions */}
         <div className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Quick Actions</h2>
+          <h2 className="text-xl font-semibold text-text-main mb-4">Quick Actions</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Link
               to="/books/new"
@@ -184,7 +184,7 @@ const ManagerDashboard = () => {
               to="/admin/books"
               className="card p-4 text-center hover:shadow-md transition-shadow"
             >
-              <FiBook className="h-8 w-8 text-blue-600 mx-auto mb-2" />
+              <FiBook className="h-8 w-8 text-brand mx-auto mb-2" />
               <span className="font-medium">Manage Books</span>
             </Link>
 
@@ -200,12 +200,12 @@ const ManagerDashboard = () => {
 
         {/* Recent Users (Read-Only for Manager) */}
         <div className="mb-8 card">
-          <div className="px-6 py-4 border-b border-gray-200">
+          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800">
             <div className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold text-gray-900">Recent Users (View Only)</h3>
+              <h3 className="text-lg font-semibold text-text-main">Recent Users (View Only)</h3>
               <Link
                 to="/admin/users"
-                className="text-sm text-blue-600 hover:text-blue-800"
+                className="text-sm text-brand hover:text-blue-800"
               >
                 View All →
               </Link>
@@ -221,10 +221,10 @@ const ManagerDashboard = () => {
                   <div key={userItem._id} className="flex items-center justify-between">
                     <div className="flex items-center">
                       <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                        <FiUser className="h-5 w-5 text-blue-600" />
+                        <FiUser className="h-5 w-5 text-brand" />
                       </div>
                       <div className="ml-3">
-                        <p className="font-medium text-gray-900">{userItem.name}</p>
+                        <p className="font-medium text-text-main">{userItem.name}</p>
                         <p className="text-sm text-gray-500">{userItem.email}</p>
                       </div>
                     </div>
@@ -255,9 +255,9 @@ const ManagerDashboard = () => {
 
         {/* Recent Books with Actions */}
         <div className="card">
-          <div className="px-6 py-4 border-b border-gray-200">
+          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800">
             <div className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold text-gray-900">Recent Books</h3>
+              <h3 className="text-lg font-semibold text-text-main">Recent Books</h3>
               <div className="flex space-x-3">
                 <Link
                   to="/admin/books"
@@ -267,7 +267,7 @@ const ManagerDashboard = () => {
                 </Link>
                 <Link
                   to="/books/new"
-                  className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  className="inline-flex items-center px-4 py-2 bg-brand text-white rounded-lg hover:bg-blue-700"
                 >
                   <FiPlus className="mr-2" />
                   Add Book
@@ -300,7 +300,7 @@ const ManagerDashboard = () => {
                         <td className="px-4 py-3">
                           <div className="flex items-center">
                             <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                              <FiUser className="h-4 w-4 text-gray-600" />
+                              <FiUser className="h-4 w-4 text-text-muted" />
                             </div>
                             <div className="ml-2">
                               <div className="text-sm font-medium">{book.addedBy?.name || 'Unknown'}</div>
@@ -312,7 +312,7 @@ const ManagerDashboard = () => {
                           <div className="flex space-x-2">
                             <Link
                               to={`/books/${book._id}`}
-                              className="p-1 text-blue-600 hover:text-blue-800"
+                              className="p-1 text-brand hover:text-blue-800"
                               title="View"
                             >
                               <FiEye className="h-5 w-5" />
@@ -342,7 +342,7 @@ const ManagerDashboard = () => {
             <div className="mt-6 text-center">
               <Link
                 to="/admin/books"
-                className="inline-flex items-center px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                className="inline-flex items-center px-6 py-2 bg-brand text-white rounded-lg hover:bg-blue-700"
               >
                 <FiBook className="mr-2" />
                 View All Books

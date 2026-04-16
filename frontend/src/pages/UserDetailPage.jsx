@@ -107,10 +107,10 @@ const UserDetailPage = () => {
 
   if (!userData) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-base flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">User Not Found</h2>
-          <Link to="/admin/users" className="text-blue-600 hover:text-blue-800">
+          <h2 className="text-2xl font-bold text-text-main mb-4">User Not Found</h2>
+          <Link to="/admin/users" className="text-brand hover:text-blue-800">
             ← Back to Users
           </Link>
         </div>
@@ -119,7 +119,7 @@ const UserDetailPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-base py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header with Back Button */}
         <div className="mb-8">
@@ -127,15 +127,15 @@ const UserDetailPage = () => {
             <div className="flex items-center space-x-4">
               <Link
                 to="/admin/users"
-                className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg"
+                className="p-2 text-text-muted hover:text-text-main hover:bg-gray-100 rounded-lg"
               >
                 <FiArrowLeft className="h-5 w-5" />
               </Link>
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">
+                <h1 className="text-3xl font-bold text-text-main">
                   User Details
                 </h1>
-                <p className="text-gray-600 mt-1">
+                <p className="text-text-muted mt-1">
                   View and manage user information
                 </p>
               </div>
@@ -144,7 +144,7 @@ const UserDetailPage = () => {
             <div className="flex space-x-3">
               <Link
                 to={`/admin/users/${id}/edit`}
-                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                className="inline-flex items-center px-4 py-2 bg-brand text-white rounded-lg hover:bg-blue-700"
               >
                 <FiEdit className="mr-2" />
                 Edit User
@@ -171,21 +171,21 @@ const UserDetailPage = () => {
                 {/* User Avatar */}
                 <div className="text-center mb-6">
                   <div className="w-32 h-32 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <span className="text-4xl font-bold text-blue-600">
+                    <span className="text-4xl font-bold text-brand">
                       {userData.name?.charAt(0).toUpperCase()}
                     </span>
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-900">{userData.name}</h2>
-                  <p className="text-gray-600">{userData.email}</p>
+                  <h2 className="text-2xl font-bold text-text-main">{userData.name}</h2>
+                  <p className="text-text-muted">{userData.email}</p>
                 </div>
 
                 {/* User Stats */}
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div className="flex items-center justify-between p-3 bg-base rounded-lg">
                     <div className="flex items-center">
                       <FiShield className="h-5 w-5 text-gray-500 mr-3" />
                       <div>
-                        <p className="text-sm text-gray-600">Role</p>
+                        <p className="text-sm text-text-muted">Role</p>
                         <p className="font-medium">{userData.roleName}</p>
                       </div>
                     </div>
@@ -198,11 +198,11 @@ const UserDetailPage = () => {
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div className="flex items-center justify-between p-3 bg-base rounded-lg">
                     <div className="flex items-center">
                       <FiActivity className="h-5 w-5 text-gray-500 mr-3" />
                       <div>
-                        <p className="text-sm text-gray-600">Status</p>
+                        <p className="text-sm text-text-muted">Status</p>
                         <p className="font-medium">
                           {userData.isActive ? 'Active' : 'Inactive'}
                         </p>
@@ -231,11 +231,11 @@ const UserDetailPage = () => {
                     </button>
                   </div>
 
-                  <div className="p-3 bg-gray-50 rounded-lg">
+                  <div className="p-3 bg-base rounded-lg">
                     <div className="flex items-center mb-2">
                       <FiCalendar className="h-5 w-5 text-gray-500 mr-3" />
                       <div>
-                        <p className="text-sm text-gray-600">Joined</p>
+                        <p className="text-sm text-text-muted">Joined</p>
                         <p className="font-medium">
                           {formatDate(userData.createdAt)}
                         </p>
@@ -243,8 +243,8 @@ const UserDetailPage = () => {
                     </div>
                     
                     {userData.lastLogin && (
-                      <div className="mt-3 pt-3 border-t border-gray-200">
-                        <p className="text-sm text-gray-600">Last Login</p>
+                      <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-800">
+                        <p className="text-sm text-text-muted">Last Login</p>
                         <p className="font-medium">
                           {formatDate(userData.lastLogin)}
                         </p>
@@ -259,13 +259,13 @@ const UserDetailPage = () => {
           {/* Main Content */}
           <div className="lg:col-span-2">
             {/* Tabs */}
-            <div className="mb-6 border-b border-gray-200">
+            <div className="mb-6 border-b border-gray-200 dark:border-gray-800">
               <nav className="flex space-x-8">
                 <button
                   onClick={() => setActiveTab('overview')}
                   className={`py-4 px-1 border-b-2 font-medium text-sm ${
                     activeTab === 'overview'
-                      ? 'border-blue-500 text-blue-600'
+                      ? 'border-blue-500 text-brand'
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                   }`}
                 >
@@ -275,7 +275,7 @@ const UserDetailPage = () => {
                   onClick={() => setActiveTab('books')}
                   className={`py-4 px-1 border-b-2 font-medium text-sm ${
                     activeTab === 'books'
-                      ? 'border-blue-500 text-blue-600'
+                      ? 'border-blue-500 text-brand'
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                   }`}
                 >
@@ -285,7 +285,7 @@ const UserDetailPage = () => {
                   onClick={() => setActiveTab('activity')}
                   className={`py-4 px-1 border-b-2 font-medium text-sm ${
                     activeTab === 'activity'
-                      ? 'border-blue-500 text-blue-600'
+                      ? 'border-blue-500 text-brand'
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                   }`}
                 >
@@ -300,39 +300,39 @@ const UserDetailPage = () => {
                 {activeTab === 'overview' && (
                   <div className="space-y-6">
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-4">User Information</h3>
+                      <h3 className="text-lg font-semibold text-text-main mb-4">User Information</h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="p-4 bg-gray-50 rounded-lg">
-                          <p className="text-sm text-gray-600">Email</p>
+                        <div className="p-4 bg-base rounded-lg">
+                          <p className="text-sm text-text-muted">Email</p>
                           <p className="font-medium">{userData.email}</p>
                         </div>
-                        <div className="p-4 bg-gray-50 rounded-lg">
-                          <p className="text-sm text-gray-600">Role</p>
+                        <div className="p-4 bg-base rounded-lg">
+                          <p className="text-sm text-text-muted">Role</p>
                           <p className="font-medium">{userData.roleName}</p>
                         </div>
-                        <div className="p-4 bg-gray-50 rounded-lg">
-                          <p className="text-sm text-gray-600">Status</p>
+                        <div className="p-4 bg-base rounded-lg">
+                          <p className="text-sm text-text-muted">Status</p>
                           <p className={`font-medium ${
                             userData.isActive ? 'text-green-600' : 'text-red-600'
                           }`}>
                             {userData.isActive ? 'Active' : 'Inactive'}
                           </p>
                         </div>
-                        <div className="p-4 bg-gray-50 rounded-lg">
-                          <p className="text-sm text-gray-600">User ID</p>
+                        <div className="p-4 bg-base rounded-lg">
+                          <p className="text-sm text-text-muted">User ID</p>
                           <p className="font-medium text-sm truncate">{userData._id}</p>
                         </div>
                       </div>
                     </div>
 
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+                      <h3 className="text-lg font-semibold text-text-main mb-4">Quick Actions</h3>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <Link
                           to={`/admin/users/${id}/edit`}
                           className="p-4 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 text-center"
                         >
-                          <FiEdit className="h-6 w-6 text-blue-600 mx-auto mb-2" />
+                          <FiEdit className="h-6 w-6 text-brand mx-auto mb-2" />
                           <span className="font-medium text-blue-800">Edit Profile</span>
                         </Link>
                         
@@ -375,8 +375,8 @@ const UserDetailPage = () => {
                 {activeTab === 'books' && (
                   <div>
                     <div className="flex justify-between items-center mb-6">
-                      <h3 className="text-lg font-semibold text-gray-900">Books Added by User</h3>
-                      <span className="text-sm text-gray-600">
+                      <h3 className="text-lg font-semibold text-text-main">Books Added by User</h3>
+                      <span className="text-sm text-text-muted">
                         Total: {userBooks.length} books
                       </span>
                     </div>
@@ -384,17 +384,17 @@ const UserDetailPage = () => {
                     {userBooks.length === 0 ? (
                       <div className="text-center py-12">
                         <FiBook className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                        <p className="text-gray-600">No books added by this user</p>
+                        <p className="text-text-muted">No books added by this user</p>
                       </div>
                     ) : (
                       <div className="space-y-4">
                         {userBooks.map((book) => (
-                          <div key={book._id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50">
+                          <div key={book._id} className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-800 rounded-lg hover:bg-base">
                             <div className="flex-1">
-                              <h4 className="font-medium text-gray-900">{book.title}</h4>
-                              <p className="text-sm text-gray-600">by {book.author}</p>
+                              <h4 className="font-medium text-text-main">{book.title}</h4>
+                              <p className="text-sm text-text-muted">by {book.author}</p>
                               <div className="flex items-center space-x-4 mt-2">
-                                <span className="text-sm text-blue-600 font-medium">
+                                <span className="text-sm text-brand font-medium">
                                   ${book.price}
                                 </span>
                                 <span className="text-sm text-gray-500">
@@ -407,7 +407,7 @@ const UserDetailPage = () => {
                             </div>
                             <Link
                               to={`/books/${book._id}`}
-                              className="ml-4 text-blue-600 hover:text-blue-800"
+                              className="ml-4 text-brand hover:text-blue-800"
                             >
                               View →
                             </Link>
@@ -420,30 +420,30 @@ const UserDetailPage = () => {
 
                 {activeTab === 'activity' && (
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-6">User Activity</h3>
+                    <h3 className="text-lg font-semibold text-text-main mb-6">User Activity</h3>
                     <div className="space-y-4">
-                      <div className="p-4 bg-gray-50 rounded-lg">
+                      <div className="p-4 bg-base rounded-lg">
                         <p className="font-medium">Account Created</p>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-text-muted">
                           {formatDate(userData.createdAt)}
                         </p>
                       </div>
                       
                       {userData.lastLogin && (
-                        <div className="p-4 bg-gray-50 rounded-lg">
+                        <div className="p-4 bg-base rounded-lg">
                           <p className="font-medium">Last Login</p>
-                          <p className="text-sm text-gray-600">
+                          <p className="text-sm text-text-muted">
                             {formatDate(userData.lastLogin)}
                           </p>
                         </div>
                       )}
                       
-                      <div className="p-4 bg-gray-50 rounded-lg">
+                      <div className="p-4 bg-base rounded-lg">
                         <p className="font-medium">Books Added</p>
-                        <p className="text-2xl font-bold text-blue-600">
+                        <p className="text-2xl font-bold text-brand">
                           {userBooks.length}
                         </p>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-text-muted">
                           Total value: ${userBooks.reduce((sum, book) => sum + (parseFloat(book.price) || 0), 0).toFixed(2)}
                         </p>
                       </div>

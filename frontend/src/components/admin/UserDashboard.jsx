@@ -80,14 +80,14 @@ const UserDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-base py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="text-3xl font-bold text-text-main">
             User Dashboard
           </h1>
-          <p className="text-gray-600 mt-2">
+          <p className="text-text-muted mt-2">
             Welcome back, {dashboardData.profile?.name || user?.name || 'User'}!
             Here's your reading journey.
           </p>
@@ -98,11 +98,11 @@ const UserDashboard = () => {
           <div className="card p-6">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <FiBook className="h-8 w-8 text-blue-600" />
+                <FiBook className="h-8 w-8 text-brand" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Your Books</p>
-                <p className="text-2xl font-semibold text-gray-900">
+                <p className="text-sm font-medium text-text-muted">Your Books</p>
+                <p className="text-2xl font-semibold text-text-main">
                   {dashboardData.stats.totalBooks || 0}
                 </p>
               </div>
@@ -115,8 +115,8 @@ const UserDashboard = () => {
                 <FiDollarSign className="h-8 w-8 text-green-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Value</p>
-                <p className="text-2xl font-semibold text-gray-900">
+                <p className="text-sm font-medium text-text-muted">Total Value</p>
+                <p className="text-2xl font-semibold text-text-main">
                   ${formatCurrency(dashboardData.stats.totalPrice)}
                 </p>
               </div>
@@ -129,8 +129,8 @@ const UserDashboard = () => {
                 <FiStar className="h-8 w-8 text-yellow-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Avg Rating</p>
-                <p className="text-2xl font-semibold text-gray-900">
+                <p className="text-sm font-medium text-text-muted">Avg Rating</p>
+                <p className="text-2xl font-semibold text-text-main">
                   {formatRating(dashboardData.stats.avgRating)}
                 </p>
               </div>
@@ -143,8 +143,8 @@ const UserDashboard = () => {
                 <FiTrendingUp className="h-8 w-8 text-purple-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Favorite Genre</p>
-                <p className="text-2xl font-semibold text-gray-900">
+                <p className="text-sm font-medium text-text-muted">Favorite Genre</p>
+                <p className="text-2xl font-semibold text-text-main">
                   {dashboardData.stats.favoriteGenre || 'N/A'}
                 </p>
               </div>
@@ -156,12 +156,12 @@ const UserDashboard = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
           <div className="lg:col-span-2">
             <div className="card">
-              <div className="px-6 py-4 border-b border-gray-200">
+              <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800">
                 <div className="flex justify-between items-center">
-                  <h2 className="text-xl font-semibold text-gray-900">Your Books</h2>
+                  <h2 className="text-xl font-semibold text-text-main">Your Books</h2>
                   <Link
                     to="/books/new"
-                    className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    className="inline-flex items-center px-4 py-2 bg-brand text-white rounded-lg hover:bg-blue-700 transition-colors"
                   >
                     <FiPlus className="mr-2 h-4 w-4" />
                     Add Book
@@ -172,10 +172,10 @@ const UserDashboard = () => {
               <div className="p-6">
                 {dashboardData.myBooks.length === 0 ? (
                   <div className="text-center py-12">
-                    <p className="text-gray-600">You haven't added any books yet.</p>
+                    <p className="text-text-muted">You haven't added any books yet.</p>
                     <Link
                       to="/books/new"
-                      className="inline-block mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                      className="inline-block mt-4 px-6 py-2 bg-brand text-white rounded-lg hover:bg-blue-700 transition-colors"
                     >
                       Add Your First Book
                     </Link>
@@ -183,18 +183,18 @@ const UserDashboard = () => {
                 ) : (
                   <div className="space-y-4">
                     {dashboardData.myBooks.slice(0, 5).map((book) => (
-                      <div key={book._id} className="flex items-center justify-between p-4 hover:bg-gray-50 rounded-lg">
+                      <div key={book._id} className="flex items-center justify-between p-4 hover:bg-base rounded-lg">
                         <div className="flex-1">
-                          <h3 className="font-semibold text-gray-900">{book.title || 'Unknown Book'}</h3>
-                          <p className="text-sm text-gray-600 mt-1">by {book.author || 'Unknown Author'}</p>
+                          <h3 className="font-semibold text-text-main">{book.title || 'Unknown Book'}</h3>
+                          <p className="text-sm text-text-muted mt-1">by {book.author || 'Unknown Author'}</p>
                         </div>
                         <div className="text-right">
-                          <div className="text-blue-600 font-semibold">
+                          <div className="text-brand font-semibold">
                             ${formatCurrency(book.price)}
                           </div>
                           <div className="flex items-center space-x-1 mt-1">
                             <FiStar className="h-3 w-3 text-yellow-500" />
-                            <span className="text-sm text-gray-600">
+                            <span className="text-sm text-text-muted">
                               {formatRating(book.rating)}
                             </span>
                           </div>
@@ -208,7 +208,7 @@ const UserDashboard = () => {
                   <div className="mt-6 text-center">
                     <Link
                       to="/books"
-                      className="text-blue-600 hover:text-blue-800 font-medium"
+                      className="text-brand hover:text-blue-800 font-medium"
                     >
                       View all books →
                     </Link>
@@ -221,20 +221,20 @@ const UserDashboard = () => {
           <div className="space-y-8">
             {/* Profile Card */}
             <div className="card">
-              <div className="px-6 py-4 border-b border-gray-200">
-                <h2 className="text-xl font-semibold text-gray-900">Your Profile</h2>
+              <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800">
+                <h2 className="text-xl font-semibold text-text-main">Your Profile</h2>
               </div>
               
               <div className="p-6">
                 <div className="flex items-center space-x-4 mb-6">
                   <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
-                    <FiUser className="h-8 w-8 text-blue-600" />
+                    <FiUser className="h-8 w-8 text-brand" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-gray-900">
+                    <h3 className="font-bold text-text-main">
                       {dashboardData.profile?.name || user?.name || 'User'}
                     </h3>
-                    <p className="text-gray-600">
+                    <p className="text-text-muted">
                       {dashboardData.profile?.email || user?.email || 'No email'}
                     </p>
                     <span className="inline-block mt-1 px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">
@@ -245,7 +245,7 @@ const UserDashboard = () => {
                 
                 <div className="space-y-4">
                   <div>
-                    <p className="text-sm text-gray-600">Member Since</p>
+                    <p className="text-sm text-text-muted">Member Since</p>
                     <p className="font-medium">
                       {dashboardData.profile?.createdAt 
                         ? new Date(dashboardData.profile.createdAt).toLocaleDateString('en-US', {
@@ -271,16 +271,16 @@ const UserDashboard = () => {
             
             {/* Favorites Card */}
             <div className="card">
-              <div className="px-6 py-4 border-b border-gray-200">
+              <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800">
                 <div className="flex justify-between items-center">
-                  <h2 className="text-xl font-semibold text-gray-900">Favorites</h2>
+                  <h2 className="text-xl font-semibold text-text-main">Favorites</h2>
                   <FiHeart className="h-5 w-5 text-red-500" />
                 </div>
               </div>
               
               <div className="p-6">
                 {dashboardData.favorites.length === 0 ? (
-                  <p className="text-gray-600 text-center py-4">No favorite books yet</p>
+                  <p className="text-text-muted text-center py-4">No favorite books yet</p>
                 ) : (
                   <div className="space-y-3">
                     {dashboardData.favorites.slice(0, 3).map((book) => (
@@ -289,7 +289,7 @@ const UserDashboard = () => {
                           <FiBook className="h-5 w-5 text-red-600" />
                         </div>
                         <div className="flex-1">
-                          <p className="font-medium text-sm text-gray-900 truncate">
+                          <p className="font-medium text-sm text-text-main truncate">
                             {book.title || 'Unknown Book'}
                           </p>
                           <p className="text-xs text-gray-500">
@@ -305,7 +305,7 @@ const UserDashboard = () => {
                   <div className="mt-4 text-center">
                     <Link
                       to="/favorites"
-                      className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      className="text-brand hover:text-blue-800 text-sm font-medium"
                     >
                       View all favorites →
                     </Link>

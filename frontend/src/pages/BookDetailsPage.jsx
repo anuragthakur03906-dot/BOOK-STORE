@@ -60,8 +60,8 @@ const BookDetailsPage = () => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Book Not Found</h2>
-          <Link to="/books" className="text-blue-600 hover:underline">
+          <h2 className="text-2xl font-bold text-text-main mb-4">Book Not Found</h2>
+          <Link to="/books" className="text-brand hover:underline">
             Back to Books
           </Link>
         </div>
@@ -70,9 +70,9 @@ const BookDetailsPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-base py-8">
       <div className="max-w-4xl mx-auto px-4">
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+        <div className="bg-base rounded-xl shadow-lg overflow-hidden">
           <div className="p-8">
             <div className="flex flex-col md:flex-row gap-8">
               {/* Left - Book Cover */}
@@ -94,10 +94,10 @@ const BookDetailsPage = () => {
               <div className="md:w-2/3">
                 <div className="mb-6">
                   <div>
-                    <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                    <h1 className="text-3xl font-bold text-text-main mb-2">
                       {book.title}
                     </h1>
-                    <p className="text-xl text-gray-600">
+                    <p className="text-xl text-text-muted">
                       by {book.author}
                     </p>
                   </div>
@@ -105,42 +105,42 @@ const BookDetailsPage = () => {
 
                 {/* Book Stats */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                  <div className="bg-gray-50 p-4 rounded-lg">
+                  <div className="bg-base p-4 rounded-lg">
                     <div className="flex items-center mb-2">
                       <FiDollarSign className="h-5 w-5 text-green-600 mr-2" />
                       <span className="font-medium">Price</span>
                     </div>
-                    <p className="text-2xl font-bold text-gray-900">
+                    <p className="text-2xl font-bold text-text-main">
                       ${book.price?.toFixed(2)}
                     </p>
                   </div>
 
-                  <div className="bg-gray-50 p-4 rounded-lg">
+                  <div className="bg-base p-4 rounded-lg">
                     <div className="flex items-center mb-2">
                       <FiStar className="h-5 w-5 text-yellow-600 mr-2" />
                       <span className="font-medium">Rating</span>
                     </div>
-                    <p className="text-2xl font-bold text-gray-900">
+                    <p className="text-2xl font-bold text-text-main">
                       {book.rating?.toFixed(1)}/5
                     </p>
                   </div>
 
-                  <div className="bg-gray-50 p-4 rounded-lg">
+                  <div className="bg-base p-4 rounded-lg">
                     <div className="flex items-center mb-2">
-                      <FiCalendar className="h-5 w-5 text-blue-600 mr-2" />
+                      <FiCalendar className="h-5 w-5 text-brand mr-2" />
                       <span className="font-medium">Year</span>
                     </div>
-                    <p className="text-2xl font-bold text-gray-900">
+                    <p className="text-2xl font-bold text-text-main">
                       {book.publishedYear}
                     </p>
                   </div>
 
-                  <div className="bg-gray-50 p-4 rounded-lg">
+                  <div className="bg-base p-4 rounded-lg">
                     <div className="flex items-center mb-2">
                       <FiTag className="h-5 w-5 text-purple-600 mr-2" />
                       <span className="font-medium">Genre</span>
                     </div>
-                    <p className="text-2xl font-bold text-gray-900">
+                    <p className="text-2xl font-bold text-text-main">
                       {book.genre}
                     </p>
                   </div>
@@ -149,7 +149,7 @@ const BookDetailsPage = () => {
                 {/* Description */}
                 {book.description && (
                   <div className="mb-8">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-3">Description</h3>
+                    <h3 className="text-lg font-semibold text-text-main mb-3">Description</h3>
                     <p className="text-gray-700 leading-relaxed">
                       {book.description}
                     </p>
@@ -170,14 +170,14 @@ const BookDetailsPage = () => {
                 {/* Added By */}
                 {book.addedBy && (
                   <div className="border-t pt-6 mb-8">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-3">Added By</h3>
+                    <h3 className="text-lg font-semibold text-text-main mb-3">Added By</h3>
                     <div className="flex items-center">
                       <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                        <FiUser className="h-5 w-5 text-blue-600" />
+                        <FiUser className="h-5 w-5 text-brand" />
                       </div>
                       <div className="ml-4">
-                        <p className="font-medium text-gray-900">{book.addedBy.name}</p>
-                        <p className="text-sm text-gray-600">{book.addedBy.email}</p>
+                        <p className="font-medium text-text-main">{book.addedBy.name}</p>
+                        <p className="text-sm text-text-muted">{book.addedBy.email}</p>
                         <span className={`inline-block mt-1 px-2 py-1 text-xs rounded font-medium ${
                           book.addedBy.roleName === 'admin' ? 'bg-red-100 text-red-800' :
                           book.addedBy.roleName === 'manager' ? 'bg-yellow-100 text-yellow-800' :
@@ -194,7 +194,7 @@ const BookDetailsPage = () => {
                 <div className="border-t pt-6 flex flex-wrap gap-3">
                   <Link
                     to={`/books/${book._id}/edit`}
-                    className="inline-flex items-center px-4 py-2 border border-blue-600 rounded-lg text-blue-600 hover:bg-blue-50 transition-colors font-medium"
+                    className="inline-flex items-center px-4 py-2 border border-blue-600 rounded-lg text-brand hover:bg-blue-50 transition-colors font-medium"
                   >
                     <FiEdit className="h-5 w-5 mr-2" />
                     Edit Book
@@ -213,11 +213,11 @@ const BookDetailsPage = () => {
           </div>
 
           {/* Footer */}
-          <div className="bg-gray-50 px-8 py-4 border-t">
+          <div className="bg-base px-8 py-4 border-t">
             <div className="flex justify-between items-center">
               <Link
                 to="/books"
-                className="inline-flex items-center text-gray-600 hover:text-gray-900 transition-colors font-medium"
+                className="inline-flex items-center text-text-muted hover:text-text-main transition-colors font-medium"
               >
                 <FiArrowLeft className="h-4 w-4 mr-2" />
                 Back to Books

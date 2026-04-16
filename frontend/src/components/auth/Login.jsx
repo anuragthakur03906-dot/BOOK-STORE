@@ -69,10 +69,10 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-gray-100">
-      <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-xl">
+      <div className="max-w-md w-full bg-base p-8 rounded-2xl shadow-xl">
 
         <div className="text-center mb-6">
-          <FiLogIn className="mx-auto h-10 w-10 text-blue-600" />
+          <FiLogIn className="mx-auto h-10 w-10 text-brand" />
           <h2 className="text-2xl font-bold mt-2">Welcome Back</h2>
         </div>
 
@@ -119,7 +119,7 @@ const Login = () => {
                   />
                 </div>
                 <ErrorMessage name="password" component="p" className="text-xs text-red-500 mt-1" />
-                <Link to="/forgot-password" className="text-xs text-blue-600 hover:text-blue-700 font-medium mt-2 inline-block">
+                <Link to="/forgot-password" className="text-xs text-brand hover:text-blue-700 font-medium mt-2 inline-block">
                   Forgot Password?
                 </Link>
               </div>
@@ -132,7 +132,7 @@ const Login = () => {
               <button
                 type="submit"
                 disabled={loading || !captchaToken}
-                className="w-full bg-blue-600 text-white py-3 rounded-xl disabled:opacity-50"
+                className="w-full bg-brand text-white py-3 rounded-xl disabled:opacity-50"
               >
                 {loading ? 'Signing in...' : 'Sign In'}
               </button>
@@ -143,7 +143,7 @@ const Login = () => {
 
         <p className="text-sm text-center mt-6">
           Don&apos;t have an account?{' '}
-          <Link to="/register" className="text-blue-600">Register</Link>
+          <Link to="/register" className="text-brand">Register</Link>
         </p>
       </div>
     </div>

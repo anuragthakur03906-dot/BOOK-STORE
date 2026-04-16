@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import { FiBook, FiSearch, FiFilter, FiUsers } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext.jsx';
 
 const Home = () => {
@@ -13,45 +12,45 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+    <div className="bg-base transition-colors duration-200">
       {/* Hero Section */}
-      <div className="relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+      <div className="relative overflow-hidden border-b border-gray-100 dark:border-gray-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
           <div className="text-center">
-            <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-              Welcome to <span className="text-blue-600">BookStore</span>
+            <h1 className="text-4xl md:text-7xl font-extrabold text-text-main mb-8 tracking-tight">
+              Welcome to <span className="text-brand">BookStore</span>
             </h1>
-            <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-              Discover, explore, and manage your book collection with our powerful MERN stack application. 
-              Featuring authentication, pagination, search, and advanced filtering.
+            <p className="text-xl text-text-muted mb-10 max-w-3xl mx-auto leading-relaxed">
+              Discover, explore, and manage your book collection with our powerful platform. 
+              Featuring high-performance search, advanced filtering, and a modern UI.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               {isAuthenticated ? (
                 <>
                   <Link
                     to={getDashboardPath()}
-                    className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                    className="inline-flex items-center justify-center px-8 py-4 text-base font-bold rounded-xl text-white bg-brand hover:opacity-90 transition-all shadow-lg shadow-brand/20"
                   >
                     Go to Dashboard
                   </Link>
                   <Link
                     to="/books"
-                    className="inline-flex items-center justify-center px-6 py-3 border border-blue-600 text-base font-medium rounded-md text-blue-600 bg-white hover:bg-blue-50"
+                    className="inline-flex items-center justify-center px-8 py-4 border-2 border-brand text-base font-bold rounded-xl text-brand bg-transparent hover:bg-brand/5 transition-all"
                   >
-                    Browse Books
+                    Browse Collection
                   </Link>
                 </>
               ) : (
                 <>
                   <Link
                     to="/register"
-                    className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                    className="inline-flex items-center justify-center px-8 py-4 text-base font-bold rounded-xl text-white bg-brand hover:opacity-90 transition-all shadow-lg shadow-brand/20"
                   >
-                    Get Started
+                    Get Started Now
                   </Link>
                   <Link
                     to="/login"
-                    className="inline-flex items-center justify-center px-6 py-3 border border-blue-600 text-base font-medium rounded-md text-blue-600 bg-white hover:bg-blue-50"
+                    className="inline-flex items-center justify-center px-8 py-4 border-2 border-brand text-base font-bold rounded-xl text-brand bg-transparent hover:bg-brand/5 transition-all"
                   >
                     Sign In
                   </Link>
@@ -63,103 +62,70 @@ const Home = () => {
       </div>
 
       {/* Features Section */}
-      <div className="py-16 bg-white">
+      <div className="py-24 bg-base/50 dark:bg-transparent">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Powerful Features</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Everything you need to manage your book collection effectively
-            </p>
+          <div className="text-center mb-20">
+            <h2 className="text-3xl font-bold text-text-main mb-4">Powerful Features</h2>
+            <div className="h-1.5 w-20 bg-brand mx-auto rounded-full"></div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="text-center p-6">
-              <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <FiUsers className="h-8 w-8 text-blue-600" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">User Authentication</h3>
-              <p className="text-gray-600">Secure login/register with JWT tokens and role-based access</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+            <div className="group">
+              <h3 className="text-xl font-bold text-text-main mb-3 group-hover:text-brand transition-colors">Authentication</h3>
+              <p className="text-text-muted leading-relaxed">Secure login and registration with role-based access control for Admins, Managers, and Users.</p>
             </div>
             
-            <div className="text-center p-6">
-              <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <FiSearch className="h-8 w-8 text-green-600" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Smart Search</h3>
-              <p className="text-gray-600">Search across titles, authors, and descriptions in real-time</p>
+            <div className="group">
+              <h3 className="text-xl font-bold text-text-main mb-3 group-hover:text-brand transition-colors">Smart Search</h3>
+              <p className="text-text-muted leading-relaxed">Instantly find books by title, author, or description using our high-performance search engine.</p>
             </div>
             
-            <div className="text-center p-6">
-              <div className="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <FiFilter className="h-8 w-8 text-purple-600" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Advanced Filtering</h3>
-              <p className="text-gray-600">Filter by genre, price range, rating, and more</p>
+            <div className="group">
+              <h3 className="text-xl font-bold text-text-main mb-3 group-hover:text-brand transition-colors">Advanced Filters</h3>
+              <p className="text-text-muted leading-relaxed">Filter your collection by genre, price range, and ratings to find exactly what you're looking for.</p>
             </div>
             
-            <div className="text-center p-6">
-              <div className="bg-yellow-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <FiBook className="h-8 w-8 text-yellow-600" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Pagination</h3>
-              <p className="text-gray-600">Efficient data loading with server-side pagination</p>
+            <div className="group">
+              <h3 className="text-xl font-bold text-text-main mb-3 group-hover:text-brand transition-colors">Management</h3>
+              <p className="text-text-muted leading-relaxed">Full CRUD operations for books and users, including pagination and data export capabilities.</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Tech Stack Section */}
-      <div className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Built With Modern Tech Stack</h2>
+      {/* Tech Stack */}
+      <div className="py-24 border-t border-gray-100 dark:border-gray-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-2xl font-bold text-text-main mb-12">Powered by Modern Technology</h2>
+          <div className="flex flex-wrap justify-center gap-12 grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+            <span className="text-2xl font-black text-text-main tracking-tighter">MONGODB</span>
+            <span className="text-2xl font-black text-text-main tracking-tighter">EXPRESS</span>
+            <span className="text-2xl font-black text-text-main tracking-tighter">REACT</span>
+            <span className="text-2xl font-black text-text-main tracking-tighter">NODEJS</span>
           </div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <div className="bg-white p-6 rounded-lg shadow-sm text-center">
-              <div className="text-2xl font-bold text-blue-600">MongoDB</div>
-              <p className="text-gray-600 mt-2">NoSQL Database</p>
-            </div>
-            
-            <div className="bg-white p-6 rounded-lg shadow-sm text-center">
-              <div className="text-2xl font-bold text-green-600">Express.js</div>
-              <p className="text-gray-600 mt-2">Backend Framework</p>
-            </div>
-            
-            <div className="bg-white p-6 rounded-lg shadow-sm text-center">
-              <div className="text-2xl font-bold text-blue-400">React</div>
-              <p className="text-gray-600 mt-2">Frontend Library</p>
-            </div>
-            
-            <div className="bg-white p-6 rounded-lg shadow-sm text-center">
-              <div className="text-2xl font-bold text-green-500">Node.js</div>
-              <p className="text-gray-600 mt-2">Runtime Environment</p>
-            </div>
-          </div>
-          
         </div>
       </div>
 
       {/* CTA Section */}
-      <div className="py-16 bg-blue-600">
+      <div className="py-20 bg-brand mb-10 mx-4 sm:mx-8 rounded-3xl overflow-hidden shadow-2xl shadow-brand/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-white mb-6">Ready to Get Started?</h2>
-          <p className="text-blue-100 text-xl mb-8 max-w-2xl mx-auto">
-            Join thousands of users who are already managing their book collections with our app.
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Ready to Grow Your Library?</h2>
+          <p className="text-white/80 text-lg mb-10 max-w-2xl mx-auto font-medium">
+            Join our community today and start organizing your reading journey like never before.
           </p>
           {isAuthenticated ? (
             <Link
               to="/books"
-              className="inline-flex items-center justify-center px-8 py-3 border-2 border-white text-base font-medium rounded-md text-blue-600 bg-white hover:bg-blue-50"
+              className="inline-flex items-center justify-center px-10 py-4 bg-base text-brand font-bold rounded-xl hover:bg-base transition-all shadow-xl"
             >
               Explore Books
             </Link>
           ) : (
             <Link
               to="/register"
-              className="inline-flex items-center justify-center px-8 py-3 border-2 border-white text-base font-medium rounded-md text-white hover:bg-blue-700"
+              className="inline-flex items-center justify-center px-10 py-4 bg-base text-brand font-bold rounded-xl hover:bg-base transition-all shadow-xl"
             >
-              Create Free Account
+              Create Account
             </Link>
           )}
         </div>

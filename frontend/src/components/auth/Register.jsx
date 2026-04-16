@@ -73,10 +73,10 @@ const Register = () => {
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-gradient-to-br from-blue-50 to-gray-100">
-      <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-xl">
+      <div className="max-w-md w-full bg-base p-8 rounded-2xl shadow-xl">
 
         <div className="text-center mb-6">
-          <FiUserPlus className="mx-auto h-10 w-10 text-blue-600" />
+          <FiUserPlus className="mx-auto h-10 w-10 text-brand" />
           <h2 className="text-2xl font-bold mt-2">Create Account</h2>
         </div>
 
@@ -161,7 +161,7 @@ const Register = () => {
               <button
                 type="submit"
                 disabled={loading || !captchaToken}
-                className="w-full bg-blue-600 text-white py-3 rounded-xl disabled:opacity-50 hover:bg-blue-700 transition-colors flex items-center justify-center"
+                className="w-full bg-brand text-white py-3 rounded-xl disabled:opacity-50 hover:bg-blue-700 transition-colors flex items-center justify-center"
               >
                 {loading ? (
                   <>
@@ -178,11 +178,11 @@ const Register = () => {
 
               {/* Google Signup Option (Optional) */}
               <div className="text-center">
-                <p className="text-sm text-gray-600 mb-3">Or sign up with</p>
+                <p className="text-sm text-text-muted mb-3">Or sign up with</p>
                 <button
                   type="button"
                   onClick={() => window.location.href = '/api/auth/google'}
-                  className="w-full border border-gray-300 py-2 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center"
+                  className="w-full border border-gray-300 py-2 rounded-lg hover:bg-base transition-colors flex items-center justify-center"
                 >
                   <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -198,10 +198,10 @@ const Register = () => {
           )}
         </Formik>
 
-        <div className="mt-8 pt-6 border-t border-gray-200">
-          <p className="text-sm text-center text-gray-600">
+        <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-800">
+          <p className="text-sm text-center text-text-muted">
             Already have an account?{' '}
-            <Link to="/login" className="text-blue-600 hover:text-blue-800 font-medium">
+            <Link to="/login" className="text-brand hover:text-blue-800 font-medium">
               Sign In
             </Link>
           </p>

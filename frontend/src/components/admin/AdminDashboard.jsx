@@ -134,7 +134,7 @@ const AdminDashboard = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mb-4"></div>
-        <p className="text-gray-600">Loading dashboard data from MongoDB...</p>
+        <p className="text-text-muted">Loading dashboard data from MongoDB...</p>
         <p className="text-sm text-gray-500 mt-2">Fetching real-time statistics</p>
       </div>
     );
@@ -144,18 +144,18 @@ const AdminDashboard = () => {
   const activePercentage = stats.totalUsers > 0 ? ((stats.activeUsers / stats.totalUsers) * 100).toFixed(1) : 0;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-base py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header with Live Data Indicator */}
         <div className="mb-8">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-3xl font-bold text-gray-900">
+                <h1 className="text-3xl font-bold text-text-main">
                  Admin Dashboard
                 </h1>
               </div>
-              <p className="text-gray-600">
+              <p className="text-text-muted">
                 Welcome back, <span className="font-semibold">{user?.name}</span>! 
                 <span className="ml-3 text-sm text-gray-500">
                   <FiActivity className="inline mr-1" />
@@ -166,7 +166,7 @@ const AdminDashboard = () => {
             <div className="flex items-center gap-3">
               <button
                 onClick={fetchDashboardData}
-                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="inline-flex items-center px-4 py-2 bg-brand text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
                 <FiRefreshCw className="mr-2" />
                 Refresh
@@ -179,22 +179,22 @@ const AdminDashboard = () => {
         {/* Stats Grid with Real Data */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {/* Total Users card showing counts and icons */}
-          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-blue-500 hover:shadow-xl transition-shadow">
+          <div className="bg-base rounded-xl shadow-lg p-6 border-l-4 border-blue-500 hover:shadow-xl transition-shadow">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Users</p>
-                <p className="text-3xl font-bold text-gray-900 mt-2">
+                <p className="text-sm font-medium text-text-muted">Total Users</p>
+                <p className="text-3xl font-bold text-text-main mt-2">
                   {stats.totalUsers}
                 </p>
                 <div className="flex items-center mt-2">
                   <FiUserCheck className="h-4 w-4 text-green-500 mr-1" />
-                  <span className="text-sm text-gray-600">
+                  <span className="text-sm text-text-muted">
                     {stats.activeUsers} active • {activePercentage}%
                   </span>
                 </div>
               </div>
               <div className="bg-blue-100 p-3 rounded-full">
-                <FiUsers className="h-8 w-8 text-blue-600" />
+                <FiUsers className="h-8 w-8 text-brand" />
               </div>
             </div>
             <div className="mt-4">
@@ -207,16 +207,16 @@ const AdminDashboard = () => {
           </div>
 
           {/* Total Books Card */}
-          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-green-500 hover:shadow-xl transition-shadow">
+          <div className="bg-base rounded-xl shadow-lg p-6 border-l-4 border-green-500 hover:shadow-xl transition-shadow">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Books</p>
-                <p className="text-3xl font-bold text-gray-900 mt-2">
+                <p className="text-sm font-medium text-text-muted">Total Books</p>
+                <p className="text-3xl font-bold text-text-main mt-2">
                   {stats.totalBooks}
                 </p>
                 <div className="flex items-center mt-2">
                   <FiTrendingUp className="h-4 w-4 text-purple-500 mr-1" />
-                  <span className="text-sm text-gray-600">
+                  <span className="text-sm text-text-muted">
                     {stats.booksAddedToday} added today
                   </span>
                 </div>
@@ -226,23 +226,23 @@ const AdminDashboard = () => {
               </div>
             </div>
             <div className="mt-4">
-              <Link to="/admin/books" className="text-sm text-blue-600 hover:text-blue-800">
+              <Link to="/admin/books" className="text-sm text-brand hover:text-blue-800">
                 View all books →
               </Link>
             </div>
           </div>
 
           {/* Total Value Card */}
-          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-yellow-500 hover:shadow-xl transition-shadow">
+          <div className="bg-base rounded-xl shadow-lg p-6 border-l-4 border-yellow-500 hover:shadow-xl transition-shadow">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Value</p>
-                <p className="text-3xl font-bold text-gray-900 mt-2">
+                <p className="text-sm font-medium text-text-muted">Total Value</p>
+                <p className="text-3xl font-bold text-text-main mt-2">
                   ${stats.totalValue.toFixed(2)}
                 </p>
                 <div className="flex items-center mt-2">
                   <FiDollarSign className="h-4 w-4 text-yellow-500 mr-1" />
-                  <span className="text-sm text-gray-600">
+                  <span className="text-sm text-text-muted">
                     Average: ${(stats.totalBooks > 0 ? (stats.totalValue / stats.totalBooks) : 0).toFixed(2)}
                   </span>
                 </div>
@@ -257,38 +257,38 @@ const AdminDashboard = () => {
 
         {/* Quick Actions */}
         <div className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Quick Actions</h2>
+          <h2 className="text-xl font-semibold text-text-main mb-4">Quick Actions</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <Link
               to="/admin/users"
-              className="group bg-white rounded-lg shadow p-6 text-center hover:shadow-lg transition-all hover:scale-[1.02] border border-gray-100"
+              className="group bg-base rounded-lg shadow p-6 text-center hover:shadow-lg transition-all hover:scale-[1.02] border border-gray-100"
             >
               <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full mb-4 group-hover:bg-blue-200 transition-colors">
-                <FiUsers className="h-6 w-6 text-blue-600" />
+                <FiUsers className="h-6 w-6 text-brand" />
               </div>
-              <h3 className="font-medium text-gray-900 mb-2">Manage Users</h3>
+              <h3 className="font-medium text-text-main mb-2">Manage Users</h3>
               <p className="text-sm text-gray-500">View all users and manage roles</p>
             </Link>
 
             <Link
               to="/admin/books"
-              className="group bg-white rounded-lg shadow p-6 text-center hover:shadow-lg transition-all hover:scale-[1.02] border border-gray-100"
+              className="group bg-base rounded-lg shadow p-6 text-center hover:shadow-lg transition-all hover:scale-[1.02] border border-gray-100"
             >
               <div className="inline-flex items-center justify-center w-12 h-12 bg-green-100 rounded-full mb-4 group-hover:bg-green-200 transition-colors">
                 <FiBook className="h-6 w-6 text-green-600" />
               </div>
-              <h3 className="font-medium text-gray-900 mb-2">Manage Books</h3>
+              <h3 className="font-medium text-text-main mb-2">Manage Books</h3>
               <p className="text-sm text-gray-500">View and manage all books</p>
             </Link>
 
             <Link
               to="/books/new"
-              className="group bg-white rounded-lg shadow p-6 text-center hover:shadow-lg transition-all hover:scale-[1.02] border border-gray-100"
+              className="group bg-base rounded-lg shadow p-6 text-center hover:shadow-lg transition-all hover:scale-[1.02] border border-gray-100"
             >
               <div className="inline-flex items-center justify-center w-12 h-12 bg-purple-100 rounded-full mb-4 group-hover:bg-purple-200 transition-colors">
                 <FiPlus className="h-6 w-6 text-purple-600" />
               </div>
-              <h3 className="font-medium text-gray-900 mb-2">Add Book</h3>
+              <h3 className="font-medium text-text-main mb-2">Add Book</h3>
               <p className="text-sm text-gray-500">Add a new book to collection</p>
             </Link>
 
@@ -298,12 +298,12 @@ const AdminDashboard = () => {
         {/* Recent Users & Books */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Recent Users */}
-          <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-              <h3 className="text-lg font-semibold text-gray-900">Recent Users</h3>
+          <div className="bg-base rounded-xl shadow-lg overflow-hidden">
+            <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center">
+              <h3 className="text-lg font-semibold text-text-main">Recent Users</h3>
               <Link
                 to="/admin/users"
-                className="text-sm text-blue-600 hover:text-blue-800 flex items-center"
+                className="text-sm text-brand hover:text-blue-800 flex items-center"
               >
                 View All <FiArrowUp className="ml-1 rotate-90" />
               </Link>
@@ -317,15 +317,15 @@ const AdminDashboard = () => {
               ) : (
                 <div className="space-y-4">
                   {recentUsers.map((userItem) => (
-                    <div key={userItem._id} className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                    <div key={userItem._id} className="flex items-center justify-between p-3 hover:bg-base rounded-lg transition-colors">
                       <div className="flex items-center">
                         <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                          <span className="font-semibold text-blue-600">
+                          <span className="font-semibold text-brand">
                             {userItem.name?.charAt(0) || 'U'}
                           </span>
                         </div>
                         <div className="ml-4">
-                          <p className="font-medium text-gray-900">{userItem.name}</p>
+                          <p className="font-medium text-text-main">{userItem.name}</p>
                           <p className="text-sm text-gray-500">{userItem.email}</p>
                         </div>
                       </div>
@@ -372,12 +372,12 @@ const AdminDashboard = () => {
           </div>
 
           {/* Recent Books */}
-          <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-              <h3 className="text-lg font-semibold text-gray-900">Recent Books</h3>
+          <div className="bg-base rounded-xl shadow-lg overflow-hidden">
+            <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center">
+              <h3 className="text-lg font-semibold text-text-main">Recent Books</h3>
               <Link
                 to="/admin/books"
-                className="text-sm text-blue-600 hover:text-blue-800 flex items-center"
+                className="text-sm text-brand hover:text-blue-800 flex items-center"
               >
                 View All <FiArrowUp className="ml-1 rotate-90" />
               </Link>
@@ -391,15 +391,15 @@ const AdminDashboard = () => {
               ) : (
                 <div className="space-y-4">
                   {recentBooks.map((book) => (
-                    <div key={book._id} className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                    <div key={book._id} className="flex items-center justify-between p-3 hover:bg-base rounded-lg transition-colors">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center">
                           <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
                             <FiBook className="h-5 w-5 text-green-600" />
                           </div>
                           <div className="ml-4 min-w-0">
-                            <Link to={`/books/${book._id}`} className="hover:text-blue-600">
-                              <h4 className="font-medium text-gray-900 truncate">{book.title}</h4>
+                            <Link to={`/books/${book._id}`} className="hover:text-brand">
+                              <h4 className="font-medium text-text-main truncate">{book.title}</h4>
                             </Link>
                             <p className="text-sm text-gray-500 truncate">by {book.author}</p>
                           </div>
@@ -407,7 +407,7 @@ const AdminDashboard = () => {
                       </div>
                       <div className="flex items-center space-x-4 ml-4">
                         <div className="text-right">
-                          <p className="font-semibold text-blue-600">${book.price}</p>
+                          <p className="font-semibold text-brand">${book.price}</p>
                           <p className="text-xs text-gray-500">{book.genre}</p>
                         </div>
                         <div className="flex space-x-1">

@@ -214,9 +214,9 @@ const BookForm = ({ isEdit = false }) => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-base py-8">
       <div className="max-w-4xl mx-auto px-4">
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+        <div className="bg-base rounded-xl shadow-lg overflow-hidden">
           <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-8 text-white">
             <div className="flex items-center justify-between">
               <div>
@@ -399,7 +399,7 @@ const BookForm = ({ isEdit = false }) => {
                   </div>
                 </label>
                 <div className="flex items-center gap-4">
-                  <label className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer transition-colors">
+                  <label className="flex items-center px-4 py-2 bg-brand text-white rounded-lg hover:bg-blue-700 cursor-pointer transition-colors">
                     <FiUpload className="h-4 w-4 mr-2" />
                     <span>{uploading ? 'Uploading...' : 'Upload Image'}</span>
                     <input
@@ -445,7 +445,7 @@ const BookForm = ({ isEdit = false }) => {
                   type="checkbox"
                   checked={formData.inStock}
                   onChange={handleChange}
-                  className="h-5 w-5 text-blue-600"
+                  className="h-5 w-5 text-brand"
                   disabled={loading}
                 />
                 <label htmlFor="inStock" className="ml-3">
@@ -457,7 +457,7 @@ const BookForm = ({ isEdit = false }) => {
                 <button
                   type="button"
                   onClick={() => navigate('/books')}
-                  className="flex-1 px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                  className="flex-1 px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-base transition-colors"
                   disabled={loading}
                 >
                   <FiX className="mr-2 inline h-5 w-5" />
@@ -466,7 +466,7 @@ const BookForm = ({ isEdit = false }) => {
                 <button
                   type="submit"
                   disabled={loading || uploading}
-                  className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                  className="flex-1 px-6 py-3 bg-brand text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
                 >
                   {loading ? 'Saving...' : (
                     <>

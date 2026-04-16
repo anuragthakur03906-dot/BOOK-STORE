@@ -48,14 +48,14 @@ const AddUserPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-base py-8">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Add New User</h1>
-          <p className="text-gray-600 mt-1">Create a new user account (admin only).</p>
+          <h1 className="text-3xl font-bold text-text-main">Add New User</h1>
+          <p className="text-text-muted mt-1">Create a new user account (admin only).</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6 bg-white shadow rounded-xl p-6">
+        <form onSubmit={handleSubmit} className="space-y-6 bg-base shadow rounded-xl p-6">
           <div>
             <label className="block text-sm font-medium text-gray-700">Name</label>
             <input 
@@ -117,7 +117,7 @@ const AddUserPage = () => {
             <button
               type="submit"
               disabled={saving}
-              className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              className="px-5 py-2 bg-brand text-white rounded-lg hover:bg-blue-700"
             >
               {saving ? 'Saving...' : 'Create User'}
             </button>

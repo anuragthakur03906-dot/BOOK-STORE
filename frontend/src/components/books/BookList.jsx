@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { bookAPI } from '../../services/api.js';
 import BookCard from './BookCard.jsx';
 import Pagination from './Pagination.jsx';
@@ -28,7 +28,6 @@ const BookList = () => {
 
   const { user } = useAuth();
 
-  // Fetch books based on current filters
   const fetchBooks = useCallback(async () => {
     setLoading(true);
     try {
@@ -49,28 +48,19 @@ const BookList = () => {
     }
   }, [filters]);
 
-  // Trigger fetch only when filters change (use object serialization to prevent infinite loops)
   useEffect(() => {
-    // Use a small delay to batch multiple state updates
-    const timeoutId = setTimeout(() => {
-      fetchBooks();
-    }, 0);
-    
-    return () => clearTimeout(timeoutId);
+    fetchBooks();
   }, [fetchBooks]);
 
-  // Update filters - memoized to prevent recreation
   const handleFilterChange = useCallback((newFilters) => {
     setFilters(prev => ({ ...prev, ...newFilters, page: 1 }));
   }, []);
 
-  // Handle search input (with debouncing in SearchBar) - memoized
   const handleSearch = useCallback((searchTerm) => {
     const trimmed = searchTerm?.trim() || '';
     setFilters(prev => ({ ...prev, search: trimmed, page: 1 }));
   }, []);
 
-  // Reset all filters - memoized
   const handleClearFilters = useCallback(() => {
     setFilters({
       page: 1,
@@ -85,30 +75,24 @@ const BookList = () => {
     });
   }, []);
 
-  // Change page - memoized
   const handlePageChange = useCallback((page) => {
     setFilters(prev => ({ ...prev, page }));
   }, []);
 
-  // Remove deleted book from list - memoized
-  const handleBookDelete = useCallback((bookId) => {
-    setBooks(prev => prev.filter(book => book._id !== bookId));
-  }, []);
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen bg-base transition-colors duration-200">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex justify-between items-center">
+        <div className="mb-10 text-center md:text-left">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Book Collection</h1>
-              <p className="text-gray-600 mt-2">Browse and manage your books</p>
+              <h1 className="text-4xl font-black text-text-main tracking-tight">Our Collection</h1>
+              <p className="text-text-muted mt-2">Explore {pagination?.totalBooks || 0} unique titles available today.</p>
             </div>
             {user && (
               <Link
                 to="/books/new"
-                className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                className="inline-flex items-center px-6 py-3 border border-transparent rounded-xl shadow-lg text-sm font-bold text-white bg-brand hover:opacity-90 transition-all shadow-brand/20"
               >
                 <FiPlus className="mr-2 -ml-1 h-5 w-5" />
                 Add New Book
@@ -116,8 +100,7 @@ const BookList = () => {
             )}
           </div>
 
-          {/* Search Bar */}
-          <div className="mt-6">
+          <div className="mt-8">
             <SearchBar
               onSearch={handleSearch}
               initialValue={filters.search}
@@ -126,7 +109,7 @@ const BookList = () => {
         </div>
 
         {/* Main Content */}
-        <div className="flex flex-col lg:flex-row gap-8">
+        <div className="flex flex-col lg:flex-row gap-10">
           {/* Filter Panel */}
           <div className="lg:w-1/4">
             <FilterPanel
@@ -136,56 +119,60 @@ const BookList = () => {
             />
           </div>
 
-          {/* Books Grid */}
+          {/* Books List Section */}
           <div className="lg:w-3/4">
-            {/* Results Header */}
-            <div className="mb-6 flex items-center justify-between">
-              <div>
-                <h2 className="text-lg font-semibold text-gray-900">
-                  {pagination?.totalBooks || 0} Books Found
-                </h2>
-              </div>
-              <div className="flex items-center space-x-4">
+            {/* Sorting and Results count Bar */}
+            <div className="mb-8 p-4 bg-base/50 dark:bg-gray-800/20 rounded-xl border border-gray-100 dark:border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <span className="text-sm font-bold text-text-main">
+                {loading ? 'Searching...' : `${pagination?.totalBooks || 0} results found`}
+              </span>
+              <div className="flex items-center space-x-3">
+                <span className="text-xs text-text-muted font-bold uppercase">View</span>
                 <select
                   value={filters.limit}
                   onChange={(e) => handleFilterChange({ limit: parseInt(e.target.value) })}
-                  className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+                  className="bg-base text-text-main pl-3 pr-10 py-1.5 text-sm border border-gray-200 dark:border-gray-800 dark:border-gray-700 focus:ring-brand focus:border-brand rounded-lg"
                 >
-                  <option value="6">6 per page</option>
-                  <option value="9">9 per page</option>
-                  <option value="12">12 per page</option>
-                  <option value="24">24 per page</option>
+                  <option value="6">6</option>
+                  <option value="12">12</option>
+                  <option value="24">24</option>
                 </select>
               </div>
             </div>
 
-            {/* Loading State */}
+            {/* Content Area */}
             {loading ? (
-              <LoadingSpinner />
+              <div className="flex justify-center items-center py-20">
+                <LoadingSpinner />
+              </div>
             ) : books.length === 0 ? (
-              // Empty State
-              <div className="text-center py-12">
-                <div className="text-gray-400 text-6xl mb-4">📚</div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">No books found</h3>
-                <p className="text-gray-600">Try adjusting your search or filters</p>
+              <div className="text-center py-24 bg-base/30 dark:bg-gray-800/10 rounded-3xl border-2 border-dashed border-gray-200 dark:border-gray-800 dark:border-gray-800">
+                <h3 className="text-2xl font-bold text-text-main mb-2">No luck today</h3>
+                <p className="text-text-muted">We couldn't find any books matching those criteria.</p>
+                <button 
+                  onClick={handleClearFilters}
+                  className="mt-6 text-brand font-bold hover:underline"
+                >
+                  Reset all filters
+                </button>
               </div>
             ) : (
-              // Books Grid
               <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {books.map((book) => (
-                    <div key={book._id} className="h-full">
-                      <BookCard book={book} onDelete={handleBookDelete} />
+                    <div key={book._id}>
+                      <BookCard book={book} />
                     </div>
                   ))}
                 </div>
 
-                {/* Pagination */}
                 {pagination && pagination.totalPages > 1 && (
-                  <Pagination
-                    pagination={pagination}
-                    onPageChange={handlePageChange}
-                  />
+                  <div className="mt-12">
+                    <Pagination
+                      pagination={pagination}
+                      onPageChange={handlePageChange}
+                    />
+                  </div>
                 )}
               </>
             )}

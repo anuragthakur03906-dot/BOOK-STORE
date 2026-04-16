@@ -21,13 +21,13 @@ const Pagination = ({ pagination, onPageChange }) => {
   }
 
   return (
-    <nav className="flex flex-col sm:flex-row items-center justify-between py-8 px-4 bg-white rounded-lg border border-gray-200 mt-8" aria-label="Pagination">
+    <nav className="flex flex-col sm:flex-row items-center justify-between py-8 px-4 bg-base rounded-lg border border-gray-200 dark:border-gray-800 mt-8" aria-label="Pagination">
       {/* Previous Button */}
       <div className="flex items-center gap-2 mb-4 sm:mb-0">
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={!hasPrevPage}
-          className="inline-flex items-center px-3 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="inline-flex items-center px-3 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-base disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           aria-label="Previous page"
         >
           <FiChevronLeft className="h-4 w-4 mr-1" />
@@ -43,8 +43,8 @@ const Pagination = ({ pagination, onPageChange }) => {
             onClick={() => onPageChange(page)}
             className={`w-10 h-10 rounded-lg font-medium text-sm transition-colors ${
               currentPage === page
-                ? 'bg-blue-600 text-white'
-                : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
+                ? 'bg-brand text-white'
+                : 'border border-gray-300 text-gray-700 hover:bg-base'
             }`}
             aria-current={currentPage === page ? 'page' : undefined}
           >
@@ -58,7 +58,7 @@ const Pagination = ({ pagination, onPageChange }) => {
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={!hasNextPage}
-          className="inline-flex items-center px-3 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="inline-flex items-center px-3 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-base disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           aria-label="Next page"
         >
           <span className="hidden sm:inline text-sm font-medium mr-1">Next</span>
@@ -66,7 +66,7 @@ const Pagination = ({ pagination, onPageChange }) => {
         </button>
 
         {/* Page Info */}
-        <span className="text-xs sm:text-sm text-gray-600 whitespace-nowrap ml:2 sm:ml-4">
+        <span className="text-xs sm:text-sm text-text-muted whitespace-nowrap ml:2 sm:ml-4">
           {currentPage} / {totalPages}
         </span>
       </div>

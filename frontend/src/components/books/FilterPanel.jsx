@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { bookAPI } from '../../services/api.js';
-import { FiFilter, FiX, FiStar, FiDollarSign, FiCalendar, FiTag } from 'react-icons/fi';
+import { FiFilter, FiX } from 'react-icons/fi';
 
 const FilterPanel = ({ filters, onFilterChange, onClearFilters }) => {
   const [genres, setGenres] = useState([]);
@@ -47,7 +47,7 @@ const FilterPanel = ({ filters, onFilterChange, onClearFilters }) => {
       {/* Mobile Filter Button */}
       <button
         onClick={() => setIsMobileOpen(true)}
-        className="lg:hidden fixed bottom-6 right-6 bg-blue-600 text-white p-3 rounded-full shadow-lg z-40 hover:bg-blue-700 transition-colors"
+        className="lg:hidden fixed bottom-10 right-10 bg-brand text-white p-4 rounded-2xl shadow-xl z-40 transition-transform active:scale-95"
         aria-label="Open filters"
       >
         <FiFilter className="text-xl" />
@@ -55,82 +55,53 @@ const FilterPanel = ({ filters, onFilterChange, onClearFilters }) => {
 
       {/* Filter Panel */}
       <div className={`
-        fixed lg:static inset-0 bg-white lg:bg-transparent z-50 transform transition-transform duration-300
+        fixed lg:static inset-0 bg-base lg:bg-transparent z-50 transform transition-transform duration-500
         ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
-        <div className="bg-white h-full lg:h-auto w-80 lg:w-64 p-6 lg:p-4 shadow-xl lg:shadow-none overflow-y-auto filter-panel-scroll">
+        <div className="bg-base h-full lg:h-auto w-full max-w-sm lg:w-full p-8 lg:p-0 overflow-y-auto">
           
-          {/* Mobile Header */}
-          <div className="flex justify-between items-center mb-6 lg:hidden">
-            <h3 className="text-xl font-bold text-gray-800">Filters</h3>
-            <button
-              onClick={() => setIsMobileOpen(false)}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              aria-label="Close filters"
-            >
-              <FiX className="text-xl text-gray-600" />
-            </button>
-          </div>
-
-          {/* Desktop Header */}
-          <div className="hidden lg:flex justify-between items-center mb-6">
-            <h3 className="text-lg font-bold text-gray-800">Filters</h3>
+          {/* Header */}
+          <div className="flex justify-between items-center mb-10">
+            <h3 className="text-xl font-black text-text-main uppercase tracking-widest italic">Filters</h3>
             <button
               onClick={onClearFilters}
-              className="text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors"
+              className="text-xs font-bold text-brand uppercase hover:underline"
             >
-              Clear All
+              Reset
+            </button>
+            <button
+              onClick={() => setIsMobileOpen(false)}
+              className="lg:hidden p-2 text-text-main"
+            >
+              <FiX className="text-2xl" />
             </button>
           </div>
 
-          {/* Genre Filter */}
-          <div className="mb-8">
-            <div className="filter-section-header">
-              <FiTag className="h-4 w-4" />
-              <span>Genre</span>
-            </div>
-            <div className="space-y-2">
-              {genres.map((genre) => (
-                <button
-                  key={genre}
-                  onClick={() => handleGenreChange(genre)}
-                  className={`genre-button ${
-                    filters.genre === genre ? 'active' : ''
-                  }`}
-                >
-                  {genre}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Price Range Filter */}
-          <div className="mb-8">
-            <div className="filter-section-header">
-              <FiDollarSign className="h-4 w-4" />
-              <span>Price Range</span>
-            </div>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm text-gray-600 mb-1">
-                  Min: <span className="font-semibold">${filters.minPrice}</span>
-                </label>
-                <input
-                  type="range"
-                  name="minPrice"
-                  min={priceRange.minPrice}
-                  max={priceRange.maxPrice}
-                  value={filters.minPrice}
-                  onChange={handlePriceChange}
-                  className="price-range-slider"
-                />
+          <div className="space-y-12">
+            {/* Genre Filter */}
+            <div>
+              <h4 className="text-xs font-bold text-text-muted uppercase tracking-widest mb-6 border-l-4 border-brand pl-3">Category</h4>
+              <div className="flex flex-wrap gap-2">
+                {genres.map((genre) => (
+                  <button
+                    key={genre}
+                    onClick={() => handleGenreChange(genre)}
+                    className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+                      filters.genre === genre 
+                        ? 'bg-brand text-white shadow-lg shadow-brand/20' 
+                        : 'bg-gray-100 dark:bg-gray-800 text-text-main hover:bg-gray-200 dark:hover:bg-gray-700'
+                    }`}
+                  >
+                    {genre}
+                  </button>
+                ))}
               </div>
-              <div>
-                <label className="block text-sm text-gray-600 mb-1">
-                  Max: <span className="font-semibold">
-                    ${filters.maxPrice === Infinity ? '∞' : filters.maxPrice}
-                  </span>
-                </label>
+            </div>
+
+            {/* Price Range Filter */}
+            <div>
+              <h4 className="text-xs font-bold text-text-muted uppercase tracking-widest mb-6 border-l-4 border-brand pl-3">Price Range</h4>
+              <div className="px-2">
                 <input
                   type="range"
                   name="maxPrice"
@@ -138,64 +109,55 @@ const FilterPanel = ({ filters, onFilterChange, onClearFilters }) => {
                   max={priceRange.maxPrice}
                   value={filters.maxPrice === Infinity ? priceRange.maxPrice : filters.maxPrice}
                   onChange={handlePriceChange}
-                  className="price-range-slider"
+                  className="w-full h-2 bg-gray-100 dark:bg-gray-800 rounded-lg appearance-none cursor-pointer accent-brand"
                 />
+                <div className="flex justify-between items-center mt-4">
+                  <span className="text-xs font-bold text-text-muted">${priceRange.minPrice}</span>
+                  <span className="text-lg font-black text-brand">${filters.maxPrice === Infinity ? priceRange.maxPrice : filters.maxPrice}</span>
+                </div>
               </div>
-              <div className="flex justify-between text-xs text-gray-500 pt-1">
-                <span>${priceRange.minPrice}</span>
-                <span>${priceRange.maxPrice}</span>
+            </div>
+
+            {/* Minimum Rating Filter */}
+            <div>
+              <h4 className="text-xs font-bold text-text-muted uppercase tracking-widest mb-6 border-l-4 border-brand pl-3">Min Rating</h4>
+              <div className="flex justify-between gap-1">
+                {[1, 2, 3, 4, 5].map((rating) => (
+                  <button
+                    key={rating}
+                    onClick={() => handleRatingChange(rating)}
+                    className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                      filters.minRating === rating 
+                        ? 'bg-brand text-white shadow-md' 
+                        : 'bg-base dark:bg-gray-800/50 text-text-muted hover:bg-gray-100 dark:hover:bg-gray-800'
+                    }`}
+                  >
+                    {rating}+ ★
+                  </button>
+                ))}
               </div>
             </div>
-          </div>
 
-          {/* Minimum Rating Filter - FIXED */}
-          <div className="mb-8">
-            <div className="filter-section-header">
-              <FiStar className="h-4 w-4" />
-              <span>Minimum Rating</span>
-            </div>
-            <div className="rating-buttons-container">
-              {[1, 2, 3, 4, 5].map((rating) => (
-                <button
-                  key={rating}
-                  onClick={() => handleRatingChange(rating)}
-                  className={`rating-button ${
-                    filters.minRating === rating ? 'active' : ''
-                  }`}
-                  title={`${rating}+ stars`}
-                >
-                  {rating}+
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Sort By Filter */}
-          <div className="mb-8">
-            <div className="filter-section-header">
-              <FiCalendar className="h-4 w-4" />
-              <span>Sort By</span>
-            </div>
-            <div className="space-y-3">
-              <div>
+            {/* Sort Order */}
+            <div>
+              <h4 className="text-xs font-bold text-text-muted uppercase tracking-widest mb-6 border-l-4 border-brand pl-3">Sort By</h4>
+              <div className="space-y-3">
                 <select
                   name="sortBy"
                   value={filters.sortBy}
                   onChange={handleSortChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors bg-white"
+                  className="w-full bg-transparent text-text-main border-b-2 border-gray-100 dark:border-gray-800 focus:border-brand py-2 text-sm outline-none transition-colors"
                 >
                   <option value="createdAt">Date Added</option>
                   <option value="price">Price</option>
                   <option value="rating">Rating</option>
                   <option value="title">Title</option>
                 </select>
-              </div>
-              <div>
                 <select
                   name="sortOrder"
                   value={filters.sortOrder}
                   onChange={handleSortChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors bg-white"
+                  className="w-full bg-transparent text-text-main border-b-2 border-gray-100 dark:border-gray-800 focus:border-brand py-2 text-sm outline-none transition-colors"
                 >
                   <option value="desc">Descending</option>
                   <option value="asc">Ascending</option>
@@ -203,39 +165,6 @@ const FilterPanel = ({ filters, onFilterChange, onClearFilters }) => {
               </div>
             </div>
           </div>
-
-          {/* Active Filters */}
-          <div className="mb-8">
-            <h4 className="font-semibold mb-3 text-gray-700">Active Filters</h4>
-            <div className="flex flex-wrap gap-2">
-              {filters.genre && (
-                <span className="active-filter-badge genre">
-                  {filters.genre}
-                </span>
-              )}
-              {filters.minRating > 0 && (
-                <span className="active-filter-badge rating">
-                  {filters.minRating}+ Stars
-                </span>
-              )}
-              {filters.search && (
-                <span className="active-filter-badge search">
-                  "{filters.search}"
-                </span>
-              )}
-            </div>
-          </div>
-
-          {/* Mobile Clear Button */}
-          <button
-            onClick={() => {
-              onClearFilters();
-              setIsMobileOpen(false);
-            }}
-            className="lg:hidden w-full py-3 bg-gray-100 text-gray-800 rounded-lg font-medium hover:bg-gray-200 transition-colors mt-4"
-          >
-            Clear All Filters
-          </button>
         </div>
       </div>
 
@@ -243,7 +172,7 @@ const FilterPanel = ({ filters, onFilterChange, onClearFilters }) => {
       {isMobileOpen && (
         <div
           onClick={() => setIsMobileOpen(false)}
-          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40 mobile-filter-overlay"
+          className="lg:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-40 animate-fadeIn"
         />
       )}
     </>

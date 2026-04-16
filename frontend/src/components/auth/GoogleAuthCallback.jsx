@@ -79,11 +79,11 @@ const GoogleAuthCallback = () => {
   }, [searchParams, navigate]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center bg-base">
       <div className="text-center">
         <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-600 mx-auto"></div>
-        <h2 className="mt-6 text-2xl font-bold text-gray-900">Completing Google Login</h2>
-        <p className="mt-2 text-gray-600">Please wait while we authenticate you...</p>
+        <h2 className="mt-6 text-2xl font-bold text-text-main">Completing Google Login</h2>
+        <p className="mt-2 text-text-muted">Please wait while we authenticate you...</p>
         <p className="mt-1 text-sm text-gray-500">This will only take a moment</p>
       </div>
     </div>

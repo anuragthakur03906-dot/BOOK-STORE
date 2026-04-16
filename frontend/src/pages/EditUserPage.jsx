@@ -89,20 +89,20 @@ const EditUserPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-base py-8">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center space-x-4 mb-6">
             <Link
               to={`/admin/users/${id}`}
-              className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg"
+              className="p-2 text-text-muted hover:text-text-main hover:bg-gray-100 rounded-lg"
             >
               <FiArrowLeft className="h-5 w-5" />
             </Link>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Edit User</h1>
-              <p className="text-gray-600 mt-1">Update user information</p>
+              <h1 className="text-3xl font-bold text-text-main">Edit User</h1>
+              <p className="text-text-muted mt-1">Update user information</p>
             </div>
           </div>
         </div>
@@ -178,7 +178,7 @@ const EditUserPage = () => {
                   checked={formData.isActive}
                   onChange={handleChange}
                   disabled={id === user?._id} // Can't deactivate yourself
-                  className="h-4 w-4 text-blue-600 rounded focus:ring-blue-500"
+                  className="h-4 w-4 text-brand rounded focus:ring-blue-500"
                 />
                 <label htmlFor="isActive" className="ml-2 text-sm text-gray-700">
                   Active Account
@@ -191,10 +191,10 @@ const EditUserPage = () => {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+              <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200 dark:border-gray-800">
                 <Link
                   to={`/admin/users/${id}`}
-                  className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                  className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-base"
                 >
                   <FiX className="inline mr-2" />
                   Cancel
@@ -202,7 +202,7 @@ const EditUserPage = () => {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-6 py-2 bg-brand text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <FiSave className="inline mr-2" />
                   {saving ? 'Saving...' : 'Save Changes'}
@@ -217,7 +217,7 @@ const EditUserPage = () => {
           <div className="card mt-8 border border-red-200">
             <div className="p-6">
               <h3 className="text-lg font-semibold text-red-800 mb-4">Danger Zone</h3>
-              <p className="text-sm text-gray-600 mb-4">
+              <p className="text-sm text-text-muted mb-4">
                 Deleting a user will permanently remove their account and all associated data.
                 This action cannot be undone.
               </p>

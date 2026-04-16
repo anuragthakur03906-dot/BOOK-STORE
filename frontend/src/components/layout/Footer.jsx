@@ -1,37 +1,38 @@
-import { FiGithub, FiBook, FiHeart } from 'react-icons/fi';
+// components/layout/Footer.jsx
 
 const Footer = () => {
   return (
-    <footer className="bg-white border-t mt-12">
-      <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row justify-between items-center">
-          <div className="mb-4 md:mb-0">
-            <div className="flex items-center space-x-2">
-              <FiBook className="h-6 w-6 text-blue-600" />
-              <span className="text-xl font-bold text-gray-900">BookStore</span>
+    <footer className="bg-base border-t border-gray-100 dark:border-gray-800 mt-12 transition-colors">
+      <div className="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0">
+          <div className="text-center md:text-left">
+            <div className="flex items-center justify-center md:justify-start space-x-2">
+              <span className="text-2xl font-bold text-text-main">BookStore</span>
             </div>
-            <p className="text-gray-600 mt-2 text-sm">
-              Your one-stop destination for amazing books
+            <p className="text-text-muted mt-2 text-sm max-w-sm">
+              Explore a world of knowledge with our curated collection of amazing books.
             </p>
           </div>
           
-          <div className="flex space-x-6">
-            <a href="#" className="text-gray-400 hover:text-gray-500">
-              <FiGithub className="h-6 w-6" />
-            </a>
-            <a href="#" className="text-gray-400 hover:text-gray-500">
-              <FiHeart className="h-6 w-6" />
-            </a>
+          <div className="flex flex-col items-center md:items-end space-y-2">
+            <span className="text-xs uppercase tracking-widest text-text-muted font-bold">Follow Us</span>
+            <div className="flex space-x-8 text-sm">
+              <a href="#" className="text-text-muted hover:text-brand transition-colors">GitHub</a>
+              <a href="#" className="text-text-muted hover:text-brand transition-colors">Twitter</a>
+              <a href="#" className="text-text-muted hover:text-brand transition-colors">Instagram</a>
+            </div>
           </div>
         </div>
         
-        <div className="mt-8 border-t pt-8 text-center">
-          <p className="text-gray-500 text-sm">
-            &copy; {new Date().getFullYear()} BookStore. All rights reserved.
+        <div className="mt-10 border-t border-gray-100 dark:border-gray-800 pt-8 text-center flex flex-col md:flex-row justify-between items-center text-xs text-text-muted space-y-4 md:space-y-0">
+          <p>
+            &copy; {new Date().getFullYear()} BookStore Inc. All rights reserved.
           </p>
-          <p className="text-gray-400 text-xs mt-2">
-            Built with React, Node.js, MongoDB & Tailwind CSS
-          </p>
+          <div className="flex space-x-6">
+            <a href="#" className="hover:underline">Privacy Policy</a>
+            <a href="#" className="hover:underline">Terms of Service</a>
+            <a href="#" className="hover:underline">Contact</a>
+          </div>
         </div>
       </div>
     </footer>

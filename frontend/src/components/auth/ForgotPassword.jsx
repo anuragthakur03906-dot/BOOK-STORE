@@ -42,37 +42,37 @@ const handleSubmit = async (e) => {
     setLoading(false);
   }
 };  return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-base py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
           <div className="mx-auto h-16 w-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-            <FiMail className="h-8 w-8 text-blue-600" />
+            <FiMail className="h-8 w-8 text-brand" />
           </div>
-          <h2 className="text-3xl font-extrabold text-gray-900">
+          <h2 className="text-3xl font-extrabold text-text-main">
             Reset Your Password
           </h2>
-          <p className="mt-2 text-sm text-gray-600">
+          <p className="mt-2 text-sm text-text-muted">
             Enter your email address and we'll send you a link to reset your password.
           </p>
         </div>
 
-        <div className="bg-white py-8 px-4 shadow rounded-lg sm:px-10">
+        <div className="bg-base py-8 px-4 shadow rounded-lg sm:px-10">
           {submitted ? (
             <div className="text-center">
               <div className="mx-auto h-12 w-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
                 <FiMail className="h-6 w-6 text-green-600" />
               </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
+              <h3 className="text-lg font-medium text-text-main mb-2">
                 Check Your Email
               </h3>
-              <p className="text-gray-600 mb-6">
+              <p className="text-text-muted mb-6">
                 We've sent a password reset link to <strong>{email}</strong>. 
                 Please check your inbox and follow the instructions.
               </p>
               <div className="space-y-3">
                 <Link
                   to="/login"
-                  className="w-full inline-flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+                  className="w-full inline-flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-brand hover:bg-blue-700"
                 >
                   <FiArrowLeft className="mr-2 h-4 w-4" />
                   Back to Login
@@ -81,7 +81,7 @@ const handleSubmit = async (e) => {
                   Didn't receive the email?{' '}
                   <button
                     onClick={() => setSubmitted(false)}
-                    className="text-blue-600 hover:text-blue-500 font-medium"
+                    className="text-brand hover:text-blue-500 font-medium"
                   >
                     Try again
                   </button>
@@ -116,7 +116,7 @@ const handleSubmit = async (e) => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-brand hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? 'Sending...' : 'Send Reset Link'}
                 </button>
@@ -125,7 +125,7 @@ const handleSubmit = async (e) => {
               <div className="text-center">
                 <Link
                   to="/login"
-                  className="inline-flex items-center text-sm text-blue-600 hover:text-blue-500"
+                  className="inline-flex items-center text-sm text-brand hover:text-blue-500"
                 >
                   <FiArrowLeft className="mr-1 h-4 w-4" />
                   Back to Login
@@ -136,9 +136,9 @@ const handleSubmit = async (e) => {
         </div>
 
         <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-text-muted">
             Don't have an account?{' '}
-            <Link to="/register" className="font-medium text-blue-600 hover:text-blue-500">
+            <Link to="/register" className="font-medium text-brand hover:text-blue-500">
               Sign up now
             </Link>
           </p>
