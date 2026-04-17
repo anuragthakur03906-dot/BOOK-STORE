@@ -93,20 +93,20 @@ const Profile = () => {
           <div className="flex flex-col gap-6">
             <BackButton />
             <div className="flex items-center gap-6">
-              <div className="h-20 w-20 md:h-24 md:w-24 bg-brand text-white rounded-3xl flex items-center justify-center text-3xl font-bold shadow-xl shadow-brand/20">
+              <div className="h-24 w-24 md:h-28 md:w-28 bg-brand text-white rounded-2xl flex items-center justify-center text-4xl font-bold shadow-lg shadow-brand/20">
                 {profileData.name?.charAt(0)}
               </div>
               <div>
-                <h1 className="text-3xl md:text-4xl font-bold text-text-main leading-tight">{profileData.name}</h1>
-                <p className="text-text-muted mt-1 font-medium">{profileData.email}</p>
+                <h1 className="text-4xl md:text-5xl font-bold text-text-main leading-tight">{profileData.name}</h1>
+                <p className="text-text-muted mt-2 font-medium">{profileData.email}</p>
               </div>
             </div>
           </div>
           <button
             onClick={() => setEditing(!editing)}
-            className="px-6 py-2.5 btn-outline border-gray-200 shadow-sm"
+            className={`px-6 py-3 font-bold rounded-xl transition-all whitespace-nowrap ${editing ? 'bg-gray-100 dark:bg-slate-800 text-text-main hover:bg-gray-200 dark:hover:bg-slate-700' : 'bg-brand text-white hover:bg-brand/90 shadow-lg shadow-brand/20'}`}
           >
-            {editing ? 'Cancel Editing' : 'Edit Profile'}
+            {editing ? 'Cancel' : 'Edit Profile'}
           </button>
         </div>
 
@@ -115,7 +115,7 @@ const Profile = () => {
           <div className="lg:col-span-2 space-y-8">
             {editing ? (
               <div className="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-gray-100 dark:border-slate-800 shadow-sm">
-                <h2 className="text-xl font-bold text-text-main mb-8">Update Profile</h2>
+                <h2 className="text-2xl font-bold text-text-main mb-8">Update Your Profile</h2>
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <FormInput label="Display Name" name="name" value={formData.name} onChange={handleChange} icon={<FiUser />} />
                   <FormInput label="Work Email" type="email" name="email" value={formData.email} onChange={handleChange} icon={<FiMail />} />
@@ -123,7 +123,7 @@ const Profile = () => {
                     <FormInput label="New Password" type="password" name="password" value={formData.password} onChange={handleChange} placeholder="Keep empty to stay same" />
                     <FormInput label="Repeat Password" type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} placeholder="Verify password" />
                   </div>
-                  <button type="submit" className="w-full btn-primary py-4 rounded-xl shadow-lg mt-4">Save Profile Changes</button>
+                  <button type="submit" className="w-full bg-brand text-white font-bold py-4 rounded-xl hover:bg-brand/90 transition-all mt-6 shadow-lg shadow-brand/20">Save Profile Changes</button>
                 </form>
               </div>
             ) : (
@@ -134,16 +134,16 @@ const Profile = () => {
                 </div>
 
                 <div className="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-gray-100 dark:border-slate-800 shadow-sm">
-                   <h3 className="text-lg font-bold text-text-main mb-6">Recent Activity</h3>
+                   <h3 className="text-xl font-bold text-text-main mb-8">Recent Activity</h3>
                    <div className="space-y-4">
                       {profileData.favoriteBooks?.length > 0 ? (
                         profileData.favoriteBooks.slice(0, 3).map((book, idx) => (
-                          <div key={book._id || `fav-${idx}`} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-slate-800/50 rounded-2xl border border-transparent hover:border-gray-100 dark:hover:border-slate-700 transition-all">
+                          <div key={book._id || `fav-${idx}`} className="flex items-center justify-between p-5 bg-gray-50 dark:bg-slate-800/50 rounded-xl border border-transparent hover:border-gray-100 dark:hover:border-slate-700/50 transition-all">
                              <div>
                                 <h4 className="font-bold text-text-main text-sm">{book.title}</h4>
-                                <p className="text-xs text-text-muted">Stored in your favorites</p>
+                                <p className="text-xs text-text-muted font-medium mt-1">Stored in your favorites</p>
                              </div>
-                             <Link to={`/books/${book._id}`} className="text-xs font-bold text-brand hover:underline">View Book</Link>
+                             <Link to={`/books/${book._id}`} className="text-sm font-bold text-brand hover:underline underline-offset-2">View</Link>
                           </div>
                         ))
                       ) : (
@@ -151,7 +151,7 @@ const Profile = () => {
                       )}
                    </div>
                    {profileData.favoriteBooks?.length > 0 && (
-                     <Link to="/favorites" className="block text-center mt-8 text-sm font-bold text-brand hover:underline ring-1 ring-brand/10 py-2 rounded-lg">Browse All Favorites</Link>
+                     <Link to="/favorites" className="block text-center mt-8 text-sm font-bold text-brand hover:underline underline-offset-2 transition-colors">Browse All Favorites</Link>
                    )}
                 </div>
               </div>
@@ -160,25 +160,25 @@ const Profile = () => {
 
           {/* Right Sidebar Area */}
           <div className="space-y-6">
-             <div className="bg-gray-50 dark:bg-slate-900/40 p-8 rounded-3xl border border-gray-100 dark:border-slate-800 shadow-sm">
+             <div className="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-gray-100 dark:border-slate-800 shadow-sm">
                 <h3 className="text-sm font-bold text-text-muted uppercase tracking-wider mb-6">Account Overview</h3>
-                <div className="space-y-6">
+                <div className="space-y-5">
                    <div className="flex justify-between items-center text-sm border-b border-gray-100 dark:border-slate-800 pb-4">
                       <span className="text-text-muted font-medium">Catalog Entries</span>
-                      <span className="font-bold text-text-main">{profileData.booksCount || 0}</span>
+                      <span className="font-bold text-text-main text-lg">{profileData.booksCount || 0}</span>
                    </div>
                    <div className="flex justify-between items-center text-sm">
                       <span className="text-text-muted font-medium">Saved Items</span>
-                      <span className="font-bold text-text-main">{profileData.favoriteBooks?.length || 0}</span>
+                      <span className="font-bold text-text-main text-lg">{profileData.favoriteBooks?.length || 0}</span>
                    </div>
                 </div>
              </div>
 
-             <div className="p-8 space-y-4 rounded-3xl border border-red-50 dark:border-red-950/20 bg-red-50/5 dark:bg-red-950/5">
-                <h3 className="text-xs font-bold text-red-500 uppercase tracking-widest mb-4">Account Termination</h3>
+             <div className="p-8 space-y-4 rounded-3xl border border-red-50 dark:border-red-950/30 bg-red-50/5 dark:bg-red-950/5">
+                <h3 className="text-xs font-bold text-red-600 dark:text-red-400 uppercase tracking-widest">Account Termination</h3>
                 <button
                    onClick={() => setShowDeleteConfirm(true)}
-                   className="w-full bg-red-100 dark:bg-red-950/30 text-red-600 py-3 rounded-xl text-sm font-bold hover:bg-red-200 dark:hover:bg-red-900/40 transition-colors"
+                   className="w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-xl text-sm font-bold transition-colors shadow-lg shadow-red-500/20"
                 >
                    Close Account Permanently
                 </button>
@@ -201,25 +201,25 @@ const Profile = () => {
 };
 
 const FormInput = ({ label, icon, ...props }) => (
-  <div className="space-y-2">
+  <div className="space-y-2.5">
     <label className="text-xs font-bold text-text-muted uppercase tracking-wider flex items-center gap-2">
       {icon} {label}
     </label>
     <input
-      className="w-full px-4 py-3 bg-gray-50 dark:bg-slate-800 border-none rounded-xl focus:ring-2 focus:ring-brand outline-none text-text-main font-medium transition-all"
+      className="w-full px-4 py-3.5 bg-gray-50 dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-brand focus:border-transparent outline-none text-text-main font-medium transition-all"
       {...props}
     />
   </div>
 );
 
 const InfoBox = ({ icon, label, value, highlight }) => (
-  <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-gray-100 dark:border-slate-800 shadow-sm flex items-center gap-4">
-    <div className={`p-3 rounded-xl ${highlight ? 'bg-brand/10 text-brand' : 'bg-gray-100 dark:bg-slate-800 text-text-muted'}`}>
+  <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-gray-100 dark:border-slate-800 shadow-sm">
+    <div className={`p-3 rounded-xl mb-4 w-fit ${highlight ? 'bg-brand/10 text-brand' : 'bg-gray-100 dark:bg-slate-800 text-text-muted'}`}>
       {icon}
     </div>
     <div>
-       <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest block mb-1">{label}</span>
-       <span className="text-lg font-bold text-text-main">{value}</span>
+       <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest block mb-2">{label}</span>
+       <span className="text-2xl font-bold text-text-main">{value}</span>
     </div>
   </div>
 );

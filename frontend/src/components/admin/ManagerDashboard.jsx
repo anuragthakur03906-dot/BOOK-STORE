@@ -85,13 +85,13 @@ const ManagerDashboard = () => {
            <div className="flex flex-col gap-6">
               <BackButton />
               <div>
-                <h1 className="text-3xl font-bold text-text-main">Management Dashboard</h1>
-                <p className="text-text-muted mt-1 font-medium italic">Content and logistics oversight for Manager {user?.name}.</p>
+                <h1 className="text-3xl md:text-4xl font-bold text-text-main leading-tight">Management Dashboard</h1>
+                <p className="text-text-muted mt-2 font-medium">Content and logistics oversight for Manager {user?.name}.</p>
               </div>
            </div>
            <button
              onClick={fetchDashboardData}
-             className="px-6 py-2.5 bg-brand text-white font-bold rounded-xl shadow-lg shadow-brand/20 hover:opacity-90 flex items-center gap-2 transition-all"
+             className="hidden sm:flex px-6 py-2.5 bg-brand text-white font-bold rounded-xl shadow-lg shadow-brand/20 hover:bg-brand/90 transition-all items-center gap-2"
            >
               <FiRefreshCw className={loading ? 'animate-spin' : ''} />
               Refresh
@@ -120,34 +120,34 @@ const ManagerDashboard = () => {
               <div className="bg-white dark:bg-slate-900 rounded-[2rem] border border-gray-100 dark:border-slate-800 shadow-sm overflow-hidden">
                  <div className="px-8 py-6 border-b border-gray-50 dark:border-slate-800 flex justify-between items-center">
                     <h3 className="font-bold text-text-main text-lg tracking-tight">RECENT BOOKS</h3>
-                    <Link to="/admin/books" className="text-xs font-bold text-brand hover:underline">Full Inventory</Link>
+                    <Link to="/admin/books" className="text-sm font-bold text-brand hover:underline underline-offset-2">Full Inventory</Link>
                  </div>
                  <div className="p-8">
                     <div className="overflow-x-auto">
                        <table className="w-full">
                           <thead>
-                             <tr className="border-b border-gray-50 dark:border-slate-800 text-[10px] font-bold text-text-muted uppercase tracking-widest text-left">
-                                <th className="px-4 py-3">Title</th>
-                                <th className="px-4 py-3">Price</th>
-                                <th className="px-4 py-3 text-right">Actions</th>
+                             <tr className="border-b border-gray-50 dark:border-slate-800 text-[11px] font-bold text-text-muted uppercase tracking-widest text-left">
+                                <th className="px-4 py-4">Title</th>
+                                <th className="px-4 py-4">Price</th>
+                                <th className="px-4 py-4 text-right">Actions</th>
                              </tr>
                           </thead>
                           <tbody className="divide-y divide-gray-50 dark:divide-slate-800/50">
                              {recentBooks.map(b => (
                                <tr key={b._id} className="hover:bg-gray-50/50 dark:hover:bg-slate-800/10 transition-colors">
                                   <td className="px-4 py-5 flex items-center gap-3">
-                                     <div className="w-8 h-10 bg-gray-50 dark:bg-slate-800 rounded flex items-center justify-center text-xs text-text-muted italic"><FiBook /></div>
+                                     <div className="w-10 h-10 bg-gray-50 dark:bg-slate-800 rounded-lg flex items-center justify-center text-sm text-text-muted font-bold"><FiBook /></div>
                                      <div className="truncate max-w-[150px] md:max-w-xs">
                                         <div className="text-sm font-bold text-text-main truncate">{b.title}</div>
-                                        <div className="text-[10px] text-text-muted font-medium">{b.author}</div>
+                                        <div className="text-xs text-text-muted font-medium">{b.author}</div>
                                      </div>
                                   </td>
                                   <td className="px-4 py-5 text-sm font-bold text-brand">${b.price?.toFixed(2)}</td>
                                   <td className="px-4 py-5 text-right">
-                                     <div className="flex justify-end gap-1">
-                                        <button onClick={() => navigate(`/books/${b._id}`)} className="p-1.5 text-text-muted hover:text-brand"><FiEye /></button>
-                                        <button onClick={() => navigate(`/books/${b._id}/edit`)} className="p-1.5 text-text-muted hover:text-brand"><FiEdit /></button>
-                                        <button onClick={() => setModal({ isOpen: true, bookId: b._id, title: b.title })} className="p-1.5 text-text-muted hover:text-red-500"><FiTrash2 /></button>
+                                     <div className="flex justify-end gap-2">
+                                        <button onClick={() => navigate(`/books/${b._id}`)} className="p-2 text-text-muted hover:text-brand transition-colors rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800"><FiEye className="text-lg" /></button>
+                                        <button onClick={() => navigate(`/books/${b._id}/edit`)} className="p-2 text-text-muted hover:text-brand transition-colors rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800"><FiEdit className="text-lg" /></button>
+                                        <button onClick={() => setModal({ isOpen: true, bookId: b._id, title: b.title })} className="p-2 text-text-muted hover:text-red-500 transition-colors rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20"><FiTrash2 className="text-lg" /></button>
                                      </div>
                                   </td>
                                </tr>
@@ -163,25 +163,25 @@ const ManagerDashboard = () => {
            <div className="space-y-8">
               <div className="bg-white dark:bg-slate-900 rounded-[2rem] border border-gray-100 dark:border-slate-800 shadow-sm overflow-hidden">
                  <div className="px-8 py-6 border-b border-gray-50 dark:border-slate-800 flex justify-between items-center">
-                    <h3 className="font-bold text-text-main text-xs uppercase tracking-widest">Active Members</h3>
-                    <FiShield className="text-brand opacity-50" />
+                    <h3 className="font-bold text-text-main text-sm uppercase tracking-wider">Active Members</h3>
+                    <FiShield className="text-brand opacity-50 text-lg" />
                  </div>
-                 <div className="p-8 space-y-6">
+                 <div className="p-8 space-y-5">
                     {recentUsers.map(u => (
-                      <div key={u._id} className="flex items-center gap-4">
-                         <div className="w-10 h-10 bg-brand/10 text-brand rounded-xl flex items-center justify-center font-bold text-xs"><FiUser /></div>
+                      <div key={u._id} className="flex items-center gap-4 py-3 border-b border-gray-50 dark:border-slate-800/50 last:border-0">
+                         <div className="w-12 h-12 bg-brand/10 text-brand rounded-lg flex items-center justify-center font-bold text-sm shadow-sm"><FiUser /></div>
                          <div className="flex-1 min-w-0">
                             <div className="text-sm font-bold text-text-main truncate">{u.name}</div>
-                            <div className="flex gap-2">
-                               <span className={`text-[9px] font-bold uppercase tracking-widest px-1.5 rounded ${u.isActive ? 'bg-green-100 text-green-700 dark:bg-green-950/30' : 'bg-red-100 text-red-700 dark:bg-red-950/30'}`}>
+                            <div className="flex gap-3 mt-2">
+                               <span className={`text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-md ${u.isActive ? 'bg-green-100 text-green-700 dark:bg-green-950/40 dark:text-green-400' : 'bg-red-100 text-red-700 dark:bg-red-950/40 dark:text-red-400'}`}>
                                   {u.isActive ? 'Active' : 'Suspended'}
                                </span>
-                               <span className="text-[9px] font-bold uppercase text-text-muted italic">{u.roleName}</span>
+                               <span className="text-xs font-bold text-text-muted uppercase italic">{u.roleName}</span>
                             </div>
                          </div>
                       </div>
                     ))}
-                    <Link to="/admin/users" className="block text-center pt-4 text-xs font-bold text-brand hover:underline">Enter Member Directory</Link>
+                    <Link to="/admin/users" className="block text-center pt-4 text-sm font-bold text-brand hover:underline underline-offset-2">Enter Member Directory</Link>
                  </div>
               </div>
 
@@ -213,27 +213,27 @@ const ManagerDashboard = () => {
 };
 
 const InfoCard = ({ icon, label, value, color }) => (
-  <div className="bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 p-8 rounded-[2rem] shadow-sm">
-    <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-6 text-xl shadow-inner ${
+  <div className="bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 p-8 rounded-[2rem] shadow-sm hover:shadow-md transition-shadow">
+    <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-6 text-lg shadow-inner ${
        color === 'brand' ? 'bg-brand/10 text-brand' : color === 'green' ? 'bg-green-500/10 text-green-600' : color === 'yellow' ? 'bg-yellow-500/10 text-yellow-600' : 'bg-purple-500/10 text-purple-600'
     }`}>
        {icon}
     </div>
-    <div className="text-xs font-bold text-text-muted uppercase tracking-widest mb-1">{label}</div>
-    <div className="text-2xl font-bold text-text-main tracking-tight">{value}</div>
+    <div className="text-[11px] font-bold text-text-muted uppercase tracking-widest mb-2">{label}</div>
+    <div className="text-4xl font-bold text-text-main tracking-tight">{value}</div>
   </div>
 );
 
 const UtilityLink = ({ to, icon, title, color }) => (
-  <Link to={to} className="bg-white dark:bg-slate-900 p-6 rounded-[2rem] border border-gray-100 dark:border-slate-800 shadow-sm flex items-center gap-4 group hover:border-brand/30 transition-all">
-     <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl transition-colors ${
+  <Link to={to} className="bg-white dark:bg-slate-900 p-6 rounded-[2rem] border border-gray-100 dark:border-slate-800 shadow-sm hover:shadow-lg hover:border-brand/50 transition-all flex items-center gap-4 group">
+     <div className={`w-14 h-14 rounded-xl flex items-center justify-center text-2xl transition-colors transition-transform group-hover:scale-110 ${
        color === 'brand' ? 'bg-brand/10 text-brand group-hover:bg-brand group-hover:text-white' : 
        color === 'green' ? 'bg-green-500/10 text-green-600 group-hover:bg-green-500 group-hover:text-white' : 
        'bg-purple-500/10 text-purple-600 group-hover:bg-purple-500 group-hover:text-white'
      }`}>
         {icon}
      </div>
-     <div className="font-bold text-text-main group-hover:text-brand transition-colors">{title}</div>
+     <div className="font-bold text-text-main text-lg group-hover:text-brand transition-colors">{title}</div>
   </Link>
 );
 

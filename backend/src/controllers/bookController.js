@@ -6,7 +6,7 @@
 
 import Book from '../models/Book.js';
 import User from '../models/User.js';
-import { getPagination, buildFilter, buildSort } from '../utils/helpers.js';
+import { getPagination, buildFilter, buildSort } from '../helpers/index.js';
 
 /**
  * Retrieves a list of books with optional filtering, sorting, and pagination.

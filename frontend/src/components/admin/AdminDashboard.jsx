@@ -73,13 +73,13 @@ const AdminDashboard = () => {
            <div className="flex flex-col gap-4">
               <BackButton />
               <div>
-                <h1 className="text-3xl font-bold text-text-main">Administrator Dashboard</h1>
-                <p className="text-text-muted mt-1 font-medium italic">Welcome, {user?.name}. System snapshot as of {lastUpdated}.</p>
+                <h1 className="text-3xl md:text-4xl font-bold text-text-main leading-tight">Administrator Dashboard</h1>
+                <p className="text-text-muted mt-2 font-medium">Welcome, {user?.name}. Last Updated: {new Date().toLocaleTimeString()}</p>
               </div>
            </div>
            <button
              onClick={fetchDashboardData}
-             className="px-6 py-2.5 bg-brand text-white font-bold rounded-xl shadow-lg shadow-brand/20 hover:opacity-90 transition-all flex items-center gap-2"
+             className="hidden sm:flex px-6 py-2.5 bg-brand text-white font-bold rounded-xl shadow-lg shadow-brand/20 hover:bg-brand/90 transition-all items-center gap-2"
            >
               <FiRefreshCw className={loading ? 'animate-spin' : ''} />
               Refresh
@@ -107,20 +107,20 @@ const AdminDashboard = () => {
            {/* Section Users */}
            <div className="bg-white dark:bg-slate-900 rounded-[2rem] border border-gray-100 dark:border-slate-800 shadow-sm overflow-hidden">
               <div className="px-8 py-6 border-b border-gray-50 dark:border-slate-800 flex justify-between items-center">
-                  <h3 className="font-bold text-text-main text-lg uppercase tracking-tight">Recent Users</h3>
-                  <Link to="/admin/users" className="text-xs font-bold text-brand hover:underline">View All</Link>
+                  <h3 className="font-bold text-text-main text-lg tracking-tight">RECENT USERS</h3>
+                  <Link to="/admin/users" className="text-sm font-bold text-brand hover:underline underline-offset-2">View All</Link>
               </div>
               <div className="p-8 space-y-4">
                  {recentUsers.length > 0 ? recentUsers.map(u => (
-                   <div key={u._id} className="flex items-center justify-between p-4 bg-gray-50/50 dark:bg-slate-800/30 rounded-2xl">
+                   <div key={u._id} className="flex items-center justify-between p-5 bg-gray-50/50 dark:bg-slate-800/30 rounded-xl hover:bg-gray-100/50 dark:hover:bg-slate-800/50 transition-colors">
                       <div className="flex items-center gap-4">
-                         <div className="w-10 h-10 bg-brand/10 text-brand rounded-xl flex items-center justify-center font-bold text-xs">{u.name?.charAt(0)}</div>
+                         <div className="w-12 h-12 bg-brand/10 text-brand rounded-lg flex items-center justify-center font-bold text-sm shadow-sm">{u.name?.charAt(0)}</div>
                          <div>
                             <div className="text-sm font-bold text-text-main">{u.name}</div>
-                            <div className="text-[10px] text-text-muted font-bold uppercase">{u.roleName}</div>
+                            <div className="text-xs text-text-muted font-bold uppercase tracking-wide">{u.roleName}</div>
                          </div>
                       </div>
-                      <div className="text-sm font-bold text-brand">{new Date(u.createdAt).toLocaleDateString()}</div>
+                      <div className="text-sm font-bold text-text-muted">{new Date(u.createdAt).toLocaleDateString()}</div>
                    </div>
                  )) : <p className="text-center text-text-muted italic py-10">No recent registrants recorded.</p>}
               </div>
@@ -129,20 +129,20 @@ const AdminDashboard = () => {
            {/* Section Books */}
            <div className="bg-white dark:bg-slate-900 rounded-[2rem] border border-gray-100 dark:border-slate-800 shadow-sm overflow-hidden">
               <div className="px-8 py-6 border-b border-gray-50 dark:border-slate-800 flex justify-between items-center">
-                 <h3 className="font-bold text-text-main text-lg uppercase tracking-tight">Latest Catalog Entries</h3>
-                 <Link to="/admin/books" className="text-xs font-bold text-brand hover:underline">Full Inventory</Link>
+                 <h3 className="font-bold text-text-main text-lg tracking-tight">LATEST CATALOG ENTRIES</h3>
+                 <Link to="/admin/books" className="text-sm font-bold text-brand hover:underline underline-offset-2">Full Inventory</Link>
               </div>
               <div className="p-8 space-y-4">
                  {recentBooks.length > 0 ? recentBooks.map(b => (
-                   <div key={b._id} className="flex items-center justify-between p-4 bg-gray-50/50 dark:bg-slate-800/30 rounded-2xl">
+                   <div key={b._id} className="flex items-center justify-between p-5 bg-gray-50/50 dark:bg-slate-800/30 rounded-xl hover:bg-gray-100/50 dark:hover:bg-slate-800/50 transition-colors">
                       <div className="flex items-center gap-4 min-w-0">
-                         <div className="w-10 h-10 bg-green-500/10 text-green-600 rounded-xl flex items-center justify-center font-bold text-lg"><FiBook /></div>
+                         <div className="w-12 h-12 bg-green-500/10 text-green-600 rounded-lg flex items-center justify-center font-bold text-sm shadow-sm"><FiBook /></div>
                          <div className="truncate">
                             <div className="text-sm font-bold text-text-main truncate">{b.title}</div>
-                            <div className="text-[10px] text-text-muted font-medium">by {b.author}</div>
+                            <div className="text-xs text-text-muted font-medium">by {b.author}</div>
                          </div>
                       </div>
-                      <div className="text-sm font-bold text-brand whitespace-nowrap">${b.price?.toFixed(2)}</div>
+                      <div className="text-sm font-bold text-brand whitespace-nowrap ml-2">${b.price?.toFixed(2)}</div>
                    </div>
                  )) : <p className="text-center text-text-muted italic py-10">No recent titles added.</p>}
               </div>
@@ -154,28 +154,28 @@ const AdminDashboard = () => {
 };
 
 const StatCard = ({ icon, label, value, subText, color }) => (
-   <div className="bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 p-8 rounded-[2rem] shadow-sm relative overflow-hidden group">
+   <div className="bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 p-8 rounded-[2rem] shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow">
       <div className={`absolute top-0 right-0 w-24 h-24 -translate-y-1/2 translate-x-1/2 rounded-full opacity-10 ${
         color === 'brand' ? 'bg-brand' : color === 'green' ? 'bg-green-500' : color === 'yellow' ? 'bg-yellow-500' : 'bg-purple-500'
       }`}></div>
-      <div className={`inline-flex p-3 rounded-xl mb-6 text-xl ${
+      <div className={`inline-flex p-3 rounded-xl mb-6 text-lg ${
         color === 'brand' ? 'bg-brand/10 text-brand' : color === 'green' ? 'bg-green-500/10 text-green-600' : color === 'yellow' ? 'bg-yellow-500/10 text-yellow-600' : 'bg-purple-500/10 text-purple-600'
       }`}>
         {icon}
       </div>
-      <div className="text-xs font-bold text-text-muted uppercase tracking-widest mb-1">{label}</div>
-      <div className="text-3xl font-bold text-text-main mb-2 tracking-tight">{value}</div>
-      <div className="text-xs font-medium text-text-muted">{subText}</div>
+      <div className="text-[11px] font-bold text-text-muted uppercase tracking-widest mb-2">{label}</div>
+      <div className="text-4xl font-bold text-text-main mb-3 tracking-tight">{value}</div>
+      <div className="text-sm font-medium text-text-muted leading-relaxed">{subText}</div>
    </div>
 );
 
 const QuickLink = ({ to, icon, title, desc }) => (
-   <Link to={to} className="bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] border border-gray-100 dark:border-slate-800 shadow-sm hover:border-brand/40 transition-all group flex flex-col items-center text-center">
-      <div className="w-14 h-14 bg-gray-50 dark:bg-slate-800/50 rounded-2xl flex items-center justify-center text-2xl text-text-muted group-hover:bg-brand/10 group-hover:text-brand transition-colors mb-6 shadow-inner">
+   <Link to={to} className="bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] border border-gray-100 dark:border-slate-800 shadow-sm hover:shadow-lg hover:border-brand/50 transition-all duratoin-300 group flex flex-col items-center text-center">
+      <div className="w-16 h-16 bg-gray-50 dark:bg-slate-800/50 rounded-2xl flex items-center justify-center text-3xl text-text-muted group-hover:bg-brand/10 group-hover:text-brand transition-colors mb-6 shadow-inner">
          {icon}
       </div>
-      <h3 className="font-bold text-text-main mb-2">{title}</h3>
-      <p className="text-xs text-text-muted font-medium leading-relaxed">{desc}</p>
+      <h3 className="font-bold text-text-main mb-2 text-lg group-hover:text-brand transition-colors">{title}</h3>
+      <p className="text-sm text-text-muted font-medium leading-relaxed">{desc}</p>
    </Link>
 );
 

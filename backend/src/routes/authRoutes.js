@@ -14,7 +14,7 @@ import validate from '../middleware/validationMiddleware.js';
 import {
   registerValidator,
   loginValidator,
-} from '../utils/validators.js';
+} from '../validations/index.js';
 import { verifyRecaptcha } from '../middleware/captchaMiddleware.js';
 
 const router = express.Router();

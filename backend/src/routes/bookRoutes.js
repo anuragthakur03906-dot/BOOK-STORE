@@ -12,7 +12,7 @@ import {
 import { protect } from '../middleware/authMiddleware.js';
 import { hasPermission, canEditBook, canDeleteBook } from '../middleware/permissionMiddleware.js';
 import validate from '../middleware/validationMiddleware.js';
-import { bookValidator } from '../utils/validators.js';
+import { bookValidator } from '../validations/index.js';
 
 const router = express.Router();
 

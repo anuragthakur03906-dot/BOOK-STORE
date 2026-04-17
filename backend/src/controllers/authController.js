@@ -5,7 +5,7 @@
  */
 import User from '../models/User.js';
 import Token from '../models/Token.js';
-import { sendResetPasswordEmail } from '../utils/emailService.js';
+import { sendResetPasswordEmail } from '../services/index.js';
 import {
   generateAccessToken,
   generateRefreshToken,

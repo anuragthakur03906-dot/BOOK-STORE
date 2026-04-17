@@ -1,0 +1,48 @@
+/* Color Variables */
+:root {
+  /* Brand Colors */
+  --brand: rgb(16 185 129);
+  --brand-light: rgb(16 185 129 / 0.1);
+  --brand-dark: rgb(16 185 129 / 0.9);
+  
+  /* Background Colors */
+  --bg-base: #FFFFFF;
+  --bg-secondary: #F9FAFB;
+  
+  /* Text Colors */
+  --text-main: rgb(17 24 39);
+  --text-muted: rgb(75 85 99);
+}
+
+.dark {
+  --bg-base: #000000;
+  --bg-secondary: #1F2937;
+  --text-main: rgb(249 250 251);
+  --text-muted: rgb(156 163 175);
+}
+
+/* Spacing Variables */
+:root {
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+}
+
+/* Border Radius */
+:root {
+  --radius-sm: 0.5rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.5rem;
+  --radius-xl: 2rem;
+  --radius-full: 9999px;
+}
+
+/* Shadows */
+:root {
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+}
