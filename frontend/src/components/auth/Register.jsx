@@ -112,22 +112,27 @@ const Register = () => {
   );
 };
 
-const AuthInput = ({ label, icon, ...props }) => (
-  <div className="space-y-2">
-    <label className="text-xs font-bold text-text-muted uppercase tracking-wider flex items-center gap-2">
-       {label}
-    </label>
-    <div className="relative group">
-      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted group-focus-within:text-brand transition-colors">
-        {icon}
+const AuthInput = ({ label, icon, ...props }) => {
+  const inputId = `input-${props.name}-${Math.random().toString(36).substr(2, 9)}`;
+  
+  return (
+    <div className="space-y-2">
+      <label htmlFor={inputId} className="text-xs font-bold text-text-muted uppercase tracking-wider flex items-center gap-2">
+        {label}
+      </label>
+      <div className="relative group">
+        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted group-focus-within:text-brand transition-colors">
+          {icon}
+        </div>
+        <Field
+          id={inputId}
+          {...props}
+          className="w-full pl-12 pr-4 py-3.5 bg-gray-50 dark:bg-slate-800/50 border-2 border-transparent focus:border-brand/20 focus:bg-white dark:focus:bg-slate-800 rounded-xl outline-none text-text-main font-medium transition-all placeholder:text-text-muted/30"
+        />
       </div>
-      <Field
-        {...props}
-        className="w-full pl-12 pr-4 py-3.5 bg-gray-50 dark:bg-slate-800/50 border-2 border-transparent focus:border-brand/20 focus:bg-white dark:focus:bg-slate-800 rounded-xl outline-none text-text-main font-medium transition-all placeholder:text-text-muted/30"
-      />
+      <ErrorMessage name={props.name} component="p" className="text-xs font-bold text-red-500 mt-1 ml-1" />
     </div>
-    <ErrorMessage name={props.name} component="p" className="text-xs font-bold text-red-500 mt-1 ml-1" />
-  </div>
-);
+  );
+};
 
 export default Register;

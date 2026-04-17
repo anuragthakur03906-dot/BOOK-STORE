@@ -191,7 +191,7 @@ const UserManagement = () => {
                         <button 
                           onClick={() => navigate(`/admin/users/${u._id}`)}
                           className="p-2 text-text-muted hover:text-brand hover:bg-brand/5 rounded-lg transition-colors"
-                          title="View Profile"
+                          title="View"
                         >
                           <FiEye />
                         </button>
@@ -200,7 +200,7 @@ const UserManagement = () => {
                             <button 
                               onClick={() => navigate(`/admin/users/${u._id}/edit`)}
                               className="p-2 text-text-muted hover:text-brand hover:bg-brand/5 rounded-lg transition-colors"
-                              title="Edit Record"
+                              title="Edit"
                             >
                               <FiEdit />
                             </button>

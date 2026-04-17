@@ -24,13 +24,6 @@ const GoogleAuthCallback = () => {
         const email = searchParams.get('email');
         const error = searchParams.get('error');
 
-        console.log(' Google Callback Params:', {
-          accessToken: accessToken ? `${accessToken.substring(0, 20)}...` : 'Missing',
-          refreshToken: refreshToken ? `${refreshToken.substring(0, 20)}...` : 'Missing',
-          userId,
-          email,
-          error
-        });
 
         if (error) {
           toast.error(`Google login failed: ${error}`);
@@ -56,12 +49,7 @@ const GoogleAuthCallback = () => {
         };
         
         localStorage.setItem('user', JSON.stringify(userData));
-        
-        console.log('Tokens saved to localStorage');
-        console.log('User data:', userData);
 
-        // Update auth context - redirect to role-based dashboard
-        // Note: Role info will be available in AuthContext after token is validated
         toast.success('Google login successful!');
         
         // Redirect to user dashboard by default, will update if different role

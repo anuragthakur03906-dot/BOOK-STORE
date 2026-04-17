@@ -62,7 +62,7 @@ const BookManagement = () => {
         setGenres(response.data.data || []);
       }
     } catch (error) {
-      console.error('Failed to categories:', error);
+      console.error('Failed to load genres:', error);
     }
   }, []);
 
@@ -98,7 +98,7 @@ const BookManagement = () => {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
             <div>
               <h1 className="text-3xl font-bold text-text-main">Inventory Management</h1>
-              <p className="text-text-muted mt-1 font-medium italic">Catalogue control and logistics management for all active titles.</p>
+              <p className="text-text-muted mt-1 font-medium">Manage all books in the catalog. Add, edit, or remove titles.</p>
             </div>
             <div className="flex items-center gap-3 w-full md:w-auto">
               <select
@@ -124,7 +124,7 @@ const BookManagement = () => {
         {selectedBooks.length > 0 && (
           <div className="mb-8 p-4 bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 rounded-2xl flex justify-between items-center animate-fadeIn shadow-sm">
             <span className="text-sm font-bold text-red-600 dark:text-red-400">{selectedBooks.length} items selected for management</span>
-            <button className="text-xs font-bold uppercase text-red-600 hover:underline px-4 py-2 bg-white dark:bg-slate-900 rounded-lg shadow-sm">Bulk Purge</button>
+            <button className="text-xs font-bold uppercase text-red-600 hover:underline px-4 py-2 bg-white dark:bg-slate-900 rounded-lg shadow-sm">Bulk Delete</button>
           </div>
         )}
 
@@ -142,10 +142,10 @@ const BookManagement = () => {
                       className="rounded border-gray-300 dark:border-slate-700 text-brand focus:ring-brand accent-brand cursor-pointer w-4 h-4"
                     />
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-text-muted uppercase tracking-widest">Available Titles</th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-text-muted uppercase tracking-widest">Author / Creator</th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-text-muted uppercase tracking-widest">Pricing</th>
-                  <th className="px-6 py-4 text-right text-xs font-bold text-text-muted uppercase tracking-widest">Controls</th>
+                   <th className="px-6 py-4 text-left text-xs font-bold text-text-muted uppercase tracking-widest">Book Title</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-text-muted uppercase tracking-widest">Author</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-text-muted uppercase tracking-widest">Price</th>
+                  <th className="px-6 py-4 text-right text-xs font-bold text-text-muted uppercase tracking-widest">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50 dark:divide-slate-800/50">
@@ -182,9 +182,9 @@ const BookManagement = () => {
                       <div className="font-bold text-brand flex items-center gap-1"><FiDollarSign className="text-xs" />{parseFloat(b.price || 0).toFixed(2)}</div>
                     </td>
                     <td className="px-6 py-5 text-right">
-                      <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button onClick={() => navigate(`/books/${b._id}`)} className="p-2 text-text-muted hover:text-brand hover:bg-brand/5 rounded-lg transition-colors" title="Preview"><FiEye /></button>
-                        <button onClick={() => navigate(`/books/${b._id}/edit`)} className="p-2 text-text-muted hover:text-brand hover:bg-brand/5 rounded-lg transition-colors" title="Update"><FiEdit /></button>
+                      <div className="flex justify-end gap-1 transition-opacity">
+                        <button onClick={() => navigate(`/books/${b._id}`)} className="p-2 text-text-muted hover:text-brand hover:bg-brand/5 rounded-lg transition-colors" title="View"><FiEye /></button>
+                        <button onClick={() => navigate(`/books/${b._id}/edit`)} className="p-2 text-text-muted hover:text-brand hover:bg-brand/5 rounded-lg transition-colors" title="Edit"><FiEdit /></button>
                         <button onClick={() => setModalState({ isOpen: true, bookId: b._id, title: b.title })} className="p-2 text-text-muted hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-lg transition-colors" title="Delete"><FiTrash2 /></button>
                       </div>
                     </td>

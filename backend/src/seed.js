@@ -1,5 +1,11 @@
-// seed.js - database seeding script
-// populates MongoDB with sample roles, users, and books for testing/demos
+// seed.js - Database seeding script
+/**
+ * @file seed.js
+ * @description Populates MongoDB with sample roles, users, and books
+ * Run with: npm run seed
+ * Reset data with: npm run seed:reset
+ */
+
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import Book from './models/Book.js';
@@ -166,20 +172,13 @@ const sampleBooks = [
 
 const seedDatabase = async () => {
   try {
-    console.log('Starting database seed with RBAC...');
-    
     // Connect to MongoDB
     await mongoose.connect(MONGODB_URL);
-    console.log(' Connected to MongoDB');
     
     // Clear existing data
     await Book.deleteMany({});
     await User.deleteMany({});
     await Role.deleteMany({});
-    console.log('Cleared existing data');
-    
-    //  CREATE ROLES
-    console.log('Creating roles...');
     
     const rolesData = [
       {
@@ -254,20 +253,18 @@ const seedDatabase = async () => {
     ];
     
     const roles = await Role.insertMany(rolesData);
-    console.log(` Created ${roles.length} roles`);
     
     // Get role references
     const adminRole = roles.find(r => r.name === 'admin');
     const managerRole = roles.find(r => r.name === 'manager');
     const userRole = roles.find(r => r.name === 'user');
     
-    //  CREATE DEMO USERS - FIXED APPROACH
-    console.log('Creating demo users...');
+    // Create demo users
     
     // Import bcrypt
     const bcrypt = (await import('bcryptjs')).default;
     
-    //  CREATE USERS WITH PRE-HASHED PASSWORDS
+    // Create users with pre-hashed passwords
     const usersData = [
   {
     name: 'Admin User',
@@ -291,12 +288,10 @@ const seedDatabase = async () => {
     role: userRole._id,
   }
 ];
-    //  Use insertMany instead of create
+    // Insert users into database
     const users = await User.insertMany(usersData);
-    console.log(' Created 3 demo users with different roles');
     
-    //  CREATE 15 BOOKS
-    console.log('Creating 15 sample books...');
+    // Create 15 sample books
     
     const booksData = sampleBooks.map((book, index) => {
       // Distribute books among users
@@ -314,7 +309,6 @@ const seedDatabase = async () => {
     });
     
     const books = await Book.insertMany(booksData);
-    console.log(` Created ${books.length} sample books`);
     
     // Add books to user's favorites
     await User.findByIdAndUpdate(
@@ -325,28 +319,13 @@ const seedDatabase = async () => {
       }
     );
     
-    console.log('\nDATABASE SEEDED SUCCESSFULLY!');
-    console.log('==================================');
-    console.log('ROLES & PERMISSIONS:');
-    console.log('  • Admin: Full system access');
-    console.log('  • Manager: Book management + view users');
-    console.log('  • User: Basic access + own book management');
-    
-    console.log('\nLOGIN CREDENTIALS:');
-    console.log('  • Admin:    admin@example.com / admin123456');
-    console.log('  • Manager:  manager@example.com / manager123456');
-    console.log('  • User:     user@example.com / user123456');
-    
-    console.log('\nBOOKS DISTRIBUTION:');
-    console.log(`  • Total Books: ${books.length}`);
-    console.log('  • User\'s Books: 5 (index 0-4)');
-    console.log('  • Manager\'s Books: 5 (index 5-9)');
-    console.log('  • Admin\'s Books: 5 (index 10-14)');
-    
-    console.log('\nTEST LINKS:');
-    console.log('  • Frontend: http://localhost:3000');
-    console.log('  • Backend:  http://localhost:5000');
-    console.log('  • Health:   http://localhost:5000/health');
+    // Log seed completion information
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('\n=== Database Seeded Successfully ===');
+      console.log('Roles configured: Admin, Manager, User');
+      console.log(`Users created: ${users.length}`);
+      console.log(`Books created: ${books.length}`);
+    }
     
     await mongoose.disconnect();
     console.log('\n Database disconnected');

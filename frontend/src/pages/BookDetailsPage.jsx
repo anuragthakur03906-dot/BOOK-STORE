@@ -128,13 +128,13 @@ const BookDetailsPage = () => {
                       to={`/books/${book._id}/edit`}
                       className="flex-1 btn-outline py-3 flex items-center justify-center gap-2"
                     >
-                      <FiEdit /> Edit Details
+                      <FiEdit /> Edit
                     </Link>
                     <button
                       onClick={() => setShowConfirm(true)}
                       className="flex-1 px-6 py-3 bg-red-50 dark:bg-red-950/20 text-red-600 font-bold rounded-xl hover:bg-red-100 transition-all flex items-center justify-center gap-2"
                     >
-                      <FiTrash2 /> Remove Title
+                      <FiTrash2 /> Delete
                     </button>
                 </div>
               </div>
@@ -154,9 +154,9 @@ const BookDetailsPage = () => {
         isOpen={showConfirm}
         onClose={() => setShowConfirm(false)}
         onConfirm={executeDelete}
-        title="Delete Book Record"
+        title="Delete Book"
         message="This operation will permanently remove this title from the global inventory system. Are you certain you wish to proceed?"
-        confirmText={deleting ? "Removing..." : "Confirm Deletion"}
+        confirmText={deleting ? "Deleting..." : "Delete"}
         cancelText="Cancel"
       />
     </div>

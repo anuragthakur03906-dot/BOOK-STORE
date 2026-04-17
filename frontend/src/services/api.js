@@ -1,7 +1,12 @@
-// src/services/api.js - COMPLETELY CORRECTED VERSION
+/**
+ * @file api.js
+ * @description Centralized Axios API client with request/response interceptors
+ * for authentication, error handling, and organized API method collections.
+ */
+
 import axios from 'axios';
 
-// Create axios instance
+// Create a pre-configured Axios instance pointing to the backend API
 const API = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
   headers: {
@@ -10,63 +15,58 @@ const API = axios.create({
   withCredentials: true,
 });
 
-//  Get auth headers function
-const getAuthHeaders = () => {
-  const token = localStorage.getItem('token');
-  return token ? { Authorization: `Bearer ${token}` } : {};
-};
-
-// Request interceptor
+/**
+ * Request interceptor: Attaches the Bearer token to all non-public routes.
+ */
 API.interceptors.request.use(
   (config) => {
-    // Don't add Authorization header for auth routes
+    // Public auth routes that do not require an Authorization header
     const noAuthRoutes = [
       '/auth/forgot-password',
-      '/auth/register', 
+      '/auth/register',
       '/auth/login',
       '/auth/reset-password',
       '/auth/google',
       '/auth/google/callback'
     ];
-    
+
     const isAuthRoute = noAuthRoutes.some(route => config.url.includes(route));
-    
+
     if (!isAuthRoute) {
       const token = localStorage.getItem('token');
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
     }
-    
+
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// Response interceptor
+/**
+ * Response interceptor: Clears session and redirects on 401 Unauthorized.
+ */
 API.interceptors.response.use(
-  (response) => {
-    return response;
-  },
+  (response) => response,
   async (error) => {
-    // Handle 401 Unauthorized
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      
-      if (!window.location.pathname.includes('/login') && 
-          !window.location.pathname.includes('/register')) {
+
+      if (
+        !window.location.pathname.includes('/login') &&
+        !window.location.pathname.includes('/register')
+      ) {
         window.location.href = '/login';
       }
     }
-    
+
     return Promise.reject(error);
   }
 );
 
-// ==================== AUTH API ====================
+// Authentication endpoints
 export const authAPI = {
   register: (userData) => API.post('/auth/register', userData),
   login: (userData) => API.post('/auth/login', userData),
@@ -81,7 +81,7 @@ export const authAPI = {
   }
 };
 
-// ==================== BOOK API ====================
+// Book catalog endpoints
 export const bookAPI = {
   getBooks: (params = {}) => API.get('/books', { params }),
   getBook: (id) => API.get(`/books/${id}`),
@@ -93,7 +93,7 @@ export const bookAPI = {
   getBooksByUser: (userId) => API.get(`/books/user/${userId}`),
 };
 
-// ==================== USER API ====================
+// User profile and favorites endpoints
 export const userAPI = {
   getProfile: () => API.get('/users/profile'),
   updateProfile: (userData) => API.put('/users/profile', userData),
@@ -104,73 +104,63 @@ export const userAPI = {
   getDashboardData: () => API.get('/users/dashboard'),
 };
 
-// ==================== UPLOAD API ====================
+// File upload and image retrieval endpoints
 export const uploadAPI = {
-  // Upload book cover image to GridFS
+  /** Upload a book cover image using multipart/form-data */
   uploadBookCover: (file) => {
     const formData = new FormData();
     formData.append('coverImage', file);
-    
+
     return API.post('/uploads/book-cover', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
+      headers: { 'Content-Type': 'multipart/form-data' }
     });
   },
-  
-  // Get book cover image by file ID
-  getBookCover: (fileId) => `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/uploads/image/${fileId}`,
-  
-  // Delete book cover image
+
+  /** Returns the full URL for a stored book cover image */
+  getBookCover: (fileId) =>
+    `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/uploads/image/${fileId}`,
+
+  /** Delete a stored book cover image by file ID */
   deleteBookCover: (fileId) => API.delete(`/uploads/image/${fileId}`)
 };
 
-// ==================== ADMIN API - FIXED VERSION ====================
+// Admin management endpoints
 export const adminAPI = {
-  //  USERS MANAGEMENT
+  // User management
   getAllUsers: (params = {}) => API.get('/admin/users', { params }),
-  
   getUserById: (id) => API.get(`/admin/users/${id}`),
-  
-  updateUser: (userId, userData) => 
-    API.put(`/admin/users/${userId}`, userData),
-  
-  updateUserRole: (userId, roleData) => 
-    API.put(`/admin/users/${userId}/role`, roleData),
-  
-  toggleUserStatus: (userId, statusData) => 
-    API.put(`/admin/users/${userId}/status`, statusData),
-  
+  updateUser: (userId, userData) => API.put(`/admin/users/${userId}`, userData),
+  updateUserRole: (userId, roleData) => API.put(`/admin/users/${userId}/role`, roleData),
+  toggleUserStatus: (userId, statusData) => API.put(`/admin/users/${userId}/status`, statusData),
   deleteUser: (userId) => API.delete(`/admin/users/${userId}`),
-  
-  //  BOOKS MANAGEMENT
+
+  // Book management
   getAllBooks: (params = {}) => API.get('/admin/books', { params }),
-  
-  updateBook: (bookId, bookData) => 
-    API.put(`/admin/books/${bookId}`, bookData),
-  
+  updateBook: (bookId, bookData) => API.put(`/admin/books/${bookId}`, bookData),
   deleteBook: (bookId) => API.delete(`/admin/books/${bookId}`),
-  
-  //  USER MANAGEMENT
+
+  // Create a new user (admin-only)
   createUser: (userData) => API.post('/admin/users/new', userData),
-  
-  //  STATISTICS & REPORTS
- getSystemStats: () => API.get('/admin/dashboard'),
-  
+
+  // System statistics and analytics
+  getSystemStats: () => API.get('/admin/dashboard'),
   getUserStats: () => API.get('/admin/user-stats'),
-  
-  //  ROLES MANAGEMENT
+
+  // Role management
   getAllRoles: () => API.get('/admin/roles'),
-  
-  updateRolePermissions: (roleId, permissions) => 
+  updateRolePermissions: (roleId, permissions) =>
     API.put(`/admin/roles/${roleId}/permissions`, permissions),
-  
-  //  ACTIVITY LOGS (optional)
-  getUserActivity: (userId, params = {}) => 
+
+  // User activity logs
+  getUserActivity: (userId, params = {}) =>
     API.get(`/admin/activity/${userId}`, { params }),
 };
 
-// ==================== UTILITY ====================
+/**
+ * Normalizes an Axios error into a consistent response shape.
+ * @param {Error} error - The caught Axios error
+ * @returns {Object} Normalized error object
+ */
 export const handleApiError = (error) => {
   if (error.response) {
     return {

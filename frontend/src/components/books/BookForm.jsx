@@ -3,7 +3,7 @@ import { FiDollarSign, FiCalendar, FiStar, FiTag, FiSave, FiUpload, FiType, FiUs
 import { useNavigate, useParams } from 'react-router-dom';
 import { bookAPI, uploadAPI } from '../../services/api.js';
 import toast from 'react-hot-toast';
-import BackButton from '../common/BackButton.jsx';
+
 
 const BookForm = ({ isEdit = false }) => {
   const { id } = useParams();
@@ -109,7 +109,7 @@ const BookForm = ({ isEdit = false }) => {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       <div className="mb-8 flex items-center justify-between">
-        <BackButton />
+
         <h1 className="text-2xl font-bold text-text-main">{isEdit ? 'Edit Book Details' : 'Add New Book'}</h1>
       </div>
 
@@ -207,7 +207,7 @@ const BookForm = ({ isEdit = false }) => {
             className="px-8 py-3 btn-primary shadow-brand/20 order-1 sm:order-2"
           >
             <span className="flex items-center gap-2">
-              <FiSave /> {loading ? 'Saving Entry...' : (isEdit ? 'Save Changes' : 'Confirm & Add')}
+              <FiSave /> {loading ? 'Saving...' : (isEdit ? 'Edit' : 'Add')}
             </span>
           </button>
         </div>

@@ -1,7 +1,12 @@
+/**
+ * @file permissionMiddleware.js
+ * @description Role-based permission middleware. Enforces granular access control
+ * based on the user's assigned role (admin, manager, user).
+ */
 import User from '../models/User.js';
 import Role from '../models/Role.js';
 
-// Main permission check middleware based on user roles
+// Role-to-permission mapping defines what each role is allowed to do
 export const hasPermission = (permission) => {
   return async (req, res, next) => {
     try {
@@ -23,7 +28,6 @@ export const hasPermission = (permission) => {
         });
       }
 
-      console.log(`� Permission Check - User: ${user.email}, Role: ${user.roleName}, Required: ${permission}`);
 
       // Define system permissions for each role
       const rolePermissions = {
@@ -131,12 +135,10 @@ export const hasPermission = (permission) => {
         }
       };
 
-      // Check if permission exists in the system
+      // Check if permission is defined for the user's role
       if (!rolePermissions[user.roleName] || !(permission in rolePermissions[user.roleName])) {
-        console.log(` Permission not defined: ${permission} for role ${user.roleName}`);
-        // For undefined permissions, check if user is admin
+        // For undefined permissions, grant access to admins and deny all others
         if (user.roleName === 'admin') {
-          console.log(`Admin granted undefined permission: ${permission}`);
           return next();
         }
         return res.status(403).json({
@@ -147,14 +149,12 @@ export const hasPermission = (permission) => {
 
       // Check if user's role has the required permission
       if (rolePermissions[user.roleName][permission]) {
-        console.log(`Permission GRANTED: ${user.roleName} can ${permission}`);
         return next();
       }
 
-      console.log(`Permission DENIED: ${user.roleName} cannot ${permission}`);
       return res.status(403).json({
         success: false,
-        error: `You don't have permission to ${permission} (Role: ${user.roleName})`
+        error: `You do not have permission to perform this action (Role: ${user.roleName})`
       });
 
     } catch (error) {

@@ -93,9 +93,9 @@ const ManagerDashboard = () => {
              onClick={fetchDashboardData}
              className="px-6 py-2.5 bg-brand text-white font-bold rounded-xl shadow-lg shadow-brand/20 hover:opacity-90 flex items-center gap-2 transition-all"
            >
-             <FiRefreshCw className={loading ? 'animate-spin' : ''} />
-             Sync Portfolio
-           </button>
+              <FiRefreshCw className={loading ? 'animate-spin' : ''} />
+              Refresh
+            </button>
         </div>
 
         {/* Intelligence Cards */}
@@ -108,9 +108,9 @@ const ManagerDashboard = () => {
 
         {/* Global Quick Utility */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-            <UtilityLink to="/books/new" icon={<FiPlus />} title="Ingest New Title" color="green" />
+            <UtilityLink to="/books/new" icon={<FiPlus />} title="Add Book" color="green" />
             <UtilityLink to="/admin/books" icon={<FiBook />} title="Manage Inventory" color="brand" />
-            <UtilityLink to="/admin/users" icon={<FiUsers />} title="View Member List" color="purple" />
+            <UtilityLink to="/admin/users" icon={<FiUsers />} title="View Users" color="purple" />
         </div>
 
         {/* Primary Layout */}
@@ -119,7 +119,7 @@ const ManagerDashboard = () => {
            <div className="lg:col-span-2 space-y-8">
               <div className="bg-white dark:bg-slate-900 rounded-[2rem] border border-gray-100 dark:border-slate-800 shadow-sm overflow-hidden">
                  <div className="px-8 py-6 border-b border-gray-50 dark:border-slate-800 flex justify-between items-center">
-                    <h3 className="font-bold text-text-main text-lg tracking-tight">RECENT CATALOGUE UPDATES</h3>
+                    <h3 className="font-bold text-text-main text-lg tracking-tight">RECENT BOOKS</h3>
                     <Link to="/admin/books" className="text-xs font-bold text-brand hover:underline">Full Inventory</Link>
                  </div>
                  <div className="p-8">
@@ -127,9 +127,9 @@ const ManagerDashboard = () => {
                        <table className="w-full">
                           <thead>
                              <tr className="border-b border-gray-50 dark:border-slate-800 text-[10px] font-bold text-text-muted uppercase tracking-widest text-left">
-                                <th className="px-4 py-3">Book Record</th>
-                                <th className="px-4 py-3">Pricing</th>
-                                <th className="px-4 py-3 text-right">Controls</th>
+                                <th className="px-4 py-3">Title</th>
+                                <th className="px-4 py-3">Price</th>
+                                <th className="px-4 py-3 text-right">Actions</th>
                              </tr>
                           </thead>
                           <tbody className="divide-y divide-gray-50 dark:divide-slate-800/50">
@@ -174,7 +174,7 @@ const ManagerDashboard = () => {
                             <div className="text-sm font-bold text-text-main truncate">{u.name}</div>
                             <div className="flex gap-2">
                                <span className={`text-[9px] font-bold uppercase tracking-widest px-1.5 rounded ${u.isActive ? 'bg-green-100 text-green-700 dark:bg-green-950/30' : 'bg-red-100 text-red-700 dark:bg-red-950/30'}`}>
-                                  {u.isActive ? 'Clear' : 'Banned'}
+                                  {u.isActive ? 'Active' : 'Suspended'}
                                </span>
                                <span className="text-[9px] font-bold uppercase text-text-muted italic">{u.roleName}</span>
                             </div>
@@ -190,8 +190,8 @@ const ManagerDashboard = () => {
                  <div className="flex items-start gap-4 text-blue-800 dark:text-blue-300">
                     <FiInfo className="mt-1 flex-shrink-0" />
                     <div>
-                       <h4 className="font-bold text-sm mb-2 uppercase tracking-tight">Access Verification</h4>
-                       <p className="text-xs font-medium leading-relaxed opacity-80 italic">As a Content Manager, you have full clearance for catalogue records but write-protection for member identities. Any status changes require Administrator escalation.</p>
+                       <h4 className="font-bold text-sm mb-2 uppercase tracking-tight">Manager Access Note</h4>
+                       <p className="text-xs font-medium leading-relaxed opacity-80">As a Content Manager, you have full permissions to manage book records but cannot modify user accounts. Contact an Administrator for user management changes.</p>
                     </div>
                  </div>
               </div>
@@ -203,9 +203,9 @@ const ManagerDashboard = () => {
         isOpen={modal.isOpen}
         onClose={() => setModal({ isOpen: false, bookId: null, title: '' })}
         onConfirm={executeDeleteBook}
-        title="Remove Catalogue Entry"
+        title="Delete Book"
         message={`Are you certain about deleting '${modal.title}' from the system? Content Managers must ensure all logistics are cleared before purging records.`}
-        confirmText="Confirm Purge"
+        confirmText="Delete"
         cancelText="Cancel"
       />
     </div>

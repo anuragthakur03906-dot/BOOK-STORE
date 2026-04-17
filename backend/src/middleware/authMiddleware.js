@@ -1,4 +1,8 @@
-// Authentication Middleware
+/**
+ * @file authMiddleware.js
+ * @description JWT-based authentication middleware. Validates Bearer tokens
+ * against the database and attaches the authenticated user to the request object.
+ */
 import User from '../models/User.js';
 import Token from '../models/Token.js';
 import { verifyAccessToken } from '../config/jwt.js';

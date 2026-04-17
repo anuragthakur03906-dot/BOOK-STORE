@@ -47,7 +47,8 @@ const FilterPanel = ({ filters, onFilterChange, onClearFilters }) => {
       {/* Mobile Trigger */}
       <button
         onClick={() => setIsMobileOpen(true)}
-        className="lg:hidden fixed bottom-8 right-8 bg-brand text-white w-14 h-14 rounded-full shadow-2xl z-40 flex items-center justify-center hover:scale-110 active:scale-90 transition-all border-4 border-white dark:border-slate-800"
+        aria-label="Open filters"
+        className="lg:hidden fixed bottom-6 right-6 bg-brand text-white w-14 h-14 rounded-full shadow-2xl z-40 flex items-center justify-center hover:scale-110 active:scale-90 transition-all border-4 border-white dark:border-slate-800"
       >
         <FiFilter className="text-xl" />
       </button>
@@ -57,7 +58,7 @@ const FilterPanel = ({ filters, onFilterChange, onClearFilters }) => {
         fixed lg:static inset-0 bg-white dark:bg-slate-900 lg:bg-transparent z-50 transform transition-transform duration-300 ease-in-out
         ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
-        <div className="h-full lg:h-auto w-full max-w-sm lg:w-full p-8 lg:p-0 overflow-y-auto">
+        <div className="h-full lg:h-auto w-full max-w-sm lg:w-full p-4 sm:p-6 lg:p-0 overflow-y-auto">
           
           {/* Controls Header */}
           <div className="flex justify-between items-center mb-10">
@@ -137,7 +138,7 @@ const FilterPanel = ({ filters, onFilterChange, onClearFilters }) => {
                     }`}
                   >
                     <span>{rating}</span>
-                    <span className="opacity-60 text-[8px]">★+</span>
+                    <span className="opacity-60 text-[8px]">Rating+</span>
                   </button>
                 ))}
               </div>

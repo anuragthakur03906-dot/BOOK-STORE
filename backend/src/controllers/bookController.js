@@ -1,7 +1,18 @@
+/**
+ * @file bookController.js
+ * @description Controllers for handling book-related operations including 
+ * CRUD, filtering, sorting, and pagination.
+ */
+
 import Book from '../models/Book.js';
 import User from '../models/User.js';
 import { getPagination, buildFilter, buildSort } from '../utils/helpers.js';
 
+/**
+ * Retrieves a list of books with optional filtering, sorting, and pagination.
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 export const getBooks = async (req, res) => {
   try {
     const { page, limit, sortBy, sortOrder, ...query } = req.query;

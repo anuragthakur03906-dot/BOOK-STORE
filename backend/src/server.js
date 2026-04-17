@@ -1,7 +1,13 @@
-// server.js - starter file for Express application
-// sets up middleware, routes, Google OAuth, and starts HTTP server
+/**
+ * @file server.js
+ * @description Entry point for the Express application. Sets up middleware, 
+ * authentication, role-based access control routes, and database connectivity.
+ * @author Anurag Thakur
+ */
+
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
@@ -10,75 +16,130 @@ import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import User from './models/User.js';
 import connectDB from './config/database.js';
 
-// ========== LOAD ENV ==========
+// Load environment variables
 dotenv.config();
 
-// ========== VERIFY REQUIRED ENV VARS ==========
-const REQUIRED_ENV = ['GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET', 'SESSION_SECRET'];
+/**
+ * Verify required environment variables
+ */
+const REQUIRED_ENV = ['GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET', 'SESSION_SECRET', 'GOOGLE_CALLBACK_URL'];
 const missing = REQUIRED_ENV.filter(key => !process.env[key]);
 
 if (missing.length > 0) {
-  console.error('ERROR: MISSING ENVIRONMENT VARIABLES:', missing);
-  console.error('Please add them to backend/.env file');
+  console.error('CRITICAL ERROR: Missing required environment variables:', missing);
   process.exit(1);
 }
 
-console.log('\nENVIRONMENT VARIABLES LOADED:');
-console.log('================================');
-console.log(`PORT: ${process.env.PORT}`);
-console.log(`GOOGLE_CLIENT_ID: ${process.env.GOOGLE_CLIENT_ID ? 'SET' : 'MISSING'}`);
-console.log(`GOOGLE_CLIENT_SECRET: ${process.env.GOOGLE_CLIENT_SECRET ? 'SET' : 'MISSING'}`);
-console.log(`SESSION_SECRET: ${process.env.SESSION_SECRET ? 'SET' : 'MISSING'}`);
-console.log('================================\n');
-
-// ========== CONNECT DATABASE ==========
+// Connect to MongoDB
 connectDB();
 
 const app = express();
 
-// ========== MIDDLEWARE ==========
-app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:5173'],
-  credentials: true,
+/**
+ * CORS Configuration
+ * Allow frontend requests from multiple origins with credentials support
+ */
+const allowedOrigins = [
+  process.env.FRONTEND_URL || 'http://localhost:3000',
+  'http://localhost:3000',   // Development
+  'http://localhost:5173'    // Vite dev server alternative
+];
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Allow requests with no origin (same-origin requests, mobile apps, Postman)
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('CORS policy: Origin not allowed'));
+    }
+  },
+  credentials: true,           // Allow cookies and credentials
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
+
+/**
+ * Security Headers Configuration with Helmet
+ * Includes CSP (Content Security Policy) to allow Google reCAPTCHA
+ */
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: [
+        "'self'",
+        "'unsafe-inline'",                    // Required for inline scripts
+        'https://www.google.com',             // Google reCAPTCHA
+        'https://www.gstatic.com'             // Google static resources
+      ],
+      frameSrc: [
+        "'self'",
+        'https://www.google.com',             // Google reCAPTCHA iframe
+        'https://recaptcha.google.com'        // Alternative reCAPTCHA domain
+      ],
+      connectSrc: [
+        "'self'",
+        'https://www.google.com',             // Allow API calls to Google
+        'https://www.gstatic.com'
+      ],
+      imgSrc: ["'self'", 'data:', 'https:'], // Allow images from all HTTPS
+      styleSrc: [
+        "'self'",
+        "'unsafe-inline'",
+        'https://fonts.googleapis.com',
+        'https://www.google.com'
+      ],
+      fontSrc: [
+        "'self'",
+        'https://fonts.gstatic.com'
+      ]
+    }
+  },
+  crossOriginEmbedderPolicy: false  // Allow external resources
 }));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// ========== SESSION ==========
+/**
+ * Session Management Configuration
+ */
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false, // Security best practice
   cookie: {
-    secure: false, // false for HTTP in development
+    secure: process.env.NODE_ENV === 'production', 
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
     sameSite: 'lax'
   }
 }));
 
-// ========== PASSPORT CONFIGURATION ==========
+/**
+ * Passport.js Authentication Initialization
+ */
 app.use(passport.initialize());
 app.use(passport.session());
 
-// ========== GOOGLE STRATEGY ==========
-console.log('Configuring Google OAuth...');
-
-// Initialize Google Authentication Strategy
+/**
+ * Google OAuth 2.0 Strategy Configuration
+ */
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: 'http://localhost:5000/api/auth/google/callback',
+  callbackURL: process.env.GOOGLE_CALLBACK_URL,
   passReqToCallback: false
 }, async (accessToken, refreshToken, profile, done) => {
-  console.log(' Google OAuth callback received');
-
   try {
     const email = profile.emails[0].value;
 
-    // Find user
+    // Search for existing user by email or provider ID
     let user = await User.findOne({
       $or: [
         { email: email },
@@ -87,40 +148,33 @@ passport.use(new GoogleStrategy({
     });
 
     if (!user) {
-      console.log(` Creating new Google user: ${email}`);
-
-      // Create a user without a local password for Google OAuth users
+      // Create new user record for Google authorized accounts
       user = await User.create({
         name: profile.displayName || email.split('@')[0],
         email: email,
-        password: undefined, // Password is not required for OAuth
-        googleId: profile.id, // Store Google provider ID
+        password: undefined, 
+        googleId: profile.id,
         roleName: 'user',
         isActive: true,
         lastLogin: new Date()
       });
-      console.log(` New Google user created: ${user.email}`);
     } else {
-      // Update last login
+      // Update session metadata
       user.lastLogin = new Date();
-
-      // Add Google ID if missing
-      if (!user.googleId) {
-        user.googleId = profile.id;
-      }
-
+      if (!user.googleId) user.googleId = profile.id;
       await user.save();
-      console.log(` Google user logged in: ${user.email}`);
     }
 
     return done(null, user);
   } catch (error) {
-    console.error(' Error in Google OAuth:', error);
+    console.error('Google OAuth Internal Error:', error);
     return done(error, null);
   }
 }));
 
-// Serialize/Deserialize
+/**
+ * User Serialization for Session Persistence
+ */
 passport.serializeUser((user, done) => {
   done(null, user.id);
 });
@@ -134,9 +188,9 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
-console.log(' Google OAuth configured successfully\n');
-
-// ========== ROUTES ==========
+/**
+ * API Route Registrations
+ */
 import authRoutes from './routes/authRoutes.js';
 import googleAuthRoutes from './routes/googleAuthRoutes.js';
 import bookRoutes from './routes/bookRoutes.js';
@@ -151,58 +205,46 @@ app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/uploads', uploadRoutes);
 
-// ========== HEALTH CHECK ==========
+/**
+ * Global Health Check Endpoint
+ */
 app.get('/health', (req, res) => {
   res.json({
     success: true,
-    message: 'Server is running',
-    timestamp: new Date().toISOString(),
-    googleOAuth: {
-      configured: !!(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET),
-      clientId: process.env.GOOGLE_CLIENT_ID ? 'Set' : 'Missing'
-    }
-  });
-});
-
-// ========== DEBUG ROUTE ==========
-app.get('/api/debug', (req, res) => {
-  res.json({
-    success: true,
-    session: {
-      id: req.sessionID,
-      passport: req.session.passport
-    },
-    cookies: req.cookies,
-    googleStrategy: passport._strategies.google ? 'Loaded' : 'Not loaded'
-  });
-});
-
-// ========== 404 HANDLER FOR UNKNOWN API ROUTES ==========
-app.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    error: 'Route not found',
-    message: `The endpoint ${req.method} ${req.originalUrl} does not exist`,
+    status: 'Operational',
     timestamp: new Date().toISOString()
   });
 });
 
-// ========== ERROR HANDLER ==========
-app.use((err, req, res, next) => {
-  console.error('Server Error:', err);
-  res.status(500).json({
+/**
+ * Fallback handler for unmatched API routes
+ */
+app.use((req, res) => {
+  res.status(404).json({
     success: false,
-    error: 'Internal server error',
-    message: err.message
+    error: 'Not Found',
+    message: `The requested endpoint ${req.method} ${req.originalUrl} does not exist.`
   });
 });
 
-// ========== START SERVER ==========
+/**
+ * Centralized Error Handling Middleware
+ */
+app.use((err, req, res, next) => {
+  console.error('Internal System Error:', err);
+  res.status(err.status || 500).json({
+    success: false,
+    error: err.name || 'InternalServerError',
+    message: err.message || 'An unexpected error occurred on the server.'
+  });
+});
+
+/**
+ * Application Startup
+ */
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-  console.log(`Health check: http://localhost:${PORT}/health`);
-  console.log(`Debug: http://localhost:${PORT}/api/debug`);
-  console.log(`Google OAuth: http://localhost:${PORT}/api/auth/google`);
-  console.log(`Frontend: http://localhost:3000`);
+  console.log(`[Server] Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`[Server] Running on port: ${PORT}`);
+  console.log(`[Server] Health check available at: http://localhost:${PORT}/health`);
 });

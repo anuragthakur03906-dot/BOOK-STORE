@@ -4,6 +4,7 @@ import { FiHeart, FiBook } from 'react-icons/fi';
 import LoadingSpinner from '../components/common/LoadingSpinner.jsx';
 import { Link } from 'react-router-dom';
 import BookCard from '../components/books/BookCard.jsx';
+import BackButton from '../components/common/BackButton.jsx';
 
 const FavoritesPage = () => {
   const [favorites, setFavorites] = useState([]);
@@ -33,6 +34,9 @@ const FavoritesPage = () => {
   return (
     <div className="min-h-screen bg-base py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mb-10">
+          <BackButton />
+        </div>
         <div className="mb-10 text-center md:text-left">
           <h1 className="text-3xl font-bold text-text-main">My Favorites</h1>
           <p className="text-text-muted mt-2">

@@ -81,25 +81,25 @@ const AdminDashboard = () => {
              onClick={fetchDashboardData}
              className="px-6 py-2.5 bg-brand text-white font-bold rounded-xl shadow-lg shadow-brand/20 hover:opacity-90 transition-all flex items-center gap-2"
            >
-             <FiRefreshCw className={loading ? 'animate-spin' : ''} />
-             Sync Data
-           </button>
+              <FiRefreshCw className={loading ? 'animate-spin' : ''} />
+              Refresh
+            </button>
         </div>
 
         {/* Dynamic Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-           <StatCard icon={<FiUsers />} label="Total Members" value={stats.totalUsers} subText={`${stats.activeUsers} active accounts`} color="brand" />
-           <StatCard icon={<FiBook />} label="Global Titles" value={stats.totalBooks} subText={`${stats.booksAddedToday} new records today`} color="green" />
+           <StatCard icon={<FiUsers />} label="Total Users" value={stats.totalUsers} subText={`${stats.activeUsers} active accounts`} color="brand" />
+           <StatCard icon={<FiBook />} label="Total Books" value={stats.totalBooks} subText={`${stats.booksAddedToday} added today`} color="green" />
            <StatCard icon={<FiDollarSign />} label="Inventory Value" value={`$${stats.totalValue.toFixed(2)}`} subText={`Avg: $${(stats.totalBooks > 0 ? (stats.totalValue / stats.totalBooks) : 0).toFixed(2)}`} color="yellow" />
-           <StatCard icon={<FiActivity />} label="Engagement" value={`${activePercentage}%`} subText="Real-time activity rate" color="purple" />
+           <StatCard icon={<FiActivity />} label="Active Rate" value={`${activePercentage}%`} subText="Percentage of active users" color="purple" />
         </div>
 
         {/* Global Controls */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            <QuickLink to="/admin/users" icon={<FiUsers />} title="Manage Users" desc="Control user accounts and roles" />
-            <QuickLink to="/admin/books" icon={<FiLayers />} title="Inventory Control" desc="Catalog and stock logistics" />
-            <QuickLink to="/books/new" icon={<FiPlus />} title="Add New Title" desc="Insert fresh book metadata" />
-            <QuickLink to="/favorites" icon={<FiActivity />} title="System Activity" desc="Monitor global transactions" />
+             <QuickLink to="/admin/users" icon={<FiUsers />} title="Manage Users" desc="Control user accounts and roles" />
+             <QuickLink to="/admin/books" icon={<FiLayers />} title="Inventory" desc="Manage the book catalog" />
+             <QuickLink to="/books/new" icon={<FiPlus />} title="Add Book" desc="Add a new book to the catalog" />
+             <QuickLink to="/favorites" icon={<FiActivity />} title="Activity" desc="Monitor system transactions" />
         </div>
 
         {/* Detailed Logs Section */}
@@ -107,8 +107,8 @@ const AdminDashboard = () => {
            {/* Section Users */}
            <div className="bg-white dark:bg-slate-900 rounded-[2rem] border border-gray-100 dark:border-slate-800 shadow-sm overflow-hidden">
               <div className="px-8 py-6 border-b border-gray-50 dark:border-slate-800 flex justify-between items-center">
-                 <h3 className="font-bold text-text-main text-lg uppercase tracking-tight">Recent Onboardings</h3>
-                 <Link to="/admin/users" className="text-xs font-bold text-brand hover:underline">View Directory</Link>
+                  <h3 className="font-bold text-text-main text-lg uppercase tracking-tight">Recent Users</h3>
+                  <Link to="/admin/users" className="text-xs font-bold text-brand hover:underline">View All</Link>
               </div>
               <div className="p-8 space-y-4">
                  {recentUsers.length > 0 ? recentUsers.map(u => (

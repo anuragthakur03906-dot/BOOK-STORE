@@ -93,7 +93,7 @@ const UserDashboard = () => {
                          </div>
                          <div className="text-right">
                             <div className="text-sm font-bold text-brand">${b.price?.toFixed(2)}</div>
-                            <div className="text-[10px] font-bold text-yellow-500">★ {b.rating?.toFixed(1)}</div>
+                            <div className="text-[10px] font-bold text-yellow-500">Rating: {b.rating?.toFixed(1)}</div>
                          </div>
                       </div>
                     )) : (

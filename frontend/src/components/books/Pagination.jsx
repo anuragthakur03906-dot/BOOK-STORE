@@ -21,54 +21,56 @@ const Pagination = ({ pagination, onPageChange }) => {
   }
 
   return (
-    <nav className="flex flex-col sm:flex-row items-center justify-between py-8 px-4 bg-base rounded-lg border border-gray-200 dark:border-gray-800 mt-8" aria-label="Pagination">
-      {/* Previous Button */}
-      <div className="flex items-center gap-2 mb-4 sm:mb-0">
+    <nav className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between py-6 sm:py-8 px-3 sm:px-6 bg-white dark:bg-slate-900 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm mt-8 md:mt-12 transition-all" aria-label="Pagination">
+      {/* Previous Button - Responsive */}
+      <div className="flex items-center justify-center md:justify-start">
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={!hasPrevPage}
-          className="inline-flex items-center px-3 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-base disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="inline-flex items-center justify-center px-3 sm:px-6 py-3 min-h-11 min-w-32 sm:min-w-40 bg-white dark:bg-slate-800 border-2 border-gray-200 dark:border-gray-700 rounded-lg text-text-main font-semibold text-sm hover:border-brand hover:text-brand hover:bg-brand/5 dark:hover:bg-brand/10 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-gray-200 disabled:hover:text-text-main transition-all active:scale-95"
           aria-label="Previous page"
         >
-          <FiChevronLeft className="h-4 w-4 mr-1" />
-          <span className="hidden sm:inline text-sm font-medium">Previous</span>
+          <FiChevronLeft className="h-5 w-5" />
+          <span className="ml-1 hidden xs:inline">Previous</span>
         </button>
       </div>
 
-      {/* Page Numbers */}
-      <div className="flex items-center gap-1 sm:gap-2 flex-wrap justify-center mb-4 sm:mb-0">
+      {/* Page Numbers - Responsive Grid */}
+      <div className="flex items-center justify-center gap-1 sm:gap-2 flex-wrap">
         {pageNumbers.map((page) => (
           <button
             key={page}
             onClick={() => onPageChange(page)}
-            className={`w-10 h-10 rounded-lg font-medium text-sm transition-colors ${
+            className={`w-10 h-10 sm:w-11 sm:h-11 rounded-lg font-bold text-sm transition-all ${
               currentPage === page
-                ? 'bg-brand text-white'
-                : 'border border-gray-300 text-gray-700 hover:bg-base'
+                ? 'bg-brand text-white shadow-lg shadow-brand/30'
+                : 'border-2 border-gray-200 dark:border-gray-700 text-text-main hover:border-brand hover:text-brand bg-white dark:bg-slate-800 active:scale-95'
             }`}
             aria-current={currentPage === page ? 'page' : undefined}
+            aria-label={`Go to page ${page}`}
           >
             {page}
           </button>
         ))}
       </div>
 
-      {/* Next Button and Page Info */}
-      <div className="flex items-center gap-2">
+      {/* Page Info and Next Button - Responsive */}
+      <div className="flex flex-col-reverse xs:flex-row xs:items-center xs:justify-end gap-3 xs:gap-4">
+        {/* Page Info */}
+        <span className="text-xs sm:text-sm text-text-muted font-medium whitespace-nowrap text-center xs:text-right">
+          Page <span className="font-bold text-text-main">{currentPage}</span> of <span className="font-bold text-text-main">{totalPages}</span>
+        </span>
+        
+        {/* Next Button - Responsive */}
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={!hasNextPage}
-          className="inline-flex items-center px-3 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-base disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="inline-flex items-center justify-center px-3 sm:px-6 py-3 min-h-11 min-w-32 sm:min-w-40 bg-white dark:bg-slate-800 border-2 border-gray-200 dark:border-gray-700 rounded-lg text-text-main font-semibold text-sm hover:border-brand hover:text-brand hover:bg-brand/5 dark:hover:bg-brand/10 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-gray-200 disabled:hover:text-text-main transition-all active:scale-95"
           aria-label="Next page"
         >
-          <span className="hidden sm:inline text-sm font-medium mr-1">Next</span>
-          <FiChevronRight className="h-4 w-4" />
+          <span className="hidden xs:inline">Next</span>
+          <FiChevronRight className="h-5 w-5 xs:ml-1" />
         </button>
-
-        {/* Page Info */}
-        <span className="text-xs sm:text-sm text-text-muted whitespace-nowrap ml:2 sm:ml-4">
-          {currentPage} / {totalPages}
-        </span>
       </div>
     </nav>
   );

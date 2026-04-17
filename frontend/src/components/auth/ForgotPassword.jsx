@@ -21,22 +21,15 @@ const handleSubmit = async (e) => {
   
   setLoading(true);
   try {
-    console.log('� Submitting email:', email);
-    
-    // 📝 detailed logging inside try/catch
     await forgotPassword(email);
     setSubmitted(true);
     toast.success('Reset email sent! Check your inbox.');
     
   } catch (error) {
-    console.error('� HandleSubmit error:', error);
+    // Handle error from forgot password request
     
     // Display the real error message
     toast.error(error.message || 'Failed to send reset email');
-    
-    // Check localStorage for debug info
-    console.log('localStorage token:', localStorage.getItem('token'));
-    console.log('localStorage user:', localStorage.getItem('user'));
     
   } finally {
     setLoading(false);

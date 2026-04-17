@@ -9,7 +9,8 @@ const Recaptcha = ({ onTokenChange, action = 'submit' }) => {
   const isInitializedRef = useRef(false);
   const recaptchaRef = useRef(null);
   
-  const SITE_KEY = '6Ld3HyYsAAAAAEwU8yD5deY3boVXcK9KRoFobUGd';
+  // Site key from environment variable
+  const SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY || '6Ld3HyYsAAAAAEwU8yD5deY3boVXcK9KRoFobUGd';
 
   useEffect(() => {
     loadRecaptchaScript();
@@ -70,11 +71,11 @@ const Recaptcha = ({ onTokenChange, action = 'submit' }) => {
   };
   
   return (
-    <div className="flex flex-col items-center gap-2">
+    <div className="flex flex-col items-center gap-2 w-full">
       <div 
         ref={recaptchaRef}
         style={{ minHeight: '78px' }}
-        className="scale-[0.85] sm:scale-100 origin-center"
+        className="w-full flex justify-center"
       />
       <input type="hidden" name="g-recaptcha-response" value={token || ''} required />
       {!token && <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest animate-pulse">{status}</span>}

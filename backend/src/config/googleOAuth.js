@@ -1,39 +1,29 @@
-// src/config/googleOAuth.js - Google OAuth Configuration
+/**
+ * @file googleOAuth.js
+ * @description Google OAuth 2.0 strategy configuration using Passport
+ * Handles user authentication via Google accounts
+ */
+
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import User from '../models/User.js';
 import crypto from 'crypto';
 
-console.log('Initializing Google OAuth strategy...');
-
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
-
-console.log('Client ID:', GOOGLE_CLIENT_ID ? 'LOADED' : 'MISSING');
-console.log('Client Secret:', GOOGLE_CLIENT_SECRET ? 'LOADED' : 'MISSING');
+const GOOGLE_CALLBACK_URL = process.env.GOOGLE_CALLBACK_URL || 'http://localhost:5000/api/auth/google/callback';
 
 if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET) {
-  console.error('ERROR: Google OAuth credentials missing in .env file');
-  console.error('Add these to .env:');
-  console.error('GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com');
-  console.error('GOOGLE_CLIENT_SECRET=your-client-secret');
-} else {
-  console.log('Initializing Google Strategy...');
-  
-  try {
-    // Remove any existing strategy
-    if (passport._strategies && passport._strategies.google) {
-      delete passport._strategies.google;
-    }
-    
-    // Create Google Strategy
-    const googleStrategy = new GoogleStrategy({
-      clientID: GOOGLE_CLIENT_ID,
-      clientSecret: GOOGLE_CLIENT_SECRET,
-      callbackURL: 'http://localhost:5000/api/auth/google/callback',
-      passReqToCallback: false
-    }, async (accessToken, refreshToken, profile, done) => {
-      console.log('Google profile received:', profile.displayName);
+  throw new Error('Google OAuth credentials (GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET) are required in .env file');
+}
+
+// Create Google Strategy
+const googleStrategy = new GoogleStrategy({
+  clientID: GOOGLE_CLIENT_ID,
+  clientSecret: GOOGLE_CLIENT_SECRET,
+  callbackURL: GOOGLE_CALLBACK_URL,
+  passReqToCallback: false
+}, async (accessToken, refreshToken, profile, done) => {
       
       try {
         const email = profile.emails[0].value;
@@ -51,28 +41,19 @@ if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET) {
             googleId: profile.id,
             role: 'user'
           });
-          console.log('New user created:', user.email);
         } else if (!user.googleId) {
           user.googleId = profile.id;
           await user.save();
-          console.log('Existing user linked:', user.email);
         }
         
         done(null, user);
       } catch (err) {
-        console.error('User creation error:', err);
         done(err, null);
       }
     });
     
-    // Use the strategy
+    // Register the strategy
     passport.use('google', googleStrategy);
-    console.log('Google Strategy initialized successfully');
-    
-  } catch (error) {
-    console.error('Google Strategy initialization failed:', error);
-  }
-}
 
 // Serialize/Deserialize
 passport.serializeUser((user, done) => {

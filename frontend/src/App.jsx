@@ -52,7 +52,7 @@ const App = () => {
               <Route path="/auth/google/callback" element={<GoogleAuthCallback />} />
               <Route path="/auth/success" element={<GoogleAuthCallback />} />
               <Route path="/books" element={<Books />} />
-              <Route path="/books/:id" element={<BookDetailsPage />} />
+              <Route path="/books/:id" element={<ProtectedRoute><BookDetailsPage /></ProtectedRoute>} />
 
               {/* PROTECTED USER ROUTES */}
               <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />

@@ -1,3 +1,8 @@
+/**
+ * @file userController.js
+ * @description Controller for user-specific operations including profile management 
+ * and favorites tracking.
+ */
 import User from '../models/User.js';
 import Book from '../models/Book.js';
 

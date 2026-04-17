@@ -42,13 +42,12 @@ const UserDetailPage = () => {
         if (booksRes.data.success) {
           setUserBooks(booksRes.data.data || []);
         }
+      toast.error('Failed to load user details');
+        navigate('/admin/users');
       } else {
-        toast.error('User record not found');
+        toast.error('User not found');
         navigate('/admin/users');
       }
-    } catch (error) {
-      toast.error('Data pull error');
-      navigate('/admin/users');
     } finally {
       setLoading(false);
     }
@@ -59,11 +58,11 @@ const UserDetailPage = () => {
     try {
       const response = await adminAPI.deleteUser(id);
       if (response.data.success) {
-        toast.success('Member record and associated data removed');
+        toast.success('User deleted successfully');
         navigate('/admin/users');
       }
     } catch (error) {
-      toast.error('Administrative bypass denied');
+      toast.error('Failed to delete user');
     } finally {
       setProcessing(false);
       setDeleteModal(false);
@@ -80,7 +79,7 @@ const UserDetailPage = () => {
         fetchUserDetails();
       }
     } catch (error) {
-      toast.error('System state update failed');
+      toast.error('Failed to update account status');
     } finally {
       setProcessing(false);
       setStatusModal(false);
@@ -104,7 +103,7 @@ const UserDetailPage = () => {
               <BackButton />
               <div>
                 <h1 className="text-3xl font-bold text-text-main">Member Profile Details</h1>
-                <p className="text-text-muted mt-1 font-medium italic">Administrative oversight for user ID {id.substring(0, 8)}...</p>
+                <p className="text-text-muted mt-1 font-medium">View and manage this user's account details.</p>
               </div>
            </div>
 
@@ -113,7 +112,7 @@ const UserDetailPage = () => {
                 to={`/admin/users/${id}/edit`}
                 className="px-6 py-2.5 bg-brand text-white font-bold rounded-xl shadow-lg shadow-brand/20 hover:opacity-90 flex items-center gap-2 transition-all"
               >
-                <FiEdit /> Edit Identity
+                <FiEdit /> Edit
               </Link>
               
               {currentUser?.roleName === 'admin' && userData?._id !== currentUser?._id && (
@@ -121,7 +120,7 @@ const UserDetailPage = () => {
                   onClick={() => setDeleteModal(true)}
                   className="px-6 py-2.5 bg-red-50 dark:bg-red-950/20 text-red-600 font-bold rounded-xl hover:bg-red-100 flex items-center gap-2 transition-all"
                 >
-                  <FiTrash2 /> Purge User
+                  <FiTrash2 /> Delete
                 </button>
               )}
            </div>
@@ -142,7 +141,7 @@ const UserDetailPage = () => {
                   
                   <div className="w-full space-y-4">
                      <div className="flex justify-between items-center p-4 bg-gray-50/50 dark:bg-slate-800/20 rounded-2xl">
-                        <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Access Level</span>
+                        <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Role</span>
                         <span className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-lg ${
                           userData.roleName === 'admin' ? 'bg-red-100 text-red-700' :
                           userData.roleName === 'manager' ? 'bg-yellow-100 text-yellow-700' : 'bg-brand/10 text-brand'
@@ -150,7 +149,7 @@ const UserDetailPage = () => {
                      </div>
                      
                      <div className="flex justify-between items-center p-4 bg-gray-50/50 dark:bg-slate-800/20 rounded-2xl">
-                        <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Current State</span>
+                        <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Status</span>
                         <button 
                           onClick={() => setStatusModal(true)}
                           disabled={userData._id === currentUser?._id}
@@ -167,12 +166,12 @@ const UserDetailPage = () => {
 
             {/* Account Metadata */}
             <div className="bg-white dark:bg-slate-900 rounded-[2rem] border border-gray-100 dark:border-slate-800 shadow-sm p-8 space-y-6">
-               <h4 className="text-xs font-bold text-text-main uppercase tracking-widest pb-4 border-b border-gray-50 dark:border-slate-800">System Logs</h4>
+               <h4 className="text-xs font-bold text-text-main uppercase tracking-widest pb-4 border-b border-gray-50 dark:border-slate-800">Account Info</h4>
                
                <div className="flex items-start gap-4">
                   <div className="w-8 h-8 rounded-lg bg-gray-50 dark:bg-slate-800 flex items-center justify-center text-brand"><FiClock /></div>
                   <div>
-                     <p className="text-[10px] font-bold text-text-muted uppercase mb-1">Onboarding Date</p>
+                     <p className="text-[10px] font-bold text-text-muted uppercase mb-1">Registered On</p>
                      <p className="text-xs font-bold text-text-main">{formatFullDate(userData.createdAt)}</p>
                   </div>
                </div>
@@ -180,7 +179,7 @@ const UserDetailPage = () => {
                <div className="flex items-start gap-4">
                   <div className="w-8 h-8 rounded-lg bg-gray-50 dark:bg-slate-800 flex items-center justify-center text-brand"><FiActivity /></div>
                   <div>
-                     <p className="text-[10px] font-bold text-text-muted uppercase mb-1">Last Interaction</p>
+                     <p className="text-[10px] font-bold text-text-muted uppercase mb-1">Last Login</p>
                      <p className="text-xs font-bold text-text-main">{userData.lastLogin ? formatFullDate(userData.lastLogin) : 'No recent login'}</p>
                   </div>
                </div>
@@ -207,19 +206,19 @@ const UserDetailPage = () => {
             <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-gray-100 dark:border-slate-800 shadow-sm p-10 min-h-[400px]">
                {activeTab === 'overview' && (
                  <div className="space-y-10">
-                    <h3 className="text-xl font-bold text-text-main tracking-tight uppercase">Intelligence Snapshot</h3>
+                    <h3 className="text-xl font-bold text-text-main tracking-tight uppercase">Overview</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                       <MetricBox label="Global Publications" value={userBooks.length} icon={<FiBook />} color="brand" />
-                       <MetricBox label="Content Valuation" value={`$${userBooks.reduce((s, b) => s + (parseFloat(b.price) || 0), 0).toFixed(2)}`} icon={<FiDollarSign />} color="green" />
-                       <MetricBox label="Engagement Rate" value={userData.isActive ? '100%' : '0%'} icon={<FiTrendingUp />} color="purple" />
-                       <MetricBox label="Security Access" value={userData.roleName} icon={<FiShield />} color="yellow" />
+                       <MetricBox label="Books Added" value={userBooks.length} icon={<FiBook />} color="brand" />
+                       <MetricBox label="Total Value" value={`$${userBooks.reduce((s, b) => s + (parseFloat(b.price) || 0), 0).toFixed(2)}`} icon={<FiDollarSign />} color="green" />
+                       <MetricBox label="Status" value={userData.isActive ? 'Active' : 'Suspended'} icon={<FiTrendingUp />} color="purple" />
+                       <MetricBox label="Role" value={userData.roleName} icon={<FiShield />} color="yellow" />
                     </div>
                     
                     <div className="p-8 bg-blue-50/20 dark:bg-blue-950/10 rounded-3xl border border-blue-50/50 dark:border-blue-900/20 flex gap-6">
                        <FiInfo className="text-blue-500 mt-1 flex-shrink-0" size={24} />
                        <div>
                           <p className="text-sm font-bold text-blue-800 dark:text-blue-300 mb-2 uppercase tracking-wide">Administrative Note</p>
-                          <p className="text-xs font-medium text-blue-700 dark:text-blue-400 leading-relaxed italic">Changes to identity or status are logged globally. Deactivating an account restricts all management access immediately but preserves catalog history.</p>
+                          <p className="text-xs font-medium text-blue-700 dark:text-blue-400 leading-relaxed">Deactivating an account immediately restricts login access but preserves all book catalog records associated with this user.</p>
                        </div>
                     </div>
                  </div>
@@ -255,11 +254,11 @@ const UserDetailPage = () => {
 
                {activeTab === 'activity' && (
                   <div className="space-y-8">
-                     <h3 className="text-xl font-bold text-text-main tracking-tight uppercase">Audit History</h3>
+                     <h3 className="text-xl font-bold text-text-main tracking-tight uppercase">Activity Log</h3>
                      <div className="space-y-4">
-                        <ActivityLine label="Account Generation" date={userData.createdAt} desc="Full identity was validated and recorded." />
-                        {userData.lastLogin && <ActivityLine label="Security Validation" date={userData.lastLogin} desc="Standard session hash generated and verified." />}
-                        <ActivityLine label="Contribution Check" date={new Date()} desc={`${userBooks.length} records verified in global inventory.`} />
+                        <ActivityLine label="Account Created" date={userData.createdAt} desc="User account was created and registered." />
+                        {userData.lastLogin && <ActivityLine label="Last Login" date={userData.lastLogin} desc="User authenticated successfully." />}
+                        <ActivityLine label="Books" date={new Date()} desc={`${userBooks.length} books found in the catalog for this user.`} />
                      </div>
                   </div>
                )}
@@ -273,9 +272,9 @@ const UserDetailPage = () => {
         isOpen={deleteModal}
         onClose={() => setDeleteModal(false)}
         onConfirm={executeDeleteUser}
-        title="Purge Member Records"
+        title="Delete User"
         message={`Are you fully certain about removing '${userData.name}'? This action is IRREVERSIBLE and will also cascade through all catalog records created by this user.`}
-        confirmText={processing ? "Executing..." : "Confirm Purge"}
+        confirmText={processing ? "Deleting..." : "Delete"}
         cancelText="Cancel"
       />
 

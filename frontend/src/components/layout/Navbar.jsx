@@ -36,7 +36,7 @@ const Navbar = () => {
   ];
 
   if (isAuthenticated) {
-    navLinks.push({ name: 'Console', path: getDashboardPath() });
+    navLinks.push({ name: 'Dashboard', path: getDashboardPath() });
     navLinks.push(
       { name: 'Profile', path: '/profile' },
       { name: 'Saved', path: '/favorites' }
@@ -164,13 +164,16 @@ const Navbar = () => {
           <div className="lg:hidden flex items-center space-x-3">
             <button
               onClick={toggleTheme}
-              className="w-10 h-10 rounded-xl bg-gray-50 dark:bg-slate-900 flex items-center justify-center text-text-muted transition-all"
+              className="w-11 h-11 rounded-xl bg-gray-50 dark:bg-slate-900 flex items-center justify-center text-text-muted transition-all"
+              aria-label={mode === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
             >
               {mode === 'dark' ? <FiSun className="h-5 w-5" /> : <FiMoon className="h-5 w-5" />}
             </button>
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="w-10 h-10 rounded-xl text-text-main hover:bg-gray-50 dark:hover:bg-slate-900 flex items-center justify-center transition-all bg-gray-50 dark:bg-slate-900"
+              className="w-11 h-11 rounded-xl text-text-main hover:bg-gray-50 dark:hover:bg-slate-900 flex items-center justify-center transition-all bg-gray-50 dark:bg-slate-900"
+              aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={isMenuOpen}
             >
               {isMenuOpen ? <FiX className="h-6 w-6" /> : <FiMenu className="h-6 w-6" />}
             </button>
@@ -180,7 +183,7 @@ const Navbar = () => {
 
       {/* Mobile Drawer */}
       {isMenuOpen && (
-        <div className="lg:hidden bg-base border-t border-gray-100 dark:border-slate-800 animate-fadeIn h-screen overflow-y-auto pb-20">
+        <div className="lg:hidden bg-base border-t border-gray-100 dark:border-slate-800 animate-fadeIn max-h-[calc(100vh-5rem)] overflow-y-auto pb-6 sm:pb-8">
           <div className="px-4 pt-6 pb-8 space-y-4">
             <div className="space-y-2">
                <label className="text-[10px] font-bold text-text-muted uppercase tracking-[0.2em] px-4 block mb-4">Navigation</label>
@@ -217,7 +220,7 @@ const Navbar = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <div className="font-bold text-lg text-text-main">{user?.name}</div>
-                    <div className="text-[10px] text-brand font-bold uppercase tracking-[0.2em] mt-1">{user?.roleName} Access</div>
+                    <div className="text-[10px] text-brand font-bold uppercase tracking-[0.2em] mt-1">{user?.roleName} Dashboard</div>
                   </div>
                   <button
                     onClick={handleLogout}

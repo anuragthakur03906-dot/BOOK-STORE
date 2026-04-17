@@ -1,3 +1,8 @@
+/**
+ * @file adminController.js
+ * @description Administrative control logic for managing users, inventory, 
+ * and system-wide statistics.
+ */
 import mongoose from 'mongoose';
 import User from '../models/User.js';
 import Book from '../models/Book.js';

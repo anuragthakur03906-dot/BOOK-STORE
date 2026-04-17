@@ -17,7 +17,7 @@ const BookList = () => {
 
   const [filters, setFilters] = useState({
     page: 1,
-    limit: 12,
+    limit: 6,          // Show 6 books per page
     search: '',
     genre: '',
     minPrice: 0,
@@ -65,7 +65,7 @@ const BookList = () => {
   const handleClearFilters = useCallback(() => {
     setFilters({
       page: 1,
-      limit: 12,
+      limit: 6,          // Show 6 books per page
       search: '',
       genre: '',
       minPrice: 0,

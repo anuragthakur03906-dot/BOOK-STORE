@@ -1,5 +1,8 @@
-// Authentication controller handles user registration, login, password reset,
-// token refreshing and Google reCAPTCHA verification.
+/**
+ * @file authController.js
+ * @description Authentication management including registration, login, 
+ * password recovery, and secure captcha verification.
+ */
 import User from '../models/User.js';
 import Token from '../models/Token.js';
 import { sendResetPasswordEmail } from '../utils/emailService.js';
@@ -12,20 +15,20 @@ import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import axios from 'axios';
 
-// Helper function to verify Google Recaptcha Token
+/**
+ * Verifies a Google reCAPTCHA token against the Google siteverify API.
+ * @param {string} captchaToken - The token submitted by the client
+ * @returns {Promise<Object>} Verification result from Google
+ */
 const verifyGoogleCaptcha = async (captchaToken) => {
   try {
     if (process.env.SKIP_CAPTCHA === 'true') {
-      console.log(' Skipping captcha verification (development mode)');
       return { success: true, score: 0.9 };
     }
 
     if (!captchaToken) {
-      console.log(' No captcha token provided');
       return { success: false, error: 'Captcha token missing' };
     }
-
-    console.log('Verifying captcha with Google...');
 
     const verificationUrl = 'https://www.google.com/recaptcha/api/siteverify';
     const params = new URLSearchParams();
@@ -36,10 +39,9 @@ const verifyGoogleCaptcha = async (captchaToken) => {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
     });
 
-    console.log(' Captcha response:', response.data);
     return response.data;
   } catch (error) {
-    console.error(' Captcha verification error:', error);
+    console.error('Captcha verification error:', error);
     return { success: false, error: 'Captcha verification failed' };
   }
 };
@@ -48,8 +50,6 @@ const verifyGoogleCaptcha = async (captchaToken) => {
 export const register = async (req, res) => {
   try {
     const { name, email, password, captchaToken, role = 'user' } = req.body;
-
-    console.log(' Register request:', { name, email, role });
 
     // Validate that the provided role is valid
     if (role && !['admin', 'manager', 'user'].includes(role)) {
@@ -102,8 +102,6 @@ export const register = async (req, res) => {
       updatedAt: new Date()
     });
 
-    console.log(` User created: ${user.email} with role: ${role}`);
-
     // Return success
     res.status(201).json({
       success: true,
@@ -129,8 +127,6 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { email, password, captchaToken } = req.body;
-
-    console.log('Login request:', { email });
 
     // Verify captcha before proceeding
     const captchaResult = await verifyGoogleCaptcha(captchaToken);
@@ -365,10 +361,13 @@ export const getMe = async (req, res) => {
   }
 };
 
-// Initiate password reset process and send reset email
+/**
+ * Initiates the password reset process by generating a reset token and sending an email.
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 export const forgotPassword = async (req, res) => {
   try {
-    console.log(' Forgot password request received');
 
     let email = req.body.email;
 
@@ -427,7 +426,7 @@ export const forgotPassword = async (req, res) => {
         await sendResetPasswordEmail(emailString, resetToken, user.name);
       }
     } catch (emailError) {
-      console.log(' Email sending failed:', emailError.message);
+      console.error('Email sending failed:', emailError.message);
     }
 
     // Return response
@@ -443,7 +442,7 @@ export const forgotPassword = async (req, res) => {
     res.json(response);
 
   } catch (error) {
-    console.error(' Forgot password ERROR:', error);
+    console.error('Forgot password error:', error);
     res.status(500).json({
       success: false,
       error: 'Server error'

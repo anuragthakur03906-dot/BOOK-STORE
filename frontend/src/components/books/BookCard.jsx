@@ -59,7 +59,7 @@ const BookCard = ({ book, showFavoriteOnly = true }) => {
     <div className="bg-base rounded-xl shadow-card hover:shadow-card-hover border border-gray-100 dark:border-gray-800 transition-all duration-300 h-full flex flex-col group">
       <div className="p-6 flex-1">
         <div className="flex flex-col">
-          {/* Header with Title and Favorite Button */}
+          {/* Book Header */}
           <div className="flex justify-between items-start mb-4">
             <div className="flex-1 min-w-0">
               <Link to={`/books/${book._id}`}>
@@ -75,12 +75,12 @@ const BookCard = ({ book, showFavoriteOnly = true }) => {
             <button
               onClick={handleFavoriteToggle}
               disabled={loadingFavorite}
-              className={`p-2 rounded-full transition-all ${
+              className={`p-2.5 rounded-full transition-all w-10 h-10 flex items-center justify-center ${
                 isFavorite 
                   ? 'text-red-600 bg-red-50 dark:bg-red-900/20' 
                   : 'text-text-muted hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10'
               }`}
-              title={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+              aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
             >
               <FiHeart className={`h-5 w-5 ${isFavorite ? 'fill-current' : ''}`} />
             </button>
@@ -98,7 +98,7 @@ const BookCard = ({ book, showFavoriteOnly = true }) => {
             <div className="flex flex-col border-l border-gray-100 dark:border-gray-800 pl-4">
               <span className="text-xs text-text-muted uppercase tracking-wider">Rating</span>
               <span className="font-semibold text-text-main">
-                {book.rating?.toFixed(1) || '0.0'} <span className="text-yellow-500">★</span>
+                {book.rating?.toFixed(1) || '0.0'} <span className="text-yellow-500 text-[10px] font-bold">Rating</span>
               </span>
             </div>
           </div>

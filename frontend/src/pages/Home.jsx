@@ -30,7 +30,7 @@ const Home = () => {
         });
       }
     } catch (err) {
-      console.warn('Live stats unavailable, using placeholders');
+      // Silent failure - use placeholder stats
     } finally {
       setLoading(false);
     }
@@ -244,8 +244,8 @@ const FeatureCard = ({ icon, iconColor, title, desc }) => (
 );
 
 const VibrantTech = ({ icon, color, label }) => (
-  <div className="flex flex-col items-center gap-4 transition-all duration-500 transform hover:scale-125 group">
-    <div className="text-5xl drop-shadow-sm transition-all grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100" style={{ color: color }}>
+  <div className="flex flex-col items-center gap-4 transition-all duration-300 transform hover:scale-110 group cursor-default">
+    <div className="text-5xl drop-shadow-sm transition-all grayscale-0 opacity-100" style={{ color: color }}>
         {icon}
     </div>
     <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">{label}</span>
