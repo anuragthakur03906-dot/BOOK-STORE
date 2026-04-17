@@ -16,6 +16,8 @@ dist-ssr
 .env
 frontend/.env
 backend/.env
+.env.local
+.env.*.local
 
 # Editor directories and files
 .vscode/*
@@ -27,3 +29,31 @@ backend/.env
 *.njsproj
 *.sln
 *.sw?
+
+# macOS
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+desktop.ini
+ehthumbs.db
+
+# Build & Cache directories
+.next
+.cache
+.parcel-cache
+.eslintcache
+.turbo
+vite/.cache
+
+# IDE
+*.swp
+*.swo
+*~
+.vscode-test
+.vscode/settings.json
+
+# OS & Temp files
+*.pem
+.DS_Store
