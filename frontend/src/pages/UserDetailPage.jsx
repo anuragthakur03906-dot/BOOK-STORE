@@ -1,22 +1,31 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
-import { adminAPI } from '../services/api.js';
+import { adminAPI, uploadAPI } from '../services/api.js';
 import { 
   FiUser, FiMail, FiCalendar, FiShield, 
   FiBook, FiDollarSign, FiActivity, FiEdit,
-  FiArrowLeft, FiTrash2, FiCheck, FiX
+  FiTrash2, FiCheck, FiX, FiLayers, FiInfo,
+  FiClock, FiTrendingUp
 } from 'react-icons/fi';
 import toast from 'react-hot-toast';
+import BackButton from '../components/common/BackButton.jsx';
+import ConfirmModal from '../components/common/ConfirmModal.jsx';
+import LoadingSpinner from '../components/common/LoadingSpinner.jsx';
 
 const UserDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user: currentUser } = useAuth();
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [userBooks, setUserBooks] = useState([]);
   const [activeTab, setActiveTab] = useState('overview');
+  
+  // Modal states
+  const [deleteModal, setDeleteModal] = useState(false);
+  const [statusModal, setStatusModal] = useState(false);
+  const [processing, setProcessing] = useState(false);
 
   useEffect(() => {
     fetchUserDetails();
@@ -25,438 +34,285 @@ const UserDetailPage = () => {
   const fetchUserDetails = async () => {
     try {
       setLoading(true);
-      
-      //  Get user details
       const userRes = await adminAPI.getUserById(id);
       
       if (userRes.data.success) {
         setUserData(userRes.data.data);
-        
-        //  Get user's books
-        const booksRes = await adminAPI.getAllBooks({ addedBy: id, limit: 10 });
+        const booksRes = await adminAPI.getAllBooks({ addedBy: id, limit: 12 });
         if (booksRes.data.success) {
           setUserBooks(booksRes.data.data || []);
         }
       } else {
-        toast.error('User not found');
+        toast.error('User record not found');
         navigate('/admin/users');
       }
     } catch (error) {
-      console.error('Error fetching user:', error);
-      toast.error('Failed to load user details');
+      toast.error('Data pull error');
       navigate('/admin/users');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDeleteUser = async () => {
-    if (!window.confirm(`Are you sure you want to delete user "${userData.name}"? This will also delete all their books.`)) {
-      return;
-    }
-
+  const executeDeleteUser = async () => {
+    setProcessing(true);
     try {
       const response = await adminAPI.deleteUser(id);
       if (response.data.success) {
-        toast.success('User deleted successfully');
+        toast.success('Member record and associated data removed');
         navigate('/admin/users');
       }
     } catch (error) {
-      toast.error(error.response?.data?.error || 'Failed to delete user');
+      toast.error('Administrative bypass denied');
+    } finally {
+      setProcessing(false);
+      setDeleteModal(false);
     }
   };
 
-  const handleToggleStatus = async () => {
-    const action = userData.isActive ? 'deactivate' : 'activate';
-    
-    if (!window.confirm(`Are you sure you want to ${action} this user?`)) {
-      return;
-    }
-
+  const executeToggleStatus = async () => {
+    setProcessing(true);
+    const newStatus = !userData.isActive;
     try {
-      const response = await adminAPI.toggleUserStatus(id, { 
-        isActive: !userData.isActive 
-      });
-      
+      const response = await adminAPI.toggleUserStatus(id, { isActive: newStatus });
       if (response.data.success) {
-        toast.success(`User ${action}d successfully`);
+        toast.success(`Account ${newStatus ? 'activated' : 'deactivated'} successfully`);
         fetchUserDetails();
       }
     } catch (error) {
-      toast.error(error.response?.data?.error || 'Failed to update user status');
+      toast.error('System state update failed');
+    } finally {
+      setProcessing(false);
+      setStatusModal(false);
     }
   };
 
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
+  if (loading && !userData) return <LoadingSpinner fullScreen />;
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
-
-  if (!userData) {
-    return (
-      <div className="min-h-screen bg-base flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-text-main mb-4">User Not Found</h2>
-          <Link to="/admin/users" className="text-brand hover:text-blue-800">
-            ← Back to Users
-          </Link>
-        </div>
-      </div>
-    );
-  }
+  const formatFullDate = (date) => date ? new Date(date).toLocaleDateString('en-US', {
+      year: 'numeric', month: 'long', day: 'numeric',
+      hour: '2-digit', minute: '2-digit'
+  }) : 'N/A';
 
   return (
-    <div className="min-h-screen bg-base py-8">
+    <div className="min-h-screen bg-base py-12 transition-colors duration-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header with Back Button */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Link
-                to="/admin/users"
-                className="p-2 text-text-muted hover:text-text-main hover:bg-gray-100 rounded-lg"
-              >
-                <FiArrowLeft className="h-5 w-5" />
-              </Link>
+        
+        {/* Header Block */}
+        <div className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+           <div className="flex flex-col gap-6">
+              <BackButton />
               <div>
-                <h1 className="text-3xl font-bold text-text-main">
-                  User Details
-                </h1>
-                <p className="text-text-muted mt-1">
-                  View and manage user information
-                </p>
+                <h1 className="text-3xl font-bold text-text-main">Member Profile Details</h1>
+                <p className="text-text-muted mt-1 font-medium italic">Administrative oversight for user ID {id.substring(0, 8)}...</p>
               </div>
-            </div>
-            
-            <div className="flex space-x-3">
+           </div>
+
+           <div className="flex gap-3">
               <Link
                 to={`/admin/users/${id}/edit`}
-                className="inline-flex items-center px-4 py-2 bg-brand text-white rounded-lg hover:bg-blue-700"
+                className="px-6 py-2.5 bg-brand text-white font-bold rounded-xl shadow-lg shadow-brand/20 hover:opacity-90 flex items-center gap-2 transition-all"
               >
-                <FiEdit className="mr-2" />
-                Edit User
+                <FiEdit /> Edit Identity
               </Link>
               
-              {user?.roleName === 'admin' && userData._id !== user?._id && (
+              {currentUser?.roleName === 'admin' && userData?._id !== currentUser?._id && (
                 <button
-                  onClick={handleDeleteUser}
-                  className="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                  onClick={() => setDeleteModal(true)}
+                  className="px-6 py-2.5 bg-red-50 dark:bg-red-950/20 text-red-600 font-bold rounded-xl hover:bg-red-100 flex items-center gap-2 transition-all"
                 >
-                  <FiTrash2 className="mr-2" />
-                  Delete User
+                  <FiTrash2 /> Purge User
                 </button>
               )}
-            </div>
-          </div>
+           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Sidebar - User Info */}
-          <div className="lg:col-span-1">
-            <div className="card">
-              <div className="p-6">
-                {/* User Avatar */}
-                <div className="text-center mb-6">
-                  <div className="w-32 h-32 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <span className="text-4xl font-bold text-brand">
-                      {userData.name?.charAt(0).toUpperCase()}
-                    </span>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+          {/* Identity Sidebar */}
+          <div className="lg:col-span-1 space-y-8">
+            <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-gray-100 dark:border-slate-800 shadow-sm p-10 overflow-hidden relative">
+               <div className="absolute top-0 right-0 w-32 h-32 bg-brand/5 rounded-bl-[4rem]"></div>
+               
+               <div className="flex flex-col items-center text-center relative z-10">
+                  <div className="w-24 h-24 bg-brand/10 text-brand rounded-[2rem] flex items-center justify-center text-4xl font-bold mb-6 shadow-inner ring-4 ring-white dark:ring-slate-800">
+                     {userData.name?.charAt(0)}
                   </div>
-                  <h2 className="text-2xl font-bold text-text-main">{userData.name}</h2>
-                  <p className="text-text-muted">{userData.email}</p>
-                </div>
+                  <h2 className="text-2xl font-bold text-text-main mb-1">{userData.name}</h2>
+                  <p className="text-sm font-medium text-text-muted italic mb-8">{userData.email}</p>
+                  
+                  <div className="w-full space-y-4">
+                     <div className="flex justify-between items-center p-4 bg-gray-50/50 dark:bg-slate-800/20 rounded-2xl">
+                        <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Access Level</span>
+                        <span className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-lg ${
+                          userData.roleName === 'admin' ? 'bg-red-100 text-red-700' :
+                          userData.roleName === 'manager' ? 'bg-yellow-100 text-yellow-700' : 'bg-brand/10 text-brand'
+                        }`}>{userData.roleName}</span>
+                     </div>
+                     
+                     <div className="flex justify-between items-center p-4 bg-gray-50/50 dark:bg-slate-800/20 rounded-2xl">
+                        <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Current State</span>
+                        <button 
+                          onClick={() => setStatusModal(true)}
+                          disabled={userData._id === currentUser?._id}
+                          className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-lg transition-all ${
+                            userData.isActive ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-red-100 text-red-700 hover:bg-red-200'
+                          } ${userData._id === currentUser?._id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        >
+                           {userData.isActive ? 'Active' : 'Deactivated'}
+                        </button>
+                     </div>
+                  </div>
+               </div>
+            </div>
 
-                {/* User Stats */}
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between p-3 bg-base rounded-lg">
-                    <div className="flex items-center">
-                      <FiShield className="h-5 w-5 text-gray-500 mr-3" />
-                      <div>
-                        <p className="text-sm text-text-muted">Role</p>
-                        <p className="font-medium">{userData.roleName}</p>
-                      </div>
-                    </div>
-                    <span className={`px-3 py-1 text-sm rounded-full ${
-                      userData.roleName === 'admin' ? 'bg-red-100 text-red-800' :
-                      userData.roleName === 'manager' ? 'bg-yellow-100 text-yellow-800' :
-                      'bg-blue-100 text-blue-800'
-                    }`}>
-                      {userData.roleName}
-                    </span>
+            {/* Account Metadata */}
+            <div className="bg-white dark:bg-slate-900 rounded-[2rem] border border-gray-100 dark:border-slate-800 shadow-sm p-8 space-y-6">
+               <h4 className="text-xs font-bold text-text-main uppercase tracking-widest pb-4 border-b border-gray-50 dark:border-slate-800">System Logs</h4>
+               
+               <div className="flex items-start gap-4">
+                  <div className="w-8 h-8 rounded-lg bg-gray-50 dark:bg-slate-800 flex items-center justify-center text-brand"><FiClock /></div>
+                  <div>
+                     <p className="text-[10px] font-bold text-text-muted uppercase mb-1">Onboarding Date</p>
+                     <p className="text-xs font-bold text-text-main">{formatFullDate(userData.createdAt)}</p>
                   </div>
-
-                  <div className="flex items-center justify-between p-3 bg-base rounded-lg">
-                    <div className="flex items-center">
-                      <FiActivity className="h-5 w-5 text-gray-500 mr-3" />
-                      <div>
-                        <p className="text-sm text-text-muted">Status</p>
-                        <p className="font-medium">
-                          {userData.isActive ? 'Active' : 'Inactive'}
-                        </p>
-                      </div>
-                    </div>
-                    <button
-                      onClick={handleToggleStatus}
-                      disabled={userData._id === user?._id}
-                      className={`px-3 py-1 text-sm rounded-full flex items-center ${
-                        userData.isActive
-                          ? 'bg-green-100 text-green-800 hover:bg-green-200'
-                          : 'bg-red-100 text-red-800 hover:bg-red-200'
-                      } ${userData._id === user?._id ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    >
-                      {userData.isActive ? (
-                        <>
-                          <FiCheck className="mr-1" />
-                          Active
-                        </>
-                      ) : (
-                        <>
-                          <FiX className="mr-1" />
-                          Inactive
-                        </>
-                      )}
-                    </button>
+               </div>
+               
+               <div className="flex items-start gap-4">
+                  <div className="w-8 h-8 rounded-lg bg-gray-50 dark:bg-slate-800 flex items-center justify-center text-brand"><FiActivity /></div>
+                  <div>
+                     <p className="text-[10px] font-bold text-text-muted uppercase mb-1">Last Interaction</p>
+                     <p className="text-xs font-bold text-text-main">{userData.lastLogin ? formatFullDate(userData.lastLogin) : 'No recent login'}</p>
                   </div>
-
-                  <div className="p-3 bg-base rounded-lg">
-                    <div className="flex items-center mb-2">
-                      <FiCalendar className="h-5 w-5 text-gray-500 mr-3" />
-                      <div>
-                        <p className="text-sm text-text-muted">Joined</p>
-                        <p className="font-medium">
-                          {formatDate(userData.createdAt)}
-                        </p>
-                      </div>
-                    </div>
-                    
-                    {userData.lastLogin && (
-                      <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-800">
-                        <p className="text-sm text-text-muted">Last Login</p>
-                        <p className="font-medium">
-                          {formatDate(userData.lastLogin)}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
+               </div>
             </div>
           </div>
 
-          {/* Main Content */}
-          <div className="lg:col-span-2">
-            {/* Tabs */}
-            <div className="mb-6 border-b border-gray-200 dark:border-gray-800">
-              <nav className="flex space-x-8">
-                <button
-                  onClick={() => setActiveTab('overview')}
-                  className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                    activeTab === 'overview'
-                      ? 'border-blue-500 text-brand'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                  }`}
-                >
-                  Overview
-                </button>
-                <button
-                  onClick={() => setActiveTab('books')}
-                  className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                    activeTab === 'books'
-                      ? 'border-blue-500 text-brand'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                  }`}
-                >
-                  Books ({userBooks.length})
-                </button>
-                <button
-                  onClick={() => setActiveTab('activity')}
-                  className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                    activeTab === 'activity'
-                      ? 'border-blue-500 text-brand'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                  }`}
-                >
-                  Activity
-                </button>
-              </nav>
+          {/* Activity Center */}
+          <div className="lg:col-span-2 space-y-8">
+            {/* Tab Navigation */}
+            <div className="flex gap-4 p-2 bg-gray-100/50 dark:bg-slate-800/40 rounded-2xl w-fit">
+               {['overview', 'books', 'activity'].map(tab => (
+                 <button
+                   key={tab}
+                   onClick={() => setActiveTab(tab)}
+                   className={`px-6 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${
+                     activeTab === tab ? 'bg-white dark:bg-slate-900 text-brand shadow-sm' : 'text-text-muted hover:text-text-main'
+                   }`}
+                 >
+                   {tab}
+                 </button>
+               ))}
             </div>
 
-            {/* Tab Content */}
-            <div className="card">
-              <div className="p-6">
-                {activeTab === 'overview' && (
-                  <div className="space-y-6">
-                    <div>
-                      <h3 className="text-lg font-semibold text-text-main mb-4">User Information</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="p-4 bg-base rounded-lg">
-                          <p className="text-sm text-text-muted">Email</p>
-                          <p className="font-medium">{userData.email}</p>
-                        </div>
-                        <div className="p-4 bg-base rounded-lg">
-                          <p className="text-sm text-text-muted">Role</p>
-                          <p className="font-medium">{userData.roleName}</p>
-                        </div>
-                        <div className="p-4 bg-base rounded-lg">
-                          <p className="text-sm text-text-muted">Status</p>
-                          <p className={`font-medium ${
-                            userData.isActive ? 'text-green-600' : 'text-red-600'
-                          }`}>
-                            {userData.isActive ? 'Active' : 'Inactive'}
-                          </p>
-                        </div>
-                        <div className="p-4 bg-base rounded-lg">
-                          <p className="text-sm text-text-muted">User ID</p>
-                          <p className="font-medium text-sm truncate">{userData._id}</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div>
-                      <h3 className="text-lg font-semibold text-text-main mb-4">Quick Actions</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <Link
-                          to={`/admin/users/${id}/edit`}
-                          className="p-4 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 text-center"
-                        >
-                          <FiEdit className="h-6 w-6 text-brand mx-auto mb-2" />
-                          <span className="font-medium text-blue-800">Edit Profile</span>
-                        </Link>
-                        
-                        <button
-                          onClick={handleToggleStatus}
-                          disabled={userData._id === user?._id}
-                          className={`p-4 rounded-lg text-center ${
-                            userData.isActive
-                              ? 'bg-red-50 border border-red-200 hover:bg-red-100'
-                              : 'bg-green-50 border border-green-200 hover:bg-green-100'
-                          } ${userData._id === user?._id ? 'opacity-50 cursor-not-allowed' : ''}`}
-                        >
-                          {userData.isActive ? (
-                            <>
-                              <FiX className="h-6 w-6 text-red-600 mx-auto mb-2" />
-                              <span className="font-medium text-red-800">Deactivate User</span>
-                            </>
-                          ) : (
-                            <>
-                              <FiCheck className="h-6 w-6 text-green-600 mx-auto mb-2" />
-                              <span className="font-medium text-green-800">Activate User</span>
-                            </>
-                          )}
-                        </button>
-                        
-                        {user?.roleName === 'admin' && userData._id !== user?._id && (
-                          <button
-                            onClick={handleDeleteUser}
-                            className="p-4 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 text-center"
-                          >
-                            <FiTrash2 className="h-6 w-6 text-red-600 mx-auto mb-2" />
-                            <span className="font-medium text-red-800">Delete User</span>
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {activeTab === 'books' && (
-                  <div>
-                    <div className="flex justify-between items-center mb-6">
-                      <h3 className="text-lg font-semibold text-text-main">Books Added by User</h3>
-                      <span className="text-sm text-text-muted">
-                        Total: {userBooks.length} books
-                      </span>
+            <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-gray-100 dark:border-slate-800 shadow-sm p-10 min-h-[400px]">
+               {activeTab === 'overview' && (
+                 <div className="space-y-10">
+                    <h3 className="text-xl font-bold text-text-main tracking-tight uppercase">Intelligence Snapshot</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                       <MetricBox label="Global Publications" value={userBooks.length} icon={<FiBook />} color="brand" />
+                       <MetricBox label="Content Valuation" value={`$${userBooks.reduce((s, b) => s + (parseFloat(b.price) || 0), 0).toFixed(2)}`} icon={<FiDollarSign />} color="green" />
+                       <MetricBox label="Engagement Rate" value={userData.isActive ? '100%' : '0%'} icon={<FiTrendingUp />} color="purple" />
+                       <MetricBox label="Security Access" value={userData.roleName} icon={<FiShield />} color="yellow" />
                     </div>
                     
-                    {userBooks.length === 0 ? (
-                      <div className="text-center py-12">
-                        <FiBook className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                        <p className="text-text-muted">No books added by this user</p>
+                    <div className="p-8 bg-blue-50/20 dark:bg-blue-950/10 rounded-3xl border border-blue-50/50 dark:border-blue-900/20 flex gap-6">
+                       <FiInfo className="text-blue-500 mt-1 flex-shrink-0" size={24} />
+                       <div>
+                          <p className="text-sm font-bold text-blue-800 dark:text-blue-300 mb-2 uppercase tracking-wide">Administrative Note</p>
+                          <p className="text-xs font-medium text-blue-700 dark:text-blue-400 leading-relaxed italic">Changes to identity or status are logged globally. Deactivating an account restricts all management access immediately but preserves catalog history.</p>
+                       </div>
+                    </div>
+                 </div>
+               )}
+
+               {activeTab === 'books' && (
+                 <div className="space-y-8">
+                    <div className="flex justify-between items-center">
+                       <h3 className="text-xl font-bold text-text-main tracking-tight uppercase">User Catalogue</h3>
+                       <span className="text-[10px] font-bold text-text-muted uppercase tracking-[0.2em]">{userBooks.length} ITEMS FOUND</span>
+                    </div>
+                    
+                    {userBooks.length > 0 ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                         {userBooks.map(b => (
+                           <Link key={b._id} to={`/books/${b._id}`} className="p-5 bg-gray-50/50 dark:bg-slate-800/20 border border-transparent hover:border-brand/20 dark:hover:border-slate-700 rounded-2xl flex items-center gap-4 transition-all group">
+                              <div className="w-12 h-12 bg-white dark:bg-slate-800 rounded-xl flex items-center justify-center text-text-muted group-hover:text-brand shadow-sm transition-colors text-xl"><FiBook /></div>
+                              <div className="min-w-0">
+                                 <h4 className="text-sm font-bold text-text-main truncate">{b.title}</h4>
+                                 <p className="text-[10px] font-bold text-text-muted uppercase mt-0.5 tracking-wider">{b.genre}</p>
+                              </div>
+                           </Link>
+                         ))}
                       </div>
                     ) : (
-                      <div className="space-y-4">
-                        {userBooks.map((book) => (
-                          <div key={book._id} className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-800 rounded-lg hover:bg-base">
-                            <div className="flex-1">
-                              <h4 className="font-medium text-text-main">{book.title}</h4>
-                              <p className="text-sm text-text-muted">by {book.author}</p>
-                              <div className="flex items-center space-x-4 mt-2">
-                                <span className="text-sm text-brand font-medium">
-                                  ${book.price}
-                                </span>
-                                <span className="text-sm text-gray-500">
-                                  {book.genre}
-                                </span>
-                                <span className="text-sm text-gray-500">
-                                  Added: {new Date(book.createdAt).toLocaleDateString()}
-                                </span>
-                              </div>
-                            </div>
-                            <Link
-                              to={`/books/${book._id}`}
-                              className="ml-4 text-brand hover:text-blue-800"
-                            >
-                              View →
-                            </Link>
-                          </div>
-                        ))}
+                      <div className="flex flex-col items-center justify-center py-20 opacity-30 italic">
+                         <FiLayers size={64} className="mb-4" />
+                         <p className="font-bold">No contributions found for this user.</p>
                       </div>
                     )}
-                  </div>
-                )}
+                 </div>
+               )}
 
-                {activeTab === 'activity' && (
-                  <div>
-                    <h3 className="text-lg font-semibold text-text-main mb-6">User Activity</h3>
-                    <div className="space-y-4">
-                      <div className="p-4 bg-base rounded-lg">
-                        <p className="font-medium">Account Created</p>
-                        <p className="text-sm text-text-muted">
-                          {formatDate(userData.createdAt)}
-                        </p>
-                      </div>
-                      
-                      {userData.lastLogin && (
-                        <div className="p-4 bg-base rounded-lg">
-                          <p className="font-medium">Last Login</p>
-                          <p className="text-sm text-text-muted">
-                            {formatDate(userData.lastLogin)}
-                          </p>
-                        </div>
-                      )}
-                      
-                      <div className="p-4 bg-base rounded-lg">
-                        <p className="font-medium">Books Added</p>
-                        <p className="text-2xl font-bold text-brand">
-                          {userBooks.length}
-                        </p>
-                        <p className="text-sm text-text-muted">
-                          Total value: ${userBooks.reduce((sum, book) => sum + (parseFloat(book.price) || 0), 0).toFixed(2)}
-                        </p>
-                      </div>
-                    </div>
+               {activeTab === 'activity' && (
+                  <div className="space-y-8">
+                     <h3 className="text-xl font-bold text-text-main tracking-tight uppercase">Audit History</h3>
+                     <div className="space-y-4">
+                        <ActivityLine label="Account Generation" date={userData.createdAt} desc="Full identity was validated and recorded." />
+                        {userData.lastLogin && <ActivityLine label="Security Validation" date={userData.lastLogin} desc="Standard session hash generated and verified." />}
+                        <ActivityLine label="Contribution Check" date={new Date()} desc={`${userBooks.length} records verified in global inventory.`} />
+                     </div>
                   </div>
-                )}
-              </div>
+               )}
             </div>
           </div>
         </div>
       </div>
+
+      {/* Modals */}
+      <ConfirmModal 
+        isOpen={deleteModal}
+        onClose={() => setDeleteModal(false)}
+        onConfirm={executeDeleteUser}
+        title="Purge Member Records"
+        message={`Are you fully certain about removing '${userData.name}'? This action is IRREVERSIBLE and will also cascade through all catalog records created by this user.`}
+        confirmText={processing ? "Executing..." : "Confirm Purge"}
+        cancelText="Cancel"
+      />
+
+      <ConfirmModal 
+        isOpen={statusModal}
+        onClose={() => setStatusModal(false)}
+        onConfirm={executeToggleStatus}
+        title="Update Access State"
+        message={`You are about to ${userData.isActive ? 'Suspend' : 'Reinstate'} access for this member. Continue tracking status change?`}
+        confirmText={processing ? "Updating..." : "Confirm Change"}
+        cancelText="Cancel"
+      />
     </div>
   );
 };
+
+const MetricBox = ({ label, value, icon, color }) => (
+  <div className="p-6 bg-gray-50/50 dark:bg-slate-800/20 rounded-3xl border border-gray-50 dark:border-slate-800/50 flex items-center gap-6">
+     <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-xl shadow-inner ${
+       color === 'brand' ? 'bg-brand/10 text-brand' : color === 'green' ? 'bg-green-500/10 text-green-600' : color === 'yellow' ? 'bg-yellow-500/10 text-yellow-600' : 'bg-purple-500/10 text-purple-600'
+     }`}>
+        {icon}
+     </div>
+     <div>
+        <h5 className="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-1">{label}</h5>
+        <div className="text-xl font-bold text-text-main tracking-tight">{value}</div>
+     </div>
+  </div>
+);
+
+const ActivityLine = ({ label, date, desc }) => (
+   <div className="relative pl-8 pb-8 border-l border-gray-100 dark:border-slate-800 last:pb-0">
+      <div className="absolute left-0 top-0 -translate-x-1/2 w-3 h-3 rounded-full bg-brand ring-4 ring-white dark:ring-slate-900 shadow-sm"></div>
+      <div className="font-bold text-sm text-text-main mb-1">{label}</div>
+      <div className="text-[10px] font-bold text-brand uppercase tracking-widest mb-2">{new Date(date).toLocaleString()}</div>
+      <p className="text-xs font-medium text-text-muted italic">{desc}</p>
+   </div>
+);
 
 export default UserDetailPage;

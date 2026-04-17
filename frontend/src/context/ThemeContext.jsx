@@ -32,18 +32,24 @@ export const ThemeContextProvider = ({ children }) => {
         palette: {
           mode,
           primary: {
-            main: mode === 'dark' ? '#357ABD' : '#007BFF',
+            main: '#10B981', // Emerald 500 (Green Theme)
           },
           secondary: {
             main: '#64748b',
           },
           background: {
-            default: mode === 'dark' ? '#121212' : '#FFFFFF',
-            paper: mode === 'dark' ? '#1E1E1E' : '#FFFFFF',
+            default: mode === 'dark' ? '#000000' : '#FFFFFF',
+            paper: mode === 'dark' ? '#0A0A0A' : '#FFFFFF',
           },
+          text: {
+            primary: mode === 'dark' ? '#F9FAFB' : '#111827',
+          }
         },
         typography: {
-          fontFamily: 'inherit', // Uses tailwind standard fonts
+          fontFamily: "'Inter', sans-serif",
+        },
+        shape: {
+          borderRadius: 16,
         },
       }),
     [mode]

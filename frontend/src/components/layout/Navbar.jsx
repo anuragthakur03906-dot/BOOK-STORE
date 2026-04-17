@@ -8,7 +8,8 @@ import {
   FiMenu, 
   FiX,
   FiSun,
-  FiMoon
+  FiMoon,
+  FiBook
 } from 'react-icons/fi';
 
 const Navbar = () => {
@@ -31,59 +32,62 @@ const Navbar = () => {
 
   const navLinks = [
     { name: 'Home', path: '/' },
-    { name: 'Books', path: '/books' },
+    { name: 'Library', path: '/books' },
   ];
 
   if (isAuthenticated) {
-    navLinks.push({ name: 'Dashboard', path: getDashboardPath() });
+    navLinks.push({ name: 'Console', path: getDashboardPath() });
     navLinks.push(
       { name: 'Profile', path: '/profile' },
-      { name: 'Favorites', path: '/favorites' }
+      { name: 'Saved', path: '/favorites' }
     );
   }
 
   const adminLinks = [];
   if (isAuthenticated && user?.roleName === 'admin') {
     adminLinks.push(
-      { name: 'Users', path: '/admin/users' },
-      { name: 'Management', path: '/admin/books' }
+      { name: 'Directory', path: '/admin/users' },
+      { name: 'Inventory', path: '/admin/books' }
     );
   }
 
   const getLinkClass = (isActive) =>
-    `px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+    `px-4 py-2 rounded-xl text-sm font-bold transition-all ${
       isActive
-        ? 'text-brand bg-brand/10 font-semibold'
-        : 'text-text-main hover:text-brand'
+        ? 'text-brand bg-brand/10 shadow-sm'
+        : 'text-text-muted hover:text-brand hover:bg-brand/5'
     }`;
 
   const getAdminLinkClass = (isActive) =>
-    `px-2 py-1 rounded text-xs font-medium transition-colors ${
+    `px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
       isActive
-        ? 'text-brand bg-brand/10 font-semibold'
-        : 'text-text-muted hover:text-brand'
+        ? 'text-brand bg-brand/10'
+        : 'text-text-muted/60 hover:text-brand'
     }`;
 
   const getMobileLinkClass = (isActive) =>
-    `block px-3 py-2 rounded-md text-base font-medium transition-colors ${
+    `block px-4 py-3 rounded-2xl text-base font-bold transition-all ${
       isActive
-        ? 'text-brand bg-brand/10 font-semibold'
+        ? 'text-brand bg-brand/10'
         : 'text-text-main hover:text-brand hover:bg-brand/5'
     }`;
 
   return (
-    <nav className="bg-base shadow-sm sticky top-0 z-50 border-b border-gray-200 dark:border-gray-800 dark:border-gray-800 transition-colors">
+    <nav className="bg-base border-b border-gray-100 dark:border-slate-800 sticky top-0 z-50 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          {/* Logo */}
+        <div className="flex justify-between h-20">
+          {/* Brand - Emerald Theme */}
           <div className="flex items-center">
-            <Link to="/" className="flex items-center">
-              <span className="text-xl font-bold text-text-main">BookStore</span>
+            <Link to="/" className="flex items-center gap-3 group">
+              <div className="w-10 h-10 bg-brand rounded-xl flex items-center justify-center text-white shadow-lg shadow-brand/20 group-hover:scale-110 transition-transform">
+                 <FiBook className="text-xl" />
+              </div>
+              <span className="text-xl font-bold text-text-main tracking-tight group-hover:text-brand transition-colors">BookStore</span>
             </Link>
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-2">
+          <div className="hidden lg:flex items-center space-x-2">
             <div className="flex items-center space-x-1 mr-4">
               {navLinks.map((link) => (
                 <NavLink
@@ -97,7 +101,7 @@ const Navbar = () => {
             </div>
 
             {adminLinks.length > 0 && (
-              <div className="flex items-center space-x-1 border-l border-gray-200 dark:border-gray-800 dark:border-gray-700 pl-4 mr-4">
+              <div className="flex items-center space-x-1 border-l border-gray-100 dark:border-slate-800 pl-4 mr-4">
                 {adminLinks.map((link) => (
                   <NavLink
                     key={link.name}
@@ -110,63 +114,63 @@ const Navbar = () => {
               </div>
             )}
 
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-4 ml-4">
               <button
                 onClick={toggleTheme}
-                className="p-2 rounded-lg text-text-muted hover:text-brand hover:bg-brand/10 transition-colors"
+                className="w-10 h-10 rounded-xl bg-gray-50 dark:bg-slate-900 flex items-center justify-center text-text-muted hover:text-brand hover:border-brand/40 border border-transparent transition-all"
                 aria-label="Toggle theme"
               >
                 {mode === 'dark' ? <FiSun className="h-5 w-5" /> : <FiMoon className="h-5 w-5" />}
               </button>
 
               {isAuthenticated ? (
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center gap-4 pl-4 border-l border-gray-100 dark:border-slate-800">
                   <div className="flex flex-col items-end">
-                    <span className="text-sm font-medium text-text-main">
+                    <span className="text-sm font-bold text-text-main">
                       {user?.name}
                     </span>
-                    <span className="text-[10px] uppercase tracking-wider text-text-muted">
+                    <span className="text-[10px] items-center px-1.5 py-0.5 rounded bg-brand/10 text-brand font-bold uppercase tracking-widest">
                       {user?.roleName}
                     </span>
                   </div>
                   <button
                     onClick={handleLogout}
-                    className="p-2 text-text-muted hover:text-red-600 transition-colors"
+                    className="w-10 h-10 rounded-xl text-text-muted hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 transition-all flex items-center justify-center"
                     title="Logout"
                   >
                     <FiLogOut className="h-5 w-5" />
                   </button>
                 </div>
               ) : (
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-3">
                   <Link
                     to="/login"
-                    className="text-text-main hover:text-brand px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                    className="text-text-main font-bold px-4 py-2 hover:text-brand transition-colors text-sm"
                   >
-                    Sign In
+                    Login
                   </Link>
                   <Link
                     to="/register"
-                    className="bg-brand text-white px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+                    className="bg-brand text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:opacity-90 shadow-lg shadow-brand/20 transition-all active:scale-95"
                   >
-                    Sign Up
+                    Join Now
                   </Link>
                 </div>
               )}
             </div>
           </div>
 
-          {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center space-x-2">
+          {/* Mobile Menu Trigger */}
+          <div className="lg:hidden flex items-center space-x-3">
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-lg text-text-muted hover:text-brand transition-colors"
+              className="w-10 h-10 rounded-xl bg-gray-50 dark:bg-slate-900 flex items-center justify-center text-text-muted transition-all"
             >
               {mode === 'dark' ? <FiSun className="h-5 w-5" /> : <FiMoon className="h-5 w-5" />}
             </button>
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-text-main hover:text-brand p-2"
+              className="w-10 h-10 rounded-xl text-text-main hover:bg-gray-50 dark:hover:bg-slate-900 flex items-center justify-center transition-all bg-gray-50 dark:bg-slate-900"
             >
               {isMenuOpen ? <FiX className="h-6 w-6" /> : <FiMenu className="h-6 w-6" />}
             </button>
@@ -174,63 +178,70 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Drawer */}
       {isMenuOpen && (
-        <div className="md:hidden bg-base border-t border-gray-100 dark:border-gray-800 animate-fadeIn">
-          <div className="px-2 pt-2 pb-3 space-y-1">
-            {navLinks.map((link) => (
-              <NavLink
-                key={link.name}
-                to={link.path}
-                className={({ isActive }) => getMobileLinkClass(isActive)}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {link.name}
-              </NavLink>
-            ))}
+        <div className="lg:hidden bg-base border-t border-gray-100 dark:border-slate-800 animate-fadeIn h-screen overflow-y-auto pb-20">
+          <div className="px-4 pt-6 pb-8 space-y-4">
+            <div className="space-y-2">
+               <label className="text-[10px] font-bold text-text-muted uppercase tracking-[0.2em] px-4 block mb-4">Navigation</label>
+               {navLinks.map((link) => (
+                  <NavLink
+                  key={link.name}
+                  to={link.path}
+                  className={({ isActive }) => getMobileLinkClass(isActive)}
+                  onClick={() => setIsMenuOpen(false)}
+                  >
+                  {link.name}
+                  </NavLink>
+               ))}
+            </div>
             
-            {adminLinks.map((link) => (
-              <NavLink
-                key={link.name}
-                to={link.path}
-                className={({ isActive }) => getMobileLinkClass(isActive)}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Admin: {link.name}
-              </NavLink>
-            ))}
+            {adminLinks.length > 0 && (
+              <div className="pt-6 space-y-2">
+                <label className="text-[10px] font-bold text-text-muted uppercase tracking-[0.2em] px-4 block mb-4">Administrative</label>
+                {adminLinks.map((link) => (
+                  <NavLink
+                    key={link.name}
+                    to={link.path}
+                    className={({ isActive }) => getMobileLinkClass(isActive)}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {link.name}
+                  </NavLink>
+                ))}
+              </div>
+            )}
 
             {isAuthenticated ? (
-              <div className="border-t border-gray-100 dark:border-gray-800 mt-4 pt-4 px-3">
-                <div className="flex items-center justify-between mb-4">
+              <div className="mt-8 pt-8 border-t border-gray-100 dark:border-slate-800 px-4">
+                <div className="flex items-center justify-between">
                   <div>
-                    <div className="font-medium text-text-main">{user?.name}</div>
-                    <div className="text-xs text-text-muted uppercase tracking-tighter">{user?.roleName}</div>
+                    <div className="font-bold text-lg text-text-main">{user?.name}</div>
+                    <div className="text-[10px] text-brand font-bold uppercase tracking-[0.2em] mt-1">{user?.roleName} Access</div>
                   </div>
                   <button
                     onClick={handleLogout}
-                    className="flex items-center space-x-2 text-red-600 font-medium"
+                    className="px-6 py-2.5 bg-red-50 dark:bg-red-950/20 text-red-600 rounded-xl font-bold flex items-center gap-2 transition-all"
                   >
-                    <FiLogOut />
-                    <span>Logout</span>
+                    <FiLogOut /> Logout
                   </button>
                 </div>
               </div>
             ) : (
-              <div className="border-t border-gray-100 dark:border-gray-800 mt-4 pt-4 space-y-2">
+              <div className="mt-8 pt-8 border-t border-gray-100 dark:border-slate-800 space-y-3 px-2">
                 <Link
                   to="/login"
-                  className="block w-full text-center py-2 text-text-main font-medium"
+                  className="block w-full text-center py-4 text-text-main font-bold hover:bg-gray-50 rounded-2xl transition-all"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Sign In
+                  Login to Account
                 </Link>
                 <Link
                   to="/register"
-                  className="block w-full text-center py-2 bg-brand text-white rounded-lg font-medium"
+                  className="block w-full text-center py-4 bg-brand text-white rounded-2xl font-bold shadow-lg shadow-brand/20 transition-all active:scale-[0.98]"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Sign Up
+                  Join the Community
                 </Link>
               </div>
             )}

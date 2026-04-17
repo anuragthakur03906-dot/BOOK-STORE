@@ -9,9 +9,9 @@ export default {
     extend: {
       colors: {
         base: 'var(--bg-base)',
-        brand: 'var(--primary-main)',
-        'text-main': 'var(--text-main)',
-        'text-muted': 'var(--text-muted)',
+        brand: 'rgb(var(--primary-main) / <alpha-value>)',
+        'text-main': 'rgb(var(--text-main) / <alpha-value>)',
+        'text-muted': 'rgb(var(--text-muted) / <alpha-value>)',
       },
       boxShadow: {
         'card': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',

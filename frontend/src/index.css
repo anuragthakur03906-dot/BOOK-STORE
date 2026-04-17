@@ -4,44 +4,57 @@
 
 @layer base {
   :root {
+    /* Emerald 500: 16 185 129 */
+    --primary-main: 16 185 129;
     --bg-base: #FFFFFF;
-    --primary-main: #007BFF; /* Azure */
-    --text-main: #1F2937;
-    --text-muted: #6B7280;
+    --text-main: 17 24 39;
+    --text-muted: 75 85 99;
   }
 
   .dark {
-    --bg-base: #121212; /* Night */
-    --primary-main: #357ABD; /* UCLA Blue */
-    --text-main: #F9FAFB;
-    --text-muted: #9CA3AF;
+    --bg-base: #000000;
+    --primary-main: 16 185 129;
+    --text-main: 249 250 251;
+    --text-muted: 156 163 175;
   }
 
   body {
     background-color: var(--bg-base);
-    color: var(--text-main);
-    @apply transition-colors duration-200;
+    color: rgb(var(--text-main));
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    @apply transition-colors duration-300 antialiased;
   }
 }
 
 @layer components {
-  /* Minimal utility wrappers if needed */
-  .transition-standard {
-    @apply transition-all duration-200 ease-in-out;
+  .btn-primary {
+    @apply bg-brand text-white px-6 py-2.5 rounded-xl font-bold shadow-lg shadow-brand/20 hover:opacity-90 active:scale-95 transition-all;
+  }
+  
+  .btn-outline {
+    @apply border-2 border-brand/20 text-brand px-6 py-2.5 rounded-xl font-bold hover:bg-brand/5 active:scale-95 transition-all outline-none;
+  }
+
+  .card {
+    @apply bg-white dark:bg-slate-900/50 border border-gray-100 dark:border-slate-800 rounded-[2rem] shadow-sm overflow-hidden transition-all duration-300;
+  }
+
+  .input-field {
+    @apply w-full bg-gray-50/50 dark:bg-slate-800/40 border-none rounded-2xl py-4 px-6 text-sm font-medium focus:ring-2 focus:ring-brand/20 transition-all text-brand outline-none;
   }
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar - Green Style */
 .custom-scrollbar::-webkit-scrollbar {
   @apply w-2;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  @apply bg-gray-100 dark:bg-gray-800 rounded;
+  @apply bg-transparent;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  @apply bg-gray-300 dark:bg-gray-600 rounded hover:bg-gray-400 dark:hover:bg-gray-500;
+  @apply bg-brand/20 rounded hover:bg-brand/40 transition-colors;
 }
 
 /* Smooth scrolling */

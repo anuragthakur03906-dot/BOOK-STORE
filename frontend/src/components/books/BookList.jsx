@@ -8,6 +8,7 @@ import LoadingSpinner from '../common/LoadingSpinner.jsx';
 import { FiPlus } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
+import BackButton from '../common/BackButton.jsx';
 
 const BookList = () => {
   const [books, setBooks] = useState([]);
@@ -16,7 +17,7 @@ const BookList = () => {
 
   const [filters, setFilters] = useState({
     page: 1,
-    limit: 6,
+    limit: 12,
     search: '',
     genre: '',
     minPrice: 0,
@@ -64,7 +65,7 @@ const BookList = () => {
   const handleClearFilters = useCallback(() => {
     setFilters({
       page: 1,
-      limit: 6,
+      limit: 12,
       search: '',
       genre: '',
       minPrice: 0,
@@ -80,27 +81,30 @@ const BookList = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-base transition-colors duration-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        {/* Header */}
-        <div className="mb-10 text-center md:text-left">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            <div>
-              <h1 className="text-4xl font-black text-text-main tracking-tight">Our Collection</h1>
-              <p className="text-text-muted mt-2">Explore {pagination?.totalBooks || 0} unique titles available today.</p>
+    <div className="min-h-screen bg-base pb-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+        {/* Header Section */}
+        <div className="mb-10">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
+            <div className="flex flex-col gap-4">
+              <BackButton />
+              <div>
+                <h1 className="text-3xl font-bold text-text-main">Library Collection</h1>
+                <p className="text-text-muted mt-1 font-medium italic">Discover {pagination?.totalBooks || 0} unique titles available.</p>
+              </div>
             </div>
             {user && (
               <Link
                 to="/books/new"
-                className="inline-flex items-center px-6 py-3 border border-transparent rounded-xl shadow-lg text-sm font-bold text-white bg-brand hover:opacity-90 transition-all shadow-brand/20"
+                className="btn-primary py-3 px-6 flex items-center justify-center gap-2 shadow-lg shadow-brand/10"
               >
-                <FiPlus className="mr-2 -ml-1 h-5 w-5" />
-                Add New Book
+                <FiPlus className="h-5 w-5" />
+                <span>Add New Book</span>
               </Link>
             )}
           </div>
 
-          <div className="mt-8">
+          <div className="w-full">
             <SearchBar
               onSearch={handleSearch}
               initialValue={filters.search}
@@ -108,30 +112,30 @@ const BookList = () => {
           </div>
         </div>
 
-        {/* Main Content */}
-        <div className="flex flex-col lg:flex-row gap-10">
-          {/* Filter Panel */}
-          <div className="lg:w-1/4">
+        {/* Main Layout */}
+        <div className="flex flex-col lg:flex-row gap-12">
+          {/* Left Sidebar: Filters */}
+          <aside className="lg:w-1/4">
             <FilterPanel
               filters={filters}
               onFilterChange={handleFilterChange}
               onClearFilters={handleClearFilters}
             />
-          </div>
+          </aside>
 
-          {/* Books List Section */}
-          <div className="lg:w-3/4">
-            {/* Sorting and Results count Bar */}
-            <div className="mb-8 p-4 bg-base/50 dark:bg-gray-800/20 rounded-xl border border-gray-100 dark:border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <span className="text-sm font-bold text-text-main">
-                {loading ? 'Searching...' : `${pagination?.totalBooks || 0} results found`}
-              </span>
-              <div className="flex items-center space-x-3">
-                <span className="text-xs text-text-muted font-bold uppercase">View</span>
+          {/* Right Main: Results */}
+          <main className="lg:w-3/4 space-y-8">
+            {/* View Controls & Info */}
+            <div className="p-4 bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-800 flex items-center justify-between shadow-sm">
+              <div className="flex items-center gap-2 text-sm font-bold text-text-muted px-2">
+                {loading ? 'Syncing...' : `${pagination?.totalBooks || 0} Matches Found`}
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-xs font-bold text-text-muted uppercase tracking-widest hidden sm:inline">Page Size</span>
                 <select
                   value={filters.limit}
                   onChange={(e) => handleFilterChange({ limit: parseInt(e.target.value) })}
-                  className="bg-base text-text-main pl-3 pr-10 py-1.5 text-sm border border-gray-200 dark:border-gray-800 dark:border-gray-700 focus:ring-brand focus:border-brand rounded-lg"
+                  className="bg-transparent text-sm font-bold text-text-main outline-none focus:text-brand cursor-pointer"
                 >
                   <option value="6">6</option>
                   <option value="12">12</option>
@@ -140,43 +144,39 @@ const BookList = () => {
               </div>
             </div>
 
-            {/* Content Area */}
+            {/* List Logic */}
             {loading ? (
-              <div className="flex justify-center items-center py-20">
-                <LoadingSpinner />
-              </div>
+              <div className="py-20 flex justify-center"><LoadingSpinner /></div>
             ) : books.length === 0 ? (
-              <div className="text-center py-24 bg-base/30 dark:bg-gray-800/10 rounded-3xl border-2 border-dashed border-gray-200 dark:border-gray-800 dark:border-gray-800">
-                <h3 className="text-2xl font-bold text-text-main mb-2">No luck today</h3>
-                <p className="text-text-muted">We couldn't find any books matching those criteria.</p>
+              <div className="text-center py-32 bg-gray-50/50 dark:bg-slate-900 border-2 border-dashed border-gray-200 dark:border-slate-800 rounded-[2.5rem]">
+                <h3 className="text-xl font-bold text-text-main mb-2">No matching results</h3>
+                <p className="text-text-muted mb-8 max-w-xs mx-auto">We couldn't find any books matching your specific criteria. Try resetting filters.</p>
                 <button 
                   onClick={handleClearFilters}
-                  className="mt-6 text-brand font-bold hover:underline"
+                  className="text-brand font-bold hover:underline underline-offset-4"
                 >
-                  Reset all filters
+                  Clear all filters
                 </button>
               </div>
             ) : (
-              <>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="space-y-12">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
                   {books.map((book) => (
-                    <div key={book._id}>
-                      <BookCard book={book} />
-                    </div>
+                      <BookCard key={book._id} book={book} />
                   ))}
                 </div>
 
                 {pagination && pagination.totalPages > 1 && (
-                  <div className="mt-12">
+                  <div className="flex justify-center pt-8 border-t border-gray-100 dark:border-slate-800">
                     <Pagination
                       pagination={pagination}
                       onPageChange={handlePageChange}
                     />
                   </div>
                 )}
-              </>
+              </div>
             )}
-          </div>
+          </main>
         </div>
       </div>
     </div>

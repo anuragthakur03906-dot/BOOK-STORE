@@ -3,321 +3,164 @@ import { useAuth } from '../../context/AuthContext.jsx';
 import { userAPI } from '../../services/api.js';
 import { 
   FiBook, FiDollarSign, FiStar, FiUser, FiPlus, 
-  FiTrendingUp, FiHeart, FiCalendar
+  FiTrendingUp, FiHeart, FiClock, FiLayers
 } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import BackButton from '../common/BackButton.jsx';
+import LoadingSpinner from '../common/LoadingSpinner.jsx';
 
 const UserDashboard = () => {
   const { user } = useAuth();
-  const [dashboardData, setDashboardData] = useState({
+  const [data, setData] = useState({
     profile: null,
     favorites: [],
-    stats: {
-      totalBooks: 0,
-      totalPrice: 0,
-      avgRating: 0,
-      favoriteGenre: ''
-    },
+    stats: { totalBooks: 0, totalPrice: 0, avgRating: 0, favoriteGenre: 'Reading' },
     myBooks: []
   });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (user) {
-      fetchDashboardData();
-    }
+    fetchDashboardData();
   }, [user]);
 
- const fetchDashboardData = async () => {
-  try {
-    const response = await userAPI.getDashboardData();
-    
-    if (response.data.success) {
-      const apiData = response.data.data || {};
-      
-      //  Ensure proper number formatting
-      const stats = apiData.stats || {};
-      
-      setDashboardData({
-        profile: apiData.profile || null,
-        favorites: apiData.favorites || [],
-        stats: {
-          totalBooks: Number(stats.totalBooks) || 0,
-          totalPrice: Number(stats.totalPrice) || 0,
-          avgRating: Number(stats.avgRating) || 0,
-          favoriteGenre: stats.favoriteGenre || 'N/A'
-        },
-        myBooks: (apiData.myBooks || []).map(book => ({
-          ...book,
-          price: Number(book.price) || 0,
-          rating: Number(book.rating) || 0
-        }))
-      });
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+      const res = await userAPI.getDashboardData();
+      if (res.data.success) {
+        const d = res.data.data;
+        setData({
+          profile: d.profile || null,
+          favorites: d.favorites || [],
+          stats: {
+            totalBooks: Number(d.stats?.totalBooks) || 0,
+            totalPrice: Number(d.stats?.totalPrice) || 0,
+            avgRating: Number(d.stats?.avgRating) || 0,
+            favoriteGenre: d.stats?.favoriteGenre || 'Reading'
+          },
+          myBooks: d.myBooks || []
+        });
+      }
+    } catch (err) {
+      toast.error('Dashboard synchronization failed');
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error('Failed to load dashboard data:', error);
-    toast.error('Failed to load dashboard data');
-  } finally {
-    setLoading(false);
-  }
-};
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
-
-  const formatCurrency = (value) => {
-    return parseFloat(value || 0).toFixed(2);
   };
 
-  const formatRating = (value) => {
-    return parseFloat(value || 0).toFixed(1);
-  };
+  if (loading && !data.profile) return <LoadingSpinner fullScreen />;
 
   return (
-    <div className="min-h-screen bg-base py-8">
+    <div className="min-h-screen bg-base py-12 transition-colors duration-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-text-main">
-            User Dashboard
-          </h1>
-          <p className="text-text-muted mt-2">
-            Welcome back, {dashboardData.profile?.name || user?.name || 'User'}!
-            Here's your reading journey.
-          </p>
+        
+        {/* Header Section */}
+        <div className="mb-10 flex flex-col gap-6">
+           <BackButton />
+           <div>
+              <h1 className="text-3xl font-bold text-text-main leading-tight">Member Dashboard</h1>
+              <p className="text-text-muted mt-1 font-medium italic">Welcome, {data.profile?.name || user?.name}. Explore your library stats and records.</p>
+           </div>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="card p-6">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <FiBook className="h-8 w-8 text-brand" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-text-muted">Your Books</p>
-                <p className="text-2xl font-semibold text-text-main">
-                  {dashboardData.stats.totalBooks || 0}
-                </p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="card p-6">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <FiDollarSign className="h-8 w-8 text-green-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-text-muted">Total Value</p>
-                <p className="text-2xl font-semibold text-text-main">
-                  ${formatCurrency(dashboardData.stats.totalPrice)}
-                </p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="card p-6">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <FiStar className="h-8 w-8 text-yellow-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-text-muted">Avg Rating</p>
-                <p className="text-2xl font-semibold text-text-main">
-                  {formatRating(dashboardData.stats.avgRating)}
-                </p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="card p-6">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <FiTrendingUp className="h-8 w-8 text-purple-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-text-muted">Favorite Genre</p>
-                <p className="text-2xl font-semibold text-text-main">
-                  {dashboardData.stats.favoriteGenre || 'N/A'}
-                </p>
-              </div>
-            </div>
-          </div>
+        {/* Dynamic Analytics Deck */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+           <StatMetric icon={<FiBook />} label="Catalogued Books" value={data.stats.totalBooks} color="brand" />
+           <StatMetric icon={<FiDollarSign />} label="Investment Value" value={`$${data.stats.totalPrice.toFixed(2)}`} color="green" />
+           <StatMetric icon={<FiStar />} label="Average Rating" value={data.stats.avgRating.toFixed(1)} color="yellow" />
+           <StatMetric icon={<FiTrendingUp />} label="Top Genre" value={data.stats.favoriteGenre} color="purple" />
         </div>
 
-        {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-          <div className="lg:col-span-2">
-            <div className="card">
-              <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800">
-                <div className="flex justify-between items-center">
-                  <h2 className="text-xl font-semibold text-text-main">Your Books</h2>
-                  <Link
-                    to="/books/new"
-                    className="inline-flex items-center px-4 py-2 bg-brand text-white rounded-lg hover:bg-blue-700 transition-colors"
-                  >
-                    <FiPlus className="mr-2 h-4 w-4" />
-                    Add Book
-                  </Link>
-                </div>
-              </div>
-              
-              <div className="p-6">
-                {dashboardData.myBooks.length === 0 ? (
-                  <div className="text-center py-12">
-                    <p className="text-text-muted">You haven't added any books yet.</p>
-                    <Link
-                      to="/books/new"
-                      className="inline-block mt-4 px-6 py-2 bg-brand text-white rounded-lg hover:bg-blue-700 transition-colors"
-                    >
-                      Add Your First Book
-                    </Link>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {dashboardData.myBooks.slice(0, 5).map((book) => (
-                      <div key={book._id} className="flex items-center justify-between p-4 hover:bg-base rounded-lg">
-                        <div className="flex-1">
-                          <h3 className="font-semibold text-text-main">{book.title || 'Unknown Book'}</h3>
-                          <p className="text-sm text-text-muted mt-1">by {book.author || 'Unknown Author'}</p>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-brand font-semibold">
-                            ${formatCurrency(book.price)}
-                          </div>
-                          <div className="flex items-center space-x-1 mt-1">
-                            <FiStar className="h-3 w-3 text-yellow-500" />
-                            <span className="text-sm text-text-muted">
-                              {formatRating(book.rating)}
-                            </span>
-                          </div>
-                        </div>
+        {/* Action Center Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+           {/* Section: Your Publications */}
+           <div className="lg:col-span-2 space-y-8">
+              <div className="bg-white dark:bg-slate-900 rounded-[2rem] border border-gray-100 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col">
+                 <div className="px-8 py-6 border-b border-gray-50 dark:border-slate-800 flex justify-between items-center">
+                    <h2 className="font-bold text-text-main text-lg uppercase tracking-tight">Your Contributions</h2>
+                    <Link to="/books/new" className="px-5 py-2 btn-primary text-xs flex items-center gap-2"><FiPlus /> Add Entry</Link>
+                 </div>
+                 <div className="p-8 space-y-4">
+                    {data.myBooks.length > 0 ? data.myBooks.slice(0, 5).map(b => (
+                      <div key={b._id} className="flex items-center justify-between p-5 bg-gray-50/50 dark:bg-slate-800/20 rounded-2xl hover:bg-white dark:hover:bg-slate-800 transition-all border border-transparent hover:border-gray-100 dark:hover:border-slate-700">
+                         <div className="flex items-center gap-4 min-w-0">
+                            <div className="w-10 h-10 bg-brand/10 text-brand rounded-xl flex items-center justify-center font-bold text-lg shadow-inner"><FiLayers /></div>
+                            <div className="truncate">
+                               <div className="text-sm font-bold text-text-main truncate">{b.title}</div>
+                               <div className="text-[10px] text-text-muted font-bold uppercase tracking-widest">{b.genre}</div>
+                            </div>
+                         </div>
+                         <div className="text-right">
+                            <div className="text-sm font-bold text-brand">${b.price?.toFixed(2)}</div>
+                            <div className="text-[10px] font-bold text-yellow-500">★ {b.rating?.toFixed(1)}</div>
+                         </div>
                       </div>
-                    ))}
-                  </div>
-                )}
-                
-                {dashboardData.myBooks.length > 5 && (
-                  <div className="mt-6 text-center">
-                    <Link
-                      to="/books"
-                      className="text-brand hover:text-blue-800 font-medium"
-                    >
-                      View all books →
-                    </Link>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-          
-          <div className="space-y-8">
-            {/* Profile Card */}
-            <div className="card">
-              <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800">
-                <h2 className="text-xl font-semibold text-text-main">Your Profile</h2>
-              </div>
-              
-              <div className="p-6">
-                <div className="flex items-center space-x-4 mb-6">
-                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
-                    <FiUser className="h-8 w-8 text-brand" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-text-main">
-                      {dashboardData.profile?.name || user?.name || 'User'}
-                    </h3>
-                    <p className="text-text-muted">
-                      {dashboardData.profile?.email || user?.email || 'No email'}
-                    </p>
-                    <span className="inline-block mt-1 px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">
-                      {dashboardData.profile?.role || user?.role || 'user'}
-                    </span>
-                  </div>
-                </div>
-                
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-sm text-text-muted">Member Since</p>
-                    <p className="font-medium">
-                      {dashboardData.profile?.createdAt 
-                        ? new Date(dashboardData.profile.createdAt).toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric'
-                          })
-                        : 'N/A'}
-                    </p>
-                  </div>
-                  
-                  <div>
-                    <Link
-                      to="/profile"
-                      className="inline-block w-full text-center px-4 py-2 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors"
-                    >
-                      Edit Profile
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            {/* Favorites Card */}
-            <div className="card">
-              <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800">
-                <div className="flex justify-between items-center">
-                  <h2 className="text-xl font-semibold text-text-main">Favorites</h2>
-                  <FiHeart className="h-5 w-5 text-red-500" />
-                </div>
-              </div>
-              
-              <div className="p-6">
-                {dashboardData.favorites.length === 0 ? (
-                  <p className="text-text-muted text-center py-4">No favorite books yet</p>
-                ) : (
-                  <div className="space-y-3">
-                    {dashboardData.favorites.slice(0, 3).map((book) => (
-                      <div key={book._id} className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-red-100 rounded flex items-center justify-center">
-                          <FiBook className="h-5 w-5 text-red-600" />
-                        </div>
-                        <div className="flex-1">
-                          <p className="font-medium text-sm text-text-main truncate">
-                            {book.title || 'Unknown Book'}
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            by {book.author || 'Unknown Author'}
-                          </p>
-                        </div>
+                    )) : (
+                      <div className="text-center py-20 flex flex-col items-center gap-6">
+                         <div className="p-4 bg-gray-50 dark:bg-slate-800 rounded-full text-text-muted"><FiLayers className="h-10 w-10 opacity-20" /></div>
+                         <p className="text-text-muted font-medium italic">You haven't added any books to our system yet.</p>
+                         <Link to="/books/new" className="text-brand font-bold hover:underline underline-offset-4 decoration-2">Record your first book</Link>
                       </div>
-                    ))}
-                  </div>
-                )}
-                
-                {dashboardData.favorites.length > 3 && (
-                  <div className="mt-4 text-center">
-                    <Link
-                      to="/favorites"
-                      className="text-brand hover:text-blue-800 text-sm font-medium"
-                    >
-                      View all favorites →
-                    </Link>
-                  </div>
-                )}
+                    )}
+                 </div>
+                 {data.myBooks.length > 5 && (
+                   <div className="px-8 py-4 bg-gray-50/50 dark:bg-slate-800/10 border-t border-gray-50 dark:border-slate-800 text-center">
+                      <Link to="/books" className="text-xs font-bold text-brand hover:underline">Browse Full Inventory Dashboard</Link>
+                   </div>
+                 )}
               </div>
-            </div>
-          </div>
+           </div>
+
+           {/* Sidebar: Profile & Community */}
+           <div className="space-y-8">
+              {/* Account QuickView */}
+              <div className="bg-white dark:bg-slate-900 rounded-[2rem] border border-gray-100 dark:border-slate-800 shadow-sm p-8">
+                 <div className="flex flex-col items-center text-center">
+                    <div className="w-20 h-20 bg-brand/10 text-brand rounded-[1.5rem] flex items-center justify-center text-3xl font-bold mb-6 shadow-xl shadow-brand/10">
+                       {user?.name?.charAt(0)}
+                    </div>
+                    <h3 className="text-xl font-bold text-text-main">{data.profile?.name || user?.name}</h3>
+                    <p className="text-sm text-text-muted font-medium mb-8 italic">{data.profile?.email}</p>
+                    <Link to="/profile" className="w-full py-3 btn-outline text-xs flex items-center justify-center gap-2"><FiUser /> Edit Account</Link>
+                 </div>
+              </div>
+
+              {/* Favorites Snapshot */}
+              <div className="bg-white dark:bg-slate-900 rounded-[2rem] border border-gray-100 dark:border-slate-800 shadow-sm overflow-hidden">
+                 <div className="px-8 py-5 border-b border-gray-50 dark:border-slate-800 flex justify-between items-center bg-red-50/5">
+                    <h4 className="font-bold text-text-main text-xs uppercase tracking-widest">Saved Reading</h4>
+                    <FiHeart className="text-red-500" />
+                 </div>
+                 <div className="p-8 space-y-4">
+                    {data.favorites.length > 0 ? data.favorites.slice(0, 3).map(b => (
+                       <div key={b._id} className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-red-100 dark:bg-red-950/40 text-red-500 rounded-lg flex items-center justify-center text-xs shadow-sm"><FiBook /></div>
+                          <div className="min-w-0">
+                             <div className="text-xs font-bold text-text-main truncate">{b.title}</div>
+                             <div className="text-[10px] text-text-muted font-medium truncate">{b.author}</div>
+                          </div>
+                       </div>
+                    )) : <p className="text-center text-xs text-text-muted italic py-4">No favorites saved.</p>}
+                 </div>
+              </div>
+           </div>
         </div>
       </div>
     </div>
   );
 };
+
+const StatMetric = ({ icon, label, value, color }) => (
+  <div className="bg-white dark:bg-slate-900 p-8 rounded-[2rem] border border-gray-100 dark:border-slate-800 shadow-sm">
+    <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-6 text-xl shadow-inner ${
+       color === 'brand' ? 'bg-brand/10 text-brand' : color === 'green' ? 'bg-green-500/10 text-green-600' : color === 'yellow' ? 'bg-yellow-500/10 text-yellow-600' : 'bg-purple-500/10 text-purple-600'
+    }`}>
+       {icon}
+    </div>
+    <div className="text-xs font-bold text-text-muted uppercase tracking-widest mb-1">{label}</div>
+    <div className="text-2xl font-bold text-text-main tracking-tight">{value}</div>
+  </div>
+);
 
 export default UserDashboard;

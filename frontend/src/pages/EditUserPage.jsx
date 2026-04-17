@@ -2,13 +2,15 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import { adminAPI } from '../services/api.js';
-import { FiUser, FiMail, FiShield, FiSave, FiX, FiArrowLeft } from 'react-icons/fi';
+import { FiUser, FiMail, FiShield, FiSave, FiCheck, FiX, FiLayers } from 'react-icons/fi';
 import toast from 'react-hot-toast';
+import BackButton from '../components/common/BackButton.jsx';
+import LoadingSpinner from '../components/common/LoadingSpinner.jsx';
 
 const EditUserPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user: currentUser } = useAuth();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -26,21 +28,17 @@ const EditUserPage = () => {
     try {
       setLoading(true);
       const response = await adminAPI.getUserById(id);
-      
       if (response.data.success) {
-        const userData = response.data.data;
+        const u = response.data.data;
         setFormData({
-          name: userData.name || '',
-          email: userData.email || '',
-          roleName: userData.roleName || 'user',
-          isActive: userData.isActive !== false
+          name: u.name || '',
+          email: u.email || '',
+          roleName: u.roleName || 'user',
+          isActive: u.isActive
         });
-      } else {
-        toast.error('User not found');
-        navigate('/admin/users');
       }
     } catch (error) {
-      toast.error('Failed to load user data');
+      toast.error('Identity record retrieval failed');
       navigate('/admin/users');
     } finally {
       setLoading(false);
@@ -49,198 +47,135 @@ const EditUserPage = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value
+    setFormData(prev => ({ 
+      ...prev, 
+      [name]: type === 'checkbox' ? checked : value 
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Validate
     if (!formData.name.trim() || !formData.email.trim()) {
-      toast.error('Please fill in all required fields');
+      toast.error('Identity validation failed');
       return;
     }
 
     setSaving(true);
-    
     try {
       const response = await adminAPI.updateUser(id, formData);
-      
       if (response.data.success) {
-        toast.success('User updated successfully');
+        toast.success('Identity metadata updated');
         navigate(`/admin/users/${id}`);
       }
     } catch (error) {
-      toast.error(error.response?.data?.error || 'Failed to update user');
+      toast.error(error.response?.data?.error || 'Administrative commit failed');
     } finally {
       setSaving(false);
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
+  if (loading) return <LoadingSpinner fullScreen />;
 
   return (
-    <div className="min-h-screen bg-base py-8">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center space-x-4 mb-6">
-            <Link
-              to={`/admin/users/${id}`}
-              className="p-2 text-text-muted hover:text-text-main hover:bg-gray-100 rounded-lg"
-            >
-              <FiArrowLeft className="h-5 w-5" />
-            </Link>
-            <div>
-              <h1 className="text-3xl font-bold text-text-main">Edit User</h1>
-              <p className="text-text-muted mt-1">Update user information</p>
-            </div>
-          </div>
+    <div className="min-h-screen bg-base py-12 px-4 transition-colors duration-200">
+      <div className="max-w-xl mx-auto">
+        <div className="mb-10">
+          <BackButton />
         </div>
 
-        {/* Form */}
-        <div className="card">
-          <form onSubmit={handleSubmit} className="p-6">
-            <div className="space-y-6">
-              {/* Name Field */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  <FiUser className="inline mr-2" />
-                  Full Name *
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Enter full name"
-                />
-              </div>
+        <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-xl border border-gray-50 dark:border-slate-800 p-10 md:p-14">
+          <div className="mb-10 flex flex-col items-center">
+             <div className="w-16 h-16 bg-brand/10 text-brand rounded-[1.25rem] flex items-center justify-center text-3xl mb-4 font-bold shadow-inner">
+                {formData.name?.charAt(0)}
+             </div>
+             <h1 className="text-3xl font-bold text-text-main text-center">Modify Identity</h1>
+             <p className="text-text-muted mt-2 font-medium italic">Adjust metadata for user ID {id.substring(0,8)}...</p>
+          </div>
 
-              {/* Email Field */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  <FiMail className="inline mr-2" />
-                  Email Address *
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Enter email address"
-                />
-              </div>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-5">
+               <div>
+                  <label className="text-[10px] font-bold text-text-muted uppercase tracking-[0.2em] mb-2 block px-2">Official Identity</label>
+                  <div className="relative">
+                    <FiUser className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted" />
+                    <input
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      className="w-full bg-gray-50 dark:bg-slate-800/50 border-none rounded-2xl py-4 pl-12 pr-4 text-sm font-medium focus:ring-2 focus:ring-brand/20 transition-all text-text-main"
+                    />
+                  </div>
+               </div>
 
-              {/* Role Field */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  <FiShield className="inline mr-2" />
-                  User Role
-                </label>
-                <select
-                  name="roleName"
-                  value={formData.roleName}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  disabled={id === user?._id} // Can't change own role
-                >
-                  <option value="user">User</option>
-                  <option value="manager">Manager</option>
-                  <option value="admin">Admin</option>
-                </select>
-                {id === user?._id && (
-                  <p className="mt-1 text-sm text-gray-500">
-                    You cannot change your own role
-                  </p>
-                )}
-              </div>
+               <div>
+                  <label className="text-[10px] font-bold text-text-muted uppercase tracking-[0.2em] mb-2 block px-2">Communications Hub</label>
+                  <div className="relative">
+                    <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted" />
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      className="w-full bg-gray-50 dark:bg-slate-800/50 border-none rounded-2xl py-4 pl-12 pr-4 text-sm font-medium focus:ring-2 focus:ring-brand/20 transition-all text-text-main"
+                    />
+                  </div>
+               </div>
 
-              {/* Status Field */}
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  name="isActive"
-                  id="isActive"
-                  checked={formData.isActive}
-                  onChange={handleChange}
-                  disabled={id === user?._id} // Can't deactivate yourself
-                  className="h-4 w-4 text-brand rounded focus:ring-blue-500"
-                />
-                <label htmlFor="isActive" className="ml-2 text-sm text-gray-700">
-                  Active Account
-                </label>
-                {id === user?._id && (
-                  <span className="ml-2 text-sm text-gray-500">
-                    (Cannot deactivate your own account)
-                  </span>
-                )}
-              </div>
+               <div>
+                  <label className="text-[10px] font-bold text-text-muted uppercase tracking-[0.2em] mb-2 block px-2">Authorization Layer</label>
+                  <div className="relative">
+                    <FiShield className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted" />
+                    <select
+                      name="roleName"
+                      value={formData.roleName}
+                      onChange={handleChange}
+                      disabled={id === currentUser?._id}
+                      className="w-full bg-gray-50 dark:bg-slate-800/50 border-none rounded-2xl py-4 pl-12 pr-4 text-sm font-bold focus:ring-2 focus:ring-brand/20 transition-all text-text-main appearance-none cursor-pointer disabled:opacity-50"
+                    >
+                      <option value="user">Standard User</option>
+                      <option value="manager">Content Manager</option>
+                      <option value="admin">Administrator</option>
+                    </select>
+                  </div>
+                  {id === currentUser?._id && <p className="text-[10px] text-brand/60 mt-2 font-bold uppercase italic px-2 tracking-tight">Self-role modification restricted</p>}
+               </div>
 
-              {/* Action Buttons */}
-              <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200 dark:border-gray-800">
-                <Link
-                  to={`/admin/users/${id}`}
-                  className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-base"
-                >
-                  <FiX className="inline mr-2" />
-                  Cancel
-                </Link>
-                <button
-                  type="submit"
-                  disabled={saving}
-                  className="px-6 py-2 bg-brand text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <FiSave className="inline mr-2" />
-                  {saving ? 'Saving...' : 'Save Changes'}
-                </button>
-              </div>
+               <div className="pt-4">
+                  <label className="text-[10px] font-bold text-text-muted uppercase tracking-[0.2em] mb-4 block px-2">Account State</label>
+                  <div className="flex items-center gap-4">
+                     <button
+                        type="button"
+                        onClick={() => id !== currentUser?._id && setFormData(p => ({ ...p, isActive: true }))}
+                        className={`flex-1 py-3 rounded-xl border-2 transition-all flex items-center justify-center gap-2 font-bold text-xs ${
+                          formData.isActive ? 'bg-green-500/10 border-green-500 text-green-600' : 'bg-transparent border-gray-100 dark:border-slate-800 text-text-muted opacity-40'
+                        } ${id === currentUser?._id ? 'cursor-not-allowed' : ''}`}
+                     >
+                        <FiCheck /> Active
+                     </button>
+                     <button
+                        type="button"
+                        onClick={() => id !== currentUser?._id && setFormData(p => ({ ...p, isActive: false }))}
+                        className={`flex-1 py-3 rounded-xl border-2 transition-all flex items-center justify-center gap-2 font-bold text-xs ${
+                          !formData.isActive ? 'bg-red-500/10 border-red-500 text-red-600' : 'bg-transparent border-gray-100 dark:border-slate-800 text-text-muted opacity-40'
+                        } ${id === currentUser?._id ? 'cursor-not-allowed' : ''}`}
+                     >
+                        <FiX /> Suspended
+                     </button>
+                  </div>
+               </div>
             </div>
+
+            <button
+              type="submit"
+              disabled={saving}
+              className="w-full py-4 bg-brand text-white font-bold rounded-2xl shadow-xl shadow-brand/20 hover:opacity-90 transition-all transform active:scale-[0.98] mt-6 flex items-center justify-center gap-2"
+            >
+              <FiSave />
+              {saving ? 'Committing Changes...' : 'Authorize Metadata Update'}
+            </button>
           </form>
         </div>
-
-        {/* Danger Zone */}
-        {user?.roleName === 'admin' && id !== user?._id && (
-          <div className="card mt-8 border border-red-200">
-            <div className="p-6">
-              <h3 className="text-lg font-semibold text-red-800 mb-4">Danger Zone</h3>
-              <p className="text-sm text-text-muted mb-4">
-                Deleting a user will permanently remove their account and all associated data.
-                This action cannot be undone.
-              </p>
-              <button
-                onClick={() => {
-                  if (window.confirm('Are you sure you want to delete this user?')) {
-                    adminAPI.deleteUser(id)
-                      .then(() => {
-                        toast.success('User deleted successfully');
-                        navigate('/admin/users');
-                      })
-                      .catch(error => {
-                        toast.error('Failed to delete user');
-                      });
-                  }
-                }}
-                className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-              >
-                Delete User
-              </button>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

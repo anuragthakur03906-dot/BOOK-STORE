@@ -4,6 +4,11 @@ import { FiX } from 'react-icons/fi';
 const SearchBar = ({ onSearch, initialValue = '' }) => {
   const [searchTerm, setSearchTerm] = useState(initialValue);
 
+  // Sync state if initialValue changes (e.g., from 'Clear Filters' button)
+  useEffect(() => {
+    setSearchTerm(initialValue);
+  }, [initialValue]);
+
   useEffect(() => {
     const debounceTimer = setTimeout(() => {
       onSearch(searchTerm);

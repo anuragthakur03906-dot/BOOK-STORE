@@ -1,24 +1,16 @@
-import { useNavigate } from 'react-router-dom';
 import BookForm from '../components/books/BookForm.jsx';
+import BackButton from '../components/common/BackButton.jsx';
 
 const AddBookPage = () => {
-  const navigate = useNavigate();
-
   return (
-    <>
-      {/* Back Button */}
-      <div className="bg-base border-b border-gray-200 dark:border-gray-800">
-        <div className="max-w-4xl mx-auto px-4 py-4">
-          <button
-            onClick={() => navigate(-1)}
-            className="text-brand hover:text-blue-800 font-medium flex items-center transition-colors"
-          >
-            ← Go Back
-          </button>
+    <div className="bg-base min-h-screen">
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <BackButton />
+        <div className="mt-8">
+          <BookForm isEdit={false} />
         </div>
       </div>
-      <BookForm isEdit={false} />
-    </>
+    </div>
   );
 };
 

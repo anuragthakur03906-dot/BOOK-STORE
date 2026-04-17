@@ -4,13 +4,17 @@ import { adminAPI, bookAPI } from '../../services/api.js';
 import { 
   FiBook, FiUsers, FiDollarSign, FiTrendingUp,
   FiEdit, FiTrash2, FiEye, FiPlus, FiUser,
-  FiRefreshCw, FiFilter // using FiRefreshCw icon
+  FiRefreshCw, FiFilter, FiShield, FiInfo
 } from 'react-icons/fi';
 import toast from 'react-hot-toast';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import BackButton from '../common/BackButton.jsx';
+import ConfirmModal from '../common/ConfirmModal.jsx';
+import LoadingSpinner from '../common/LoadingSpinner.jsx';
 
 const ManagerDashboard = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [stats, setStats] = useState({
     totalBooks: 0,
     totalValue: 0,
@@ -20,353 +24,217 @@ const ManagerDashboard = () => {
   const [recentBooks, setRecentBooks] = useState([]);
   const [recentUsers, setRecentUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  
+  // Modal state
+  const [modal, setModal] = useState({ isOpen: false, bookId: null, title: '' });
 
   useEffect(() => {
     fetchDashboardData();
   }, []);
 
- const fetchDashboardData = async () => {
-  try {
-    setLoading(true);
-    
-    //  Get ACTUAL system stats
-    const statsRes = await adminAPI.getSystemStats();
-    
-    //  Get ACTUAL users
-    const usersRes = await adminAPI.getAllUsers({ page: 1, limit: 5 });
-    
-    //  Get ACTUAL books
-    const booksRes = await adminAPI.getAllBooks({ page: 1, limit: 10 });
-    
-    if (statsRes.data.success) {
-      const data = statsRes.data.data;
-      setStats({
-        totalBooks: data.books.total || 0,
-        totalValue: data.books.totalValue || 0,
-        booksAddedToday: data.books.booksAddedToday || 0,
-        activeUsers: data.users.active || 0
-      });
-    }
-
-    if (usersRes.data.success) {
-      setRecentUsers(usersRes.data.data || []);
-    }
-
-    if (booksRes.data.success) {
-      setRecentBooks(booksRes.data.data || []);
-    }
-  } catch (error) {
-    toast.error('Failed to load dashboard data');
-  } finally {
-    setLoading(false);
-  }
-};
-  const handleDeleteBook = async (bookId, bookTitle) => {
-    if (!window.confirm(`Are you sure you want to delete book "${bookTitle}"?`)) {
-      return;
-    }
-
+  const fetchDashboardData = async () => {
     try {
-      const response = await adminAPI.deleteBook(bookId);
-      if (response.data.success) {
-        toast.success('Book deleted successfully');
-        fetchDashboardData();
+      setLoading(true);
+      const [statsRes, usersRes, booksRes] = await Promise.all([
+        adminAPI.getSystemStats(),
+        adminAPI.getAllUsers({ page: 1, limit: 5 }),
+        adminAPI.getAllBooks({ page: 1, limit: 5 })
+      ]);
+      
+      if (statsRes.data.success) {
+        const d = statsRes.data.data;
+        setStats({
+          totalBooks: d.books.total || 0,
+          totalValue: d.books.totalValue || 0,
+          booksAddedToday: d.books.booksAddedToday || 0,
+          activeUsers: d.users.active || 0
+        });
       }
+      if (usersRes.data.success) setRecentUsers(usersRes.data.data || []);
+      if (booksRes.data.success) setRecentBooks(booksRes.data.data || []);
+      
     } catch (error) {
-      toast.error(error.response?.data?.error || 'Failed to delete book');
+      toast.error('Sync failed. Checking connectivity.');
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
+  const executeDeleteBook = async () => {
+    try {
+      const response = await adminAPI.deleteBook(modal.bookId);
+      if (response.data.success) {
+        toast.success(`'${modal.title}' removed from catalogue`);
+        fetchDashboardData();
+      }
+    } catch (error) {
+      toast.error('Access verification failed');
+    } finally {
+      setModal({ isOpen: false, bookId: null, title: '' });
+    }
+  };
+
+  if (loading && stats.totalBooks === 0) return <LoadingSpinner fullScreen />;
 
   return (
-    <div className="min-h-screen bg-base py-8">
+    <div className="min-h-screen bg-base py-12 transition-colors duration-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-3xl font-bold text-text-main">
-                Manager Dashboard
-              </h1>
-              <p className="text-text-muted mt-2">
-                Welcome back, {user?.name}! Manage books and view reports.
-              </p>
-            </div>
-            <button
-              onClick={fetchDashboardData}
-              className="inline-flex items-center px-4 py-2 bg-brand text-white rounded-lg hover:bg-blue-700"
-            >
-              <FiRefreshCw className="mr-2" />
-              Refresh
-            </button>
-          </div>
+        
+        {/* Header Block */}
+        <div className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+           <div className="flex flex-col gap-6">
+              <BackButton />
+              <div>
+                <h1 className="text-3xl font-bold text-text-main">Management Dashboard</h1>
+                <p className="text-text-muted mt-1 font-medium italic">Content and logistics oversight for Manager {user?.name}.</p>
+              </div>
+           </div>
+           <button
+             onClick={fetchDashboardData}
+             className="px-6 py-2.5 bg-brand text-white font-bold rounded-xl shadow-lg shadow-brand/20 hover:opacity-90 flex items-center gap-2 transition-all"
+           >
+             <FiRefreshCw className={loading ? 'animate-spin' : ''} />
+             Sync Portfolio
+           </button>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="card p-6">
-            <div className="flex items-center">
-              <div className="flex-shrink-0 bg-blue-100 p-3 rounded-lg">
-                <FiBook className="h-6 w-6 text-brand" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-text-muted">Total Books</p>
-                <p className="text-2xl font-semibold text-text-main">
-                  {stats.totalBooks}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="card p-6">
-            <div className="flex items-center">
-              <div className="flex-shrink-0 bg-green-100 p-3 rounded-lg">
-                <FiDollarSign className="h-6 w-6 text-green-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-text-muted">Total Value</p>
-                <p className="text-2xl font-semibold text-text-main">
-                  ${stats.totalValue.toFixed(2)}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="card p-6">
-            <div className="flex items-center">
-              <div className="flex-shrink-0 bg-purple-100 p-3 rounded-lg">
-                <FiTrendingUp className="h-6 w-6 text-purple-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-text-muted">Added Today</p>
-                <p className="text-2xl font-semibold text-text-main">
-                  {stats.booksAddedToday}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="card p-6">
-            <div className="flex items-center">
-              <div className="flex-shrink-0 bg-yellow-100 p-3 rounded-lg">
-                <FiUsers className="h-6 w-6 text-yellow-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-text-muted">Active Users</p>
-                <p className="text-2xl font-semibold text-text-main">
-                  {stats.activeUsers}
-                </p>
-              </div>
-            </div>
-          </div>
+        {/* Intelligence Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            <InfoCard icon={<FiBook />} label="Catalog Size" value={stats.totalBooks} color="brand" />
+            <InfoCard icon={<FiDollarSign />} label="Inventory Worth" value={`$${stats.totalValue.toFixed(2)}`} color="green" />
+            <InfoCard icon={<FiTrendingUp />} label="Today's Intake" value={stats.booksAddedToday} color="purple" />
+            <InfoCard icon={<FiUsers />} label="Active Members" value={stats.activeUsers} color="yellow" />
         </div>
 
-        {/* Quick Actions */}
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold text-text-main mb-4">Quick Actions</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Link
-              to="/books/new"
-              className="card p-4 text-center hover:shadow-md transition-shadow"
-            >
-              <FiPlus className="h-8 w-8 text-green-600 mx-auto mb-2" />
-              <span className="font-medium">Add New Book</span>
-            </Link>
-
-            <Link
-              to="/admin/books"
-              className="card p-4 text-center hover:shadow-md transition-shadow"
-            >
-              <FiBook className="h-8 w-8 text-brand mx-auto mb-2" />
-              <span className="font-medium">Manage Books</span>
-            </Link>
-
-            <Link
-              to="/admin/users"
-              className="card p-4 text-center hover:shadow-md transition-shadow"
-            >
-              <FiUsers className="h-8 w-8 text-purple-600 mx-auto mb-2" />
-              <span className="font-medium">View Users</span>
-            </Link>
-          </div>
+        {/* Global Quick Utility */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <UtilityLink to="/books/new" icon={<FiPlus />} title="Ingest New Title" color="green" />
+            <UtilityLink to="/admin/books" icon={<FiBook />} title="Manage Inventory" color="brand" />
+            <UtilityLink to="/admin/users" icon={<FiUsers />} title="View Member List" color="purple" />
         </div>
 
-        {/* Recent Users (Read-Only for Manager) */}
-        <div className="mb-8 card">
-          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800">
-            <div className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold text-text-main">Recent Users (View Only)</h3>
-              <Link
-                to="/admin/users"
-                className="text-sm text-brand hover:text-blue-800"
-              >
-                View All →
-              </Link>
-            </div>
-          </div>
-          
-          <div className="p-6">
-            {recentUsers.length === 0 ? (
-              <p className="text-gray-500 text-center py-4">No users found</p>
-            ) : (
-              <div className="space-y-4">
-                {recentUsers.map((userItem) => (
-                  <div key={userItem._id} className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                        <FiUser className="h-5 w-5 text-brand" />
-                      </div>
-                      <div className="ml-3">
-                        <p className="font-medium text-text-main">{userItem.name}</p>
-                        <p className="text-sm text-gray-500">{userItem.email}</p>
-                      </div>
+        {/* Primary Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+           {/* Section: Catalogue Records */}
+           <div className="lg:col-span-2 space-y-8">
+              <div className="bg-white dark:bg-slate-900 rounded-[2rem] border border-gray-100 dark:border-slate-800 shadow-sm overflow-hidden">
+                 <div className="px-8 py-6 border-b border-gray-50 dark:border-slate-800 flex justify-between items-center">
+                    <h3 className="font-bold text-text-main text-lg tracking-tight">RECENT CATALOGUE UPDATES</h3>
+                    <Link to="/admin/books" className="text-xs font-bold text-brand hover:underline">Full Inventory</Link>
+                 </div>
+                 <div className="p-8">
+                    <div className="overflow-x-auto">
+                       <table className="w-full">
+                          <thead>
+                             <tr className="border-b border-gray-50 dark:border-slate-800 text-[10px] font-bold text-text-muted uppercase tracking-widest text-left">
+                                <th className="px-4 py-3">Book Record</th>
+                                <th className="px-4 py-3">Pricing</th>
+                                <th className="px-4 py-3 text-right">Controls</th>
+                             </tr>
+                          </thead>
+                          <tbody className="divide-y divide-gray-50 dark:divide-slate-800/50">
+                             {recentBooks.map(b => (
+                               <tr key={b._id} className="hover:bg-gray-50/50 dark:hover:bg-slate-800/10 transition-colors">
+                                  <td className="px-4 py-5 flex items-center gap-3">
+                                     <div className="w-8 h-10 bg-gray-50 dark:bg-slate-800 rounded flex items-center justify-center text-xs text-text-muted italic"><FiBook /></div>
+                                     <div className="truncate max-w-[150px] md:max-w-xs">
+                                        <div className="text-sm font-bold text-text-main truncate">{b.title}</div>
+                                        <div className="text-[10px] text-text-muted font-medium">{b.author}</div>
+                                     </div>
+                                  </td>
+                                  <td className="px-4 py-5 text-sm font-bold text-brand">${b.price?.toFixed(2)}</td>
+                                  <td className="px-4 py-5 text-right">
+                                     <div className="flex justify-end gap-1">
+                                        <button onClick={() => navigate(`/books/${b._id}`)} className="p-1.5 text-text-muted hover:text-brand"><FiEye /></button>
+                                        <button onClick={() => navigate(`/books/${b._id}/edit`)} className="p-1.5 text-text-muted hover:text-brand"><FiEdit /></button>
+                                        <button onClick={() => setModal({ isOpen: true, bookId: b._id, title: b.title })} className="p-1.5 text-text-muted hover:text-red-500"><FiTrash2 /></button>
+                                     </div>
+                                  </td>
+                               </tr>
+                             ))}
+                          </tbody>
+                       </table>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <span className={`px-2 py-1 text-xs rounded-full ${
-                        userItem.roleName === 'admin' ? 'bg-red-100 text-red-800' :
-                        userItem.roleName === 'manager' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-blue-100 text-blue-800'
-                      }`}>
-                        {userItem.roleName}
-                      </span>
-                      <span className={`px-2 py-1 text-xs rounded-full ${
-                        userItem.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                      }`}>
-                        {userItem.isActive ? 'Active' : 'Inactive'}
-                      </span>
-                    </div>
-                  </div>
-                ))}
+                 </div>
               </div>
-            )}
-            <div className="mt-4 text-sm text-gray-500">
-              <FiFilter className="inline-block mr-1" />
-              Managers can only view users. Editing requires admin privileges.
-            </div>
-          </div>
-        </div>
+           </div>
 
-        {/* Recent Books with Actions */}
-        <div className="card">
-          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800">
-            <div className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold text-text-main">Recent Books</h3>
-              <div className="flex space-x-3">
-                <Link
-                  to="/admin/books"
-                  className="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
-                >
-                  Manage All
-                </Link>
-                <Link
-                  to="/books/new"
-                  className="inline-flex items-center px-4 py-2 bg-brand text-white rounded-lg hover:bg-blue-700"
-                >
-                  <FiPlus className="mr-2" />
-                  Add Book
-                </Link>
-              </div>
-            </div>
-          </div>
-          
-          <div className="p-6">
-            {recentBooks.length === 0 ? (
-              <p className="text-gray-500 text-center py-4">No books found</p>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead>
-                    <tr>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Book</th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Author</th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Added By</th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {recentBooks.map((book) => (
-                      <tr key={book._id}>
-                        <td className="px-4 py-3 font-medium">{book.title}</td>
-                        <td className="px-4 py-3">{book.author}</td>
-                        <td className="px-4 py-3 font-semibold">${book.price}</td>
-                        <td className="px-4 py-3">
-                          <div className="flex items-center">
-                            <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                              <FiUser className="h-4 w-4 text-text-muted" />
+           {/* Section: Member Insights */}
+           <div className="space-y-8">
+              <div className="bg-white dark:bg-slate-900 rounded-[2rem] border border-gray-100 dark:border-slate-800 shadow-sm overflow-hidden">
+                 <div className="px-8 py-6 border-b border-gray-50 dark:border-slate-800 flex justify-between items-center">
+                    <h3 className="font-bold text-text-main text-xs uppercase tracking-widest">Active Members</h3>
+                    <FiShield className="text-brand opacity-50" />
+                 </div>
+                 <div className="p-8 space-y-6">
+                    {recentUsers.map(u => (
+                      <div key={u._id} className="flex items-center gap-4">
+                         <div className="w-10 h-10 bg-brand/10 text-brand rounded-xl flex items-center justify-center font-bold text-xs"><FiUser /></div>
+                         <div className="flex-1 min-w-0">
+                            <div className="text-sm font-bold text-text-main truncate">{u.name}</div>
+                            <div className="flex gap-2">
+                               <span className={`text-[9px] font-bold uppercase tracking-widest px-1.5 rounded ${u.isActive ? 'bg-green-100 text-green-700 dark:bg-green-950/30' : 'bg-red-100 text-red-700 dark:bg-red-950/30'}`}>
+                                  {u.isActive ? 'Clear' : 'Banned'}
+                               </span>
+                               <span className="text-[9px] font-bold uppercase text-text-muted italic">{u.roleName}</span>
                             </div>
-                            <div className="ml-2">
-                              <div className="text-sm font-medium">{book.addedBy?.name || 'Unknown'}</div>
-                              <div className="text-xs text-gray-500">{book.addedBy?.roleName || 'User'}</div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="flex space-x-2">
-                            <Link
-                              to={`/books/${book._id}`}
-                              className="p-1 text-brand hover:text-blue-800"
-                              title="View"
-                            >
-                              <FiEye className="h-5 w-5" />
-                            </Link>
-                            <Link
-                              to={`/books/${book._id}/edit`}
-                              className="p-1 text-green-600 hover:text-green-800"
-                              title="Edit"
-                            >
-                              <FiEdit className="h-5 w-5" />
-                            </Link>
-                            <button
-                              onClick={() => handleDeleteBook(book._id, book.title)}
-                              className="p-1 text-red-600 hover:text-red-800"
-                              title="Delete"
-                            >
-                              <FiTrash2 className="h-5 w-5" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
+                         </div>
+                      </div>
                     ))}
-                  </tbody>
-                </table>
+                    <Link to="/admin/users" className="block text-center pt-4 text-xs font-bold text-brand hover:underline">Enter Member Directory</Link>
+                 </div>
               </div>
-            )}
-            <div className="mt-6 text-center">
-              <Link
-                to="/admin/books"
-                className="inline-flex items-center px-6 py-2 bg-brand text-white rounded-lg hover:bg-blue-700"
-              >
-                <FiBook className="mr-2" />
-                View All Books
-              </Link>
-            </div>
-          </div>
-        </div>
 
-        {/* Manager Permissions Info */}
-        <div className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-          <h3 className="font-semibold text-blue-800 mb-2">Manager Permissions:</h3>
-          <ul className="text-sm text-blue-700 space-y-1">
-            <li> Can view all users (read-only)</li>
-            <li> Can manage all books (create, edit, delete)</li>
-            <li> Cannot edit user information</li>
-            <li> Cannot change user roles</li>
-            <li> Cannot activate/deactivate users</li>
-            <li> Cannot delete users</li>
-            <li> Can view system reports</li>
-          </ul>
+              {/* Management Clearance Info */}
+              <div className="p-8 bg-blue-50/30 dark:bg-blue-950/20 rounded-[2rem] border border-blue-50 dark:border-blue-900/30">
+                 <div className="flex items-start gap-4 text-blue-800 dark:text-blue-300">
+                    <FiInfo className="mt-1 flex-shrink-0" />
+                    <div>
+                       <h4 className="font-bold text-sm mb-2 uppercase tracking-tight">Access Verification</h4>
+                       <p className="text-xs font-medium leading-relaxed opacity-80 italic">As a Content Manager, you have full clearance for catalogue records but write-protection for member identities. Any status changes require Administrator escalation.</p>
+                    </div>
+                 </div>
+              </div>
+           </div>
         </div>
       </div>
+
+      <ConfirmModal 
+        isOpen={modal.isOpen}
+        onClose={() => setModal({ isOpen: false, bookId: null, title: '' })}
+        onConfirm={executeDeleteBook}
+        title="Remove Catalogue Entry"
+        message={`Are you certain about deleting '${modal.title}' from the system? Content Managers must ensure all logistics are cleared before purging records.`}
+        confirmText="Confirm Purge"
+        cancelText="Cancel"
+      />
     </div>
   );
 };
+
+const InfoCard = ({ icon, label, value, color }) => (
+  <div className="bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 p-8 rounded-[2rem] shadow-sm">
+    <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-6 text-xl shadow-inner ${
+       color === 'brand' ? 'bg-brand/10 text-brand' : color === 'green' ? 'bg-green-500/10 text-green-600' : color === 'yellow' ? 'bg-yellow-500/10 text-yellow-600' : 'bg-purple-500/10 text-purple-600'
+    }`}>
+       {icon}
+    </div>
+    <div className="text-xs font-bold text-text-muted uppercase tracking-widest mb-1">{label}</div>
+    <div className="text-2xl font-bold text-text-main tracking-tight">{value}</div>
+  </div>
+);
+
+const UtilityLink = ({ to, icon, title, color }) => (
+  <Link to={to} className="bg-white dark:bg-slate-900 p-6 rounded-[2rem] border border-gray-100 dark:border-slate-800 shadow-sm flex items-center gap-4 group hover:border-brand/30 transition-all">
+     <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl transition-colors ${
+       color === 'brand' ? 'bg-brand/10 text-brand group-hover:bg-brand group-hover:text-white' : 
+       color === 'green' ? 'bg-green-500/10 text-green-600 group-hover:bg-green-500 group-hover:text-white' : 
+       'bg-purple-500/10 text-purple-600 group-hover:bg-purple-500 group-hover:text-white'
+     }`}>
+        {icon}
+     </div>
+     <div className="font-bold text-text-main group-hover:text-brand transition-colors">{title}</div>
+  </Link>
+);
 
 export default ManagerDashboard;

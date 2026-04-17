@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { bookAPI } from '../../services/api.js';
-import { FiFilter, FiX } from 'react-icons/fi';
+import { FiFilter, FiX, FiCheck } from 'react-icons/fi';
 
 const FilterPanel = ({ filters, onFilterChange, onClearFilters }) => {
   const [genres, setGenres] = useState([]);
@@ -20,7 +20,7 @@ const FilterPanel = ({ filters, onFilterChange, onClearFilters }) => {
       setGenres(genresRes.data.data);
       setPriceRange(priceRes.data.data);
     } catch (error) {
-      console.error('Error fetching filter data:', error);
+      console.error('Data pull error:', error);
     }
   };
 
@@ -44,123 +44,131 @@ const FilterPanel = ({ filters, onFilterChange, onClearFilters }) => {
 
   return (
     <>
-      {/* Mobile Filter Button */}
+      {/* Mobile Trigger */}
       <button
         onClick={() => setIsMobileOpen(true)}
-        className="lg:hidden fixed bottom-10 right-10 bg-brand text-white p-4 rounded-2xl shadow-xl z-40 transition-transform active:scale-95"
-        aria-label="Open filters"
+        className="lg:hidden fixed bottom-8 right-8 bg-brand text-white w-14 h-14 rounded-full shadow-2xl z-40 flex items-center justify-center hover:scale-110 active:scale-90 transition-all border-4 border-white dark:border-slate-800"
       >
         <FiFilter className="text-xl" />
       </button>
 
-      {/* Filter Panel */}
+      {/* Drawer Layer */}
       <div className={`
-        fixed lg:static inset-0 bg-base lg:bg-transparent z-50 transform transition-transform duration-500
+        fixed lg:static inset-0 bg-white dark:bg-slate-900 lg:bg-transparent z-50 transform transition-transform duration-300 ease-in-out
         ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
-        <div className="bg-base h-full lg:h-auto w-full max-w-sm lg:w-full p-8 lg:p-0 overflow-y-auto">
+        <div className="h-full lg:h-auto w-full max-w-sm lg:w-full p-8 lg:p-0 overflow-y-auto">
           
-          {/* Header */}
+          {/* Controls Header */}
           <div className="flex justify-between items-center mb-10">
-            <h3 className="text-xl font-black text-text-main uppercase tracking-widest italic">Filters</h3>
-            <button
-              onClick={onClearFilters}
-              className="text-xs font-bold text-brand uppercase hover:underline"
-            >
-              Reset
-            </button>
-            <button
-              onClick={() => setIsMobileOpen(false)}
-              className="lg:hidden p-2 text-text-main"
-            >
-              <FiX className="text-2xl" />
-            </button>
+            <h3 className="text-lg font-bold text-text-main tracking-tight flex items-center gap-2 uppercase">
+               <FiFilter className="text-brand" /> Filter Records
+            </h3>
+            <div className="flex items-center gap-4">
+               <button
+                  onClick={onClearFilters}
+                  className="text-xs font-bold text-red-500 hover:underline px-2"
+               >
+                  Clear All
+               </button>
+               <button onClick={() => setIsMobileOpen(false)} className="lg:hidden p-1.5 bg-gray-50 dark:bg-slate-800 rounded-lg text-text-muted">
+                  <FiX className="text-xl" />
+               </button>
+            </div>
           </div>
 
           <div className="space-y-12">
-            {/* Genre Filter */}
+            {/* Genre: Visual Tags */}
             <div>
-              <h4 className="text-xs font-bold text-text-muted uppercase tracking-widest mb-6 border-l-4 border-brand pl-3">Category</h4>
+              <label className="text-[10px] font-bold text-text-muted uppercase tracking-[0.2em] mb-4 block">Categories</label>
               <div className="flex flex-wrap gap-2">
-                {genres.map((genre) => (
-                  <button
-                    key={genre}
-                    onClick={() => handleGenreChange(genre)}
-                    className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-                      filters.genre === genre 
-                        ? 'bg-brand text-white shadow-lg shadow-brand/20' 
-                        : 'bg-gray-100 dark:bg-gray-800 text-text-main hover:bg-gray-200 dark:hover:bg-gray-700'
-                    }`}
-                  >
-                    {genre}
-                  </button>
-                ))}
+                {genres.map((genre) => {
+                  const isActive = filters.genre === genre;
+                  return (
+                    <button
+                      key={genre}
+                      onClick={() => handleGenreChange(genre)}
+                      className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${
+                        isActive 
+                          ? 'bg-brand text-white border-brand shadow-lg shadow-brand/20' 
+                          : 'bg-white dark:bg-slate-900 text-text-muted border-gray-100 dark:border-slate-800 hover:border-brand/40'
+                      }`}
+                    >
+                      {genre}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
-            {/* Price Range Filter */}
-            <div>
-              <h4 className="text-xs font-bold text-text-muted uppercase tracking-widest mb-6 border-l-4 border-brand pl-3">Price Range</h4>
-              <div className="px-2">
-                <input
-                  type="range"
-                  name="maxPrice"
-                  min={priceRange.minPrice}
-                  max={priceRange.maxPrice}
-                  value={filters.maxPrice === Infinity ? priceRange.maxPrice : filters.maxPrice}
-                  onChange={handlePriceChange}
-                  className="w-full h-2 bg-gray-100 dark:bg-gray-800 rounded-lg appearance-none cursor-pointer accent-brand"
-                />
-                <div className="flex justify-between items-center mt-4">
-                  <span className="text-xs font-bold text-text-muted">${priceRange.minPrice}</span>
-                  <span className="text-lg font-black text-brand">${filters.maxPrice === Infinity ? priceRange.maxPrice : filters.maxPrice}</span>
-                </div>
+            {/* Pricing Slider */}
+            <div className="space-y-6">
+              <div className="flex justify-between items-end">
+                 <label className="text-[10px] font-bold text-text-muted uppercase tracking-[0.2em]">Max Pricing</label>
+                 <span className="text-lg font-bold text-brand">${filters.maxPrice === Infinity ? priceRange.maxPrice : filters.maxPrice}</span>
+              </div>
+              <input
+                type="range"
+                name="maxPrice"
+                min={priceRange.minPrice}
+                max={priceRange.maxPrice}
+                value={filters.maxPrice === Infinity ? priceRange.maxPrice : filters.maxPrice}
+                onChange={handlePriceChange}
+                className="w-full h-1.5 bg-gray-100 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-brand"
+              />
+              <div className="flex justify-between text-[10px] font-bold text-text-muted/40 uppercase">
+                 <span>${priceRange.minPrice}</span>
+                 <span>${priceRange.maxPrice}</span>
               </div>
             </div>
 
-            {/* Minimum Rating Filter */}
+            {/* Ratings: Star Score */}
             <div>
-              <h4 className="text-xs font-bold text-text-muted uppercase tracking-widest mb-6 border-l-4 border-brand pl-3">Min Rating</h4>
-              <div className="flex justify-between gap-1">
+              <label className="text-[10px] font-bold text-text-muted uppercase tracking-[0.2em] mb-4 block">Minimum Score</label>
+              <div className="grid grid-cols-5 gap-2">
                 {[1, 2, 3, 4, 5].map((rating) => (
                   <button
                     key={rating}
                     onClick={() => handleRatingChange(rating)}
-                    className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                    className={`py-2 rounded-xl text-[10px] font-bold transition-all flex flex-col items-center gap-1 ${
                       filters.minRating === rating 
-                        ? 'bg-brand text-white shadow-md' 
-                        : 'bg-base dark:bg-gray-800/50 text-text-muted hover:bg-gray-100 dark:hover:bg-gray-800'
+                        ? 'bg-yellow-500 text-white shadow-lg shadow-yellow-500/10' 
+                        : 'bg-gray-50 dark:bg-slate-800 text-text-muted hover:bg-white dark:hover:bg-slate-700 border border-transparent hover:border-gray-100 dark:hover:border-slate-800'
                     }`}
                   >
-                    {rating}+ ★
+                    <span>{rating}</span>
+                    <span className="opacity-60 text-[8px]">★+</span>
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Sort Order */}
-            <div>
-              <h4 className="text-xs font-bold text-text-muted uppercase tracking-widest mb-6 border-l-4 border-brand pl-3">Sort By</h4>
-              <div className="space-y-3">
-                <select
+            {/* Logic: Sorting */}
+            <div className="space-y-6 pt-4 border-t border-gray-50 dark:border-slate-800">
+              <div>
+                 <label className="text-[10px] font-bold text-text-muted uppercase tracking-[0.2em] mb-3 block">Arrange By</label>
+                 <select
                   name="sortBy"
                   value={filters.sortBy}
                   onChange={handleSortChange}
-                  className="w-full bg-transparent text-text-main border-b-2 border-gray-100 dark:border-gray-800 focus:border-brand py-2 text-sm outline-none transition-colors"
+                  className="w-full bg-gray-50 dark:bg-slate-800 text-text-main py-3 px-4 rounded-xl text-xs font-bold outline-none border-none cursor-pointer appearance-none"
                 >
-                  <option value="createdAt">Date Added</option>
-                  <option value="price">Price</option>
-                  <option value="rating">Rating</option>
-                  <option value="title">Title</option>
+                  <option value="createdAt">Creation Date</option>
+                  <option value="price">Global Pricing</option>
+                  <option value="rating">User Rating</option>
+                  <option value="title">Alphabetical</option>
                 </select>
-                <select
+              </div>
+              <div>
+                 <label className="text-[10px] font-bold text-text-muted uppercase tracking-[0.2em] mb-3 block">Ordering</label>
+                 <select
                   name="sortOrder"
                   value={filters.sortOrder}
                   onChange={handleSortChange}
-                  className="w-full bg-transparent text-text-main border-b-2 border-gray-100 dark:border-gray-800 focus:border-brand py-2 text-sm outline-none transition-colors"
+                  className="w-full bg-gray-50 dark:bg-slate-800 text-text-main py-3 px-4 rounded-xl text-xs font-bold outline-none border-none cursor-pointer appearance-none"
                 >
-                  <option value="desc">Descending</option>
-                  <option value="asc">Ascending</option>
+                  <option value="desc">Newest / Highest</option>
+                  <option value="asc">Oldest / Lowest</option>
                 </select>
               </div>
             </div>
@@ -168,11 +176,11 @@ const FilterPanel = ({ filters, onFilterChange, onClearFilters }) => {
         </div>
       </div>
 
-      {/* Mobile Overlay */}
+      {/* Backdrop */}
       {isMobileOpen && (
         <div
           onClick={() => setIsMobileOpen(false)}
-          className="lg:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-40 animate-fadeIn"
+          className="lg:hidden fixed inset-0 bg-slate-900/60 backdrop-blur-[2px] z-40 animate-fadeIn"
         />
       )}
     </>
