@@ -25,8 +25,8 @@ const Login = () => {
   const navigate = useNavigate();
 
   const handleGoogleLogin = () => {
-    const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-    window.location.href = `${backendUrl}/auth/google`;
+    const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:5002';
+    window.location.href = `${backendUrl}/api/auth/google`;
   };
 
   const handleSubmit = async (values) => {
