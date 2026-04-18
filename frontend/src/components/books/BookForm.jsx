@@ -1,10 +1,24 @@
+/**
+ * @file BookForm.jsx
+ * @description Reusable form component for creating and editing books.
+ * Handles form validation, file upload to GridFS, and API integration.
+ */
+
 import { useState, useEffect } from 'react';
 import { FiDollarSign, FiCalendar, FiStar, FiTag, FiSave, FiUpload, FiType, FiUser, FiFileText } from 'react-icons/fi';
 import { useNavigate, useParams } from 'react-router-dom';
 import { bookAPI, uploadAPI } from '../../services/api.js';
 import toast from 'react-hot-toast';
 
-
+/**
+ * BookForm Component
+ * @param {boolean} isEdit - Whether this is edit mode (true) or create mode (false)
+ * Handles:
+ * - Form state management for book details
+ * - Image upload to GridFS via backend
+ * - Create new book or update existing book
+ * - Form validation before submission
+ */
 const BookForm = ({ isEdit = false }) => {
   const { id } = useParams();
   const navigate = useNavigate();

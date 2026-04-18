@@ -8,13 +8,17 @@ import {
 
 const router = express.Router();
 
-// Upload book image
+// Upload
 router.post("/book-cover", upload.single("coverImage"), uploadBookCover);
 
-// Get book image
-router.get("/image/:fileId", getBookCover);
+// IMAGE ROUTE
+router.get("/image/:fileId", (req, res, next) => {
+  res.set('Access-Control-Allow-Origin', '*');
+  res.set('Cross-Origin-Resource-Policy', 'cross-origin');
+  next();
+}, getBookCover);
 
-// Delete image
+// Delete
 router.delete("/image/:fileId", deleteBookCover);
 
 export default router;

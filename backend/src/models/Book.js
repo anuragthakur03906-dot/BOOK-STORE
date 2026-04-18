@@ -1,5 +1,19 @@
+/**
+ * @file Book.js
+ * @description Book model schema for catalog management.
+ * Stores book details including metadata, pricing, rating, and cover image reference.
+ */
+
 import mongoose from 'mongoose';
 
+/**
+ * Book Schema
+ * - Stores book catalog information (title, author, genre, price, rating)
+ * - References cover image stored in GridFS via coverImage field
+ * - Includes inventory status (inStock) and publication tracking
+ * - Indexed fields: title, author, genre for fast searching and filtering
+ * - Timestamps: createdAt and updatedAt for activity tracking
+ */
 const bookSchema = new mongoose.Schema({
   title: {
     type: String,

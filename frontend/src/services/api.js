@@ -129,9 +129,12 @@ export const uploadAPI = {
   },
 
   /** Returns the full URL for a stored book cover image */
-  getBookCover: (fileId) =>
-    `${import.meta.env.VITE_API_URL || 'http://localhost:5002'}/api/uploads/image/${fileId}`,
+getBookCover: (fileId) => {
+  if (!fileId) return null;
 
+  const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5002/api';
+  return `${baseUrl}/uploads/image/${fileId}`;
+},
   /** Delete a stored book cover image by file ID */
   deleteBookCover: (fileId) => API.delete(`/uploads/image/${fileId}`)
 };

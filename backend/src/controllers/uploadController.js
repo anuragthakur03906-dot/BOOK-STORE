@@ -1,10 +1,6 @@
 import mongoose from 'mongoose';
 import { GridFSBucket } from 'mongodb';
 
-/**
- * Handle book cover image upload via GridFS
- * Expects multipart/form-data with 'coverImage' file field
- */
 export const uploadBookCover = async (req, res) => {
   try {
     if (!req.file) {
@@ -14,14 +10,13 @@ export const uploadBookCover = async (req, res) => {
       });
     }
 
-    // Return file information including the GridFS file ID
     const fileInfo = {
       filename: req.file.filename,
-      fileId: req.file.id, // GridFS file ID
+      fileId: req.file.id,
       mimeType: req.file.mimetype,
       size: req.file.size,
       uploadedAt: new Date(),
-      url: `/api/uploads/image/${req.file.id}` // URL to retrieve the image
+      url: `/api/uploads/image/${req.file.id}`
     };
 
     res.status(200).json({
@@ -29,24 +24,20 @@ export const uploadBookCover = async (req, res) => {
       message: 'File uploaded successfully',
       data: fileInfo
     });
+
   } catch (error) {
-    console.error('Error uploading file:', error);
+    console.error('Upload Error:', error);
     res.status(500).json({
       success: false,
-      error: error.message || 'Failed to upload file'
+      error: error.message
     });
   }
 };
 
-/**
- * Retrieve book cover image from GridFS
- * URL format: /api/uploads/image/:fileId
- */
 export const getBookCover = async (req, res) => {
   try {
     const fileId = req.params.fileId;
 
-    // Validate MongoDB ObjectId
     if (!mongoose.Types.ObjectId.isValid(fileId)) {
       return res.status(400).json({
         success: false,
@@ -54,64 +45,48 @@ export const getBookCover = async (req, res) => {
       });
     }
 
-    // Get MongoDB connection and GridFSBucket
     const db = mongoose.connection.db;
-    const gridFSBucket = new GridFSBucket(db, { bucketName: 'bookCovers' });
+    const bucket = new GridFSBucket(db, { bucketName: 'bookCovers' });
 
-    // Check if file exists
-    const files = await db
+    const file = await db
       .collection('bookCovers.files')
       .findOne({ _id: new mongoose.Types.ObjectId(fileId) });
 
-    if (!files) {
+    if (!file) {
       return res.status(404).json({
         success: false,
         error: 'File not found'
       });
     }
 
-    // Set response headers
-    res.set('Content-Type', files.metadata?.mimeType || 'application/octet-stream');
-    res.set('Content-Length', files.length);
-    res.set('Cache-Control', 'public, max-age=3600'); // Cache for 1 hour
+    
+    res.set('Content-Type', file.metadata?.mimeType || 'image/jpeg');
+    res.set('Content-Length', file.length);
     res.set('Access-Control-Allow-Origin', '*');
-    res.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
-    res.set('Access-Control-Allow-Headers', 'Content-Type');
+    res.set('Cross-Origin-Resource-Policy', 'cross-origin');
 
-    // Create download stream and pipe to response
-    const downloadStream = gridFSBucket.openDownloadStream(
-      new mongoose.Types.ObjectId(fileId)
-    );
+    const stream = bucket.openDownloadStream(file._id);
+    stream.pipe(res);
 
-    downloadStream.pipe(res);
-
-    downloadStream.on('error', (error) => {
+    stream.on('error', () => {
       if (!res.headersSent) {
-        res.status(500).json({
-          success: false,
-          error: 'Failed to download file'
-        });
+        res.status(500).json({ success: false });
       }
     });
+
   } catch (error) {
-    console.error('Error retrieving file:', error);
-    if (!res.headersSent) {
-      res.status(500).json({
-        success: false,
-        error: error.message || 'Failed to retrieve file'
-      });
-    }
+    console.error('Fetch Image Error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
   }
 };
 
-/**
- * Delete book cover image from GridFS
- */
 export const deleteBookCover = async (req, res) => {
   try {
     const fileId = req.params.fileId;
 
-    // Validate MongoDB ObjectId
     if (!mongoose.Types.ObjectId.isValid(fileId)) {
       return res.status(400).json({
         success: false,
@@ -120,21 +95,20 @@ export const deleteBookCover = async (req, res) => {
     }
 
     const db = mongoose.connection.db;
-    const { GridFSBucket } = require('mongodb');
-    const gridFSBucket = new GridFSBucket(db, { bucketName: 'bookCovers' });
+    const bucket = new GridFSBucket(db, { bucketName: 'bookCovers' });
 
-    // Delete file from GridFS
-    await gridFSBucket.delete(new mongoose.Types.ObjectId(fileId));
+    await bucket.delete(new mongoose.Types.ObjectId(fileId));
 
     res.json({
       success: true,
-      message: 'File deleted successfully'
+      message: 'Deleted successfully'
     });
+
   } catch (error) {
-    console.error('Error deleting file:', error);
+    console.error('Delete Error:', error);
     res.status(500).json({
       success: false,
-      error: error.message || 'Failed to delete file'
+      error: error.message
     });
   }
 };

@@ -1,6 +1,18 @@
-// User Model
+/**
+ * @file User.js
+ * @description User model schema for authentication and user management.
+ * Stores user profile, authentication credentials, favorites, and activity tracking.
+ */
+
 import mongoose from 'mongoose';
 
+/**
+ * User Schema
+ * - Stores user account information
+ * - Supports both traditional email/password and Google OAuth authentication
+ * - Tracks user role, activity, and favorite books
+ * - Includes password reset token management
+ */
 const userSchema = new mongoose.Schema({
   name: {
     type: String,

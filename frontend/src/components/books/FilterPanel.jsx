@@ -55,10 +55,14 @@ const FilterPanel = ({ filters, onFilterChange, onClearFilters }) => {
 
       {/* Drawer Layer */}
       <div className={`
-        fixed lg:static inset-0 bg-white dark:bg-slate-900 lg:bg-transparent z-50 transform transition-transform duration-300 ease-in-out
+        fixed lg:static inset-0 bg-white dark:bg-slate-900 
+        lg:bg-white dark:lg:bg-slate-900 
+        lg:rounded-3xl lg:border lg:border-gray-100 dark:lg:border-slate-800 
+        lg:shadow-lg lg:p-6 
+        z-50 transform transition-transform duration-300 ease-in-out
         ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
-        <div className="h-full lg:h-auto w-full max-w-sm lg:w-full p-4 sm:p-6 lg:p-0 overflow-y-auto">
+        <div className="h-full lg:h-auto w-full max-w-sm lg:w-full p-4 sm:p-6 overflow-y-auto">
           
           {/* Controls Header */}
           <div className="flex justify-between items-center mb-10">
@@ -126,19 +130,19 @@ const FilterPanel = ({ filters, onFilterChange, onClearFilters }) => {
             {/* Ratings: Star Score */}
             <div>
               <label className="text-[10px] font-bold text-text-muted uppercase tracking-[0.2em] mb-4 block">Minimum Score</label>
-              <div className="grid grid-cols-5 gap-2">
+              <div className="flex gap-1.5">
                 {[1, 2, 3, 4, 5].map((rating) => (
                   <button
                     key={rating}
                     onClick={() => handleRatingChange(rating)}
-                    className={`py-2 rounded-xl text-[10px] font-bold transition-all flex flex-col items-center gap-1 ${
+                    className={`flex-1 py-2 rounded-lg text-[10px] font-bold transition-all flex flex-col items-center gap-0.5 ${
                       filters.minRating === rating 
                         ? 'bg-yellow-500 text-white shadow-lg shadow-yellow-500/10' 
                         : 'bg-gray-50 dark:bg-slate-800 text-text-muted hover:bg-white dark:hover:bg-slate-700 border border-transparent hover:border-gray-100 dark:hover:border-slate-800'
                     }`}
                   >
                     <span>{rating}</span>
-                    <span className="opacity-60 text-[8px]">Rating+</span>
+                    <span className="opacity-60 text-[7px]">+</span>
                   </button>
                 ))}
               </div>

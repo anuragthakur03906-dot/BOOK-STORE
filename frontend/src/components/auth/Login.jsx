@@ -1,3 +1,9 @@
+/**
+ * @file Login.jsx
+ * @description User login component with email/password and Google OAuth support.
+ * Includes form validation with Formik/Yup and Google reCAPTCHA v2 verification.
+ */
+
 import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
@@ -9,6 +15,10 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import BackButton from '../common/BackButton.jsx';
 
+/**
+ * Yup validation schema for login form
+ * Validates email format and password minimum length
+ */
 const LoginSchema = Yup.object().shape({
   email: Yup.string()
     .email('Please enter a valid email address')
@@ -18,6 +28,12 @@ const LoginSchema = Yup.object().shape({
     .required('Password is required'),
 });
 
+/**
+ * Login Component
+ * Provides two authentication methods:
+ * 1. Traditional email/password with CAPTCHA protection
+ * 2. Google OAuth 2.0 via Passport.js
+ */
 const Login = () => {
   const [captchaToken, setCaptchaToken] = useState('');
   const [loading, setLoading] = useState(false);
