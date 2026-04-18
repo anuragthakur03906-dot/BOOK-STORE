@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { GridFSBucket } from 'mongodb';
 
 /**
  * Handle book cover image upload via GridFS
@@ -55,7 +56,6 @@ export const getBookCover = async (req, res) => {
 
     // Get MongoDB connection and GridFSBucket
     const db = mongoose.connection.db;
-    const { GridFSBucket } = require('mongodb');
     const gridFSBucket = new GridFSBucket(db, { bucketName: 'bookCovers' });
 
     // Check if file exists
@@ -73,6 +73,10 @@ export const getBookCover = async (req, res) => {
     // Set response headers
     res.set('Content-Type', files.metadata?.mimeType || 'application/octet-stream');
     res.set('Content-Length', files.length);
+    res.set('Cache-Control', 'public, max-age=3600'); // Cache for 1 hour
+    res.set('Access-Control-Allow-Origin', '*');
+    res.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.set('Access-Control-Allow-Headers', 'Content-Type');
 
     // Create download stream and pipe to response
     const downloadStream = gridFSBucket.openDownloadStream(

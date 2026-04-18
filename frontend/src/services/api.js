@@ -8,7 +8,7 @@ import axios from 'axios';
 
 // Create a pre-configured Axios instance pointing to the backend API
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5002/api',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -45,11 +45,23 @@ API.interceptors.request.use(
 );
 
 /**
- * Response interceptor: Clears session and redirects on 401 Unauthorized.
+ * Response interceptor: Handles errors including connection issues and 401 Unauthorized.
  */
 API.interceptors.response.use(
   (response) => response,
   async (error) => {
+    // Handle connection errors
+    if (!error.response) {
+      if (error.code === 'ECONNABORTED') {
+        console.error('Backend connection timeout');
+        error.message = 'Backend server is not responding. Please try again.';
+      } else if (error.message === 'Network Error' || !navigator.onLine) {
+        console.error('Network error or backend is down');
+        error.message = 'Cannot connect to backend server. Please check if it is running on port 5002.';
+      }
+    }
+
+    // Handle 401 Unauthorized
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
@@ -77,7 +89,7 @@ export const authAPI = {
   refreshToken: () => API.post('/auth/refresh'),
   googleAuth: () => API.get('/auth/google/status'),
   initiateGoogleLogin: () => {
-    window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/auth/google`;
+    window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:5002'}/api/auth/google`;
   }
 };
 
@@ -118,7 +130,7 @@ export const uploadAPI = {
 
   /** Returns the full URL for a stored book cover image */
   getBookCover: (fileId) =>
-    `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/uploads/image/${fileId}`,
+    `${import.meta.env.VITE_API_URL || 'http://localhost:5002'}/api/uploads/image/${fileId}`,
 
   /** Delete a stored book cover image by file ID */
   deleteBookCover: (fileId) => API.delete(`/uploads/image/${fileId}`)
@@ -143,8 +155,8 @@ export const adminAPI = {
   createUser: (userData) => API.post('/admin/users/new', userData),
 
   // System statistics and analytics
-  getSystemStats: () => API.get('/admin/dashboard'),
-  getUserStats: () => API.get('/admin/user-stats'),
+  getDashboard: () => API.get('/admin/dashboard'),
+  getStats: () => API.get('/admin/stats'),
 
   // Role management
   getAllRoles: () => API.get('/admin/roles'),

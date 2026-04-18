@@ -5,19 +5,20 @@
  * @author Anurag Thakur
  */
 
+import dotenv from 'dotenv';
+
+// Load environment variables FIRST - before any other imports
+dotenv.config();
+
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import User from './src/models/User.js';
 import connectDB from './src/config/database.js';
-
-// Load environment variables
-dotenv.config();
 
 /**
  * Verify required environment variables
@@ -40,8 +41,9 @@ const app = express();
  * Allow frontend requests from multiple origins with credentials support
  */
 const allowedOrigins = [
-  process.env.FRONTEND_URL || 'http://localhost:3000',
-  'http://localhost:3000',   // Development
+  process.env.FRONTEND_URL || 'http://localhost:5174',
+  'http://localhost:5174',   // Primary frontend port
+  'http://localhost:3000',   // Fallback development
   'http://localhost:5173'    // Vite dev server alternative
 ];
 
@@ -86,7 +88,7 @@ app.use(helmet({
         'https://www.google.com',             // Allow API calls to Google
         'https://www.gstatic.com'
       ],
-      imgSrc: ["'self'", 'data:', 'https:'], // Allow images from all HTTPS
+      imgSrc: ["'self'", 'data:', 'https:', 'http:'], // Allow images from all sources for development
       styleSrc: [
         "'self'",
         "'unsafe-inline'",
@@ -242,7 +244,7 @@ app.use((err, req, res, next) => {
 /**
  * Application Startup
  */
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 app.listen(PORT,  "0.0.0.0", () => {
   console.log(`[Server] Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`[Server] Running on port: ${PORT}`);
