@@ -13,8 +13,8 @@ import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
-import User from './models/User.js';
-import connectDB from './config/database.js';
+import User from './src/models/User.js';
+import connectDB from './src/config/database.js';
 
 // Load environment variables
 dotenv.config();
@@ -191,12 +191,12 @@ passport.deserializeUser(async (id, done) => {
 /**
  * API Route Registrations
  */
-import authRoutes from './routes/authRoutes.js';
-import googleAuthRoutes from './routes/googleAuthRoutes.js';
-import bookRoutes from './routes/bookRoutes.js';
-import userRoutes from './routes/userRoutes.js';
-import adminRoutes from './routes/adminRoutes.js';
-import uploadRoutes from './routes/uploadRoutes.js';
+import authRoutes from './src/routes/authRoutes.js';
+import googleAuthRoutes from './src/routes/googleAuthRoutes.js';
+import bookRoutes from './src/routes/bookRoutes.js';
+import userRoutes from './src/routes/userRoutes.js';
+import adminRoutes from './src/routes/adminRoutes.js';
+import uploadRoutes from './src/routes/uploadRoutes.js';
 
 app.use('/api/auth', authRoutes);
 app.use('/api/auth', googleAuthRoutes);
@@ -243,7 +243,7 @@ app.use((err, req, res, next) => {
  * Application Startup
  */
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+app.listen(PORT,  "0.0.0.0", () => {
   console.log(`[Server] Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`[Server] Running on port: ${PORT}`);
   console.log(`[Server] Health check available at: http://localhost:${PORT}/health`);
