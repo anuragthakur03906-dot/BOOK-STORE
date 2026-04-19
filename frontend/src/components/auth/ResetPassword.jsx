@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useSearchParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { FiLock, FiCheckCircle, FiXCircle } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 
 const ResetPassword = () => {
-  const [searchParams] = useSearchParams();
+  const { token } = useParams();
   const navigate = useNavigate();
   const { resetPassword } = useAuth();
   const [loading, setLoading] = useState(false);
@@ -17,14 +17,13 @@ const ResetPassword = () => {
     confirmPassword: ''
   });
 
-  useEffect(() => {
-    const token = searchParams.get('token');
-    if (!token) {
-      setValidToken(false);
-    } else {
-      setValidToken(true);
-    }
-  }, []);
+useEffect(() => {
+  if (!token) {
+    setValidToken(false);
+  } else {
+    setValidToken(true);
+  }
+}, [token]);
 
   const handleChange = (e) => {
     setFormData({
@@ -33,36 +32,35 @@ const ResetPassword = () => {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    if (formData.password !== formData.confirmPassword) {
-      toast.error('Passwords do not match');
-      return;
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  if (formData.password !== formData.confirmPassword) {
+    toast.error('Passwords do not match');
+    return;
+  }
+
+  if (formData.password.length < 6) {
+    toast.error('Password must be at least 6 characters');
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    const result = await resetPassword(token, formData.password); 
+    if (result.success) {
+      setSuccess(true);
+      setTimeout(() => {
+        navigate('/login');
+      }, 3000);
     }
-    
-    if (formData.password.length < 6) {
-      toast.error('Password must be at least 6 characters');
-      return;
-    }
-    
-    setLoading(true);
-    const token = searchParams.get('token');
-    
-    try {
-      const result = await resetPassword(token, formData.password);
-      if (result.success) {
-        setSuccess(true);
-        setTimeout(() => {
-          navigate('/login');
-        }, 3000);
-      }
-    } catch (error) {
-      console.error('Reset password error:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  } catch (error) {
+    console.error('Reset password error:', error);
+  } finally {
+    setLoading(false);
+  }
+};
 
   if (validToken === false) {
     return (
