@@ -45,7 +45,7 @@ export const sendResetPasswordEmail = async (email, token, name) => {
   try {
     const transporter = createTransporter();
 
-    const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password?token=${token}`;
+    const resetUrl = `${process.env.FRONTEND_URL || 'https://anurag-book-store.vercel.app/'}/reset-password?token=${token}`;
 
     const mailOptions = {
       from: process.env.EMAIL_FROM || `"BookStore" <${process.env.EMAIL_USER}>`,

@@ -27,7 +27,7 @@ router.get('/google', (req, res, next) => {
 // Google OAuth callback
 router.get('/google/callback',
   passport.authenticate('google', {
-    failureRedirect: 'http://localhost:3000/login?error=google_auth_failed',
+    failureRedirect: 'https://anurag-book-store.vercel.app/login?error=google_auth_failed',
     session: false
   }),
   async (req, res) => {
@@ -56,14 +56,14 @@ router.get('/google/callback',
       });
 
       // Redirect to frontend with tokens
-      const redirectUrl = `http://localhost:3000/auth/success?accessToken=${accessToken}&refreshToken=${refreshToken}&userId=${user._id}&email=${user.email}`;
+      const redirectUrl = `https://anurag-book-store.vercel.app/auth/success?accessToken=${accessToken}&refreshToken=${refreshToken}&userId=${user._id}&email=${user.email}`;
 
       console.log(` Google login successful for: ${user.email}`);
       res.redirect(redirectUrl);
 
     } catch (error) {
       console.error(' Google callback error:', error);
-      res.redirect('http://localhost:3000/login?error=oauth_failed');
+      res.redirect('https://anurag-book-store.vercel.app/login?error=oauth_failed');
     }
   }
 );

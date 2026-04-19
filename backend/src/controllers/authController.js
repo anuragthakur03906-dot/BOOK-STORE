@@ -418,7 +418,7 @@ export const forgotPassword = async (req, res) => {
     user.updatedAt = new Date();
     await user.save();
 
-    const resetLink = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`;
+    const resetLink = `${process.env.FRONTEND_URL || 'https://anurag-book-store.vercel.app/'}/reset-password?token=${resetToken}`;
 
     // Try to send email
     try {

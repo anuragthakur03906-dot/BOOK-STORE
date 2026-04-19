@@ -8,7 +8,7 @@ import axios from 'axios';
 
 // Create a pre-configured Axios instance pointing to the backend API
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5002/api',
+  baseURL: import.meta.env.VITE_API_URL || 'https://book-store-l8lq.onrender.com/api',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -89,7 +89,7 @@ export const authAPI = {
   refreshToken: () => API.post('/auth/refresh'),
   googleAuth: () => API.get('/auth/google/status'),
   initiateGoogleLogin: () => {
-    window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:5002'}/api/auth/google`;
+    window.location.href = `${import.meta.env.VITE_API_URL || 'https://book-store-l8lq.onrender.com'}/api/auth/google`;
   }
 };
 
@@ -132,7 +132,7 @@ export const uploadAPI = {
 getBookCover: (fileId) => {
   if (!fileId) return null;
 
-  const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5002/api';
+  const baseUrl = import.meta.env.VITE_API_URL || 'https://book-store-l8lq.onrender.com/api';
   return `${baseUrl}/uploads/image/${fileId}`;
 },
   /** Delete a stored book cover image by file ID */
