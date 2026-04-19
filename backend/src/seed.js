@@ -14,7 +14,7 @@ import Role from './models/Role.js';
 
 dotenv.config();
 
-const MONGODB_URL = process.env.MONGODB_URL || 'mongodb://localhost:27017/bookstore_auth';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/bookstore_auth';
 
 // 15 SAMPLE BOOKS
 const sampleBooks = [
@@ -173,7 +173,7 @@ const sampleBooks = [
 const seedDatabase = async () => {
   try {
     // Connect to MongoDB
-    await mongoose.connect(MONGODB_URL);
+    await mongoose.connect(MONGODB_URI);
     
     // Clear existing data
     await Book.deleteMany({});

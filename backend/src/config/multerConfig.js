@@ -15,7 +15,7 @@ import { GridFsStorage } from "@lenne.tech/multer-gridfs-storage";
  * - Provides reliable file retrieval via ObjectId
  */
 const storage = new GridFsStorage({
-  url: process.env.MONGODB_URL, // MongoDB connection string
+  url: process.env.MONGODB_URI, // MongoDB connection string
   file: (req, file) => {
     return {
       bucketName: "bookCovers",                    // GridFS bucket for book cover images
