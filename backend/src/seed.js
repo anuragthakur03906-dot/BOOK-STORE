@@ -14,7 +14,7 @@ import Role from './models/Role.js';
 
 dotenv.config();
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://anuragthakur03906_db_user:meOrf3CnNReqDh0J@cluster0.dcbr30a.mongodb.net/bookstore_auth';
+const MONGODB_URI = process.env.MONGODB_URI;
 
 // 15 SAMPLE BOOKS
 const sampleBooks = [
