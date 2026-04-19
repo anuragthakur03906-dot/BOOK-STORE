@@ -218,6 +218,15 @@ app.get('/health', (req, res) => {
   });
 });
 
+
+app.get('/', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Bookstore API is running 🚀',
+    status: 'OK'
+  });
+});
+
 /**
  * Fallback handler for unmatched API routes
  */
