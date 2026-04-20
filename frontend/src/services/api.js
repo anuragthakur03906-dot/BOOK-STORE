@@ -89,8 +89,7 @@ export const authAPI = {
   refreshToken: () => API.post('/auth/refresh'),
   googleAuth: () => API.get('/auth/google/status'),
   initiateGoogleLogin: () => {
-    window.location.href = `${import.meta.env.VITE_API_URL || 'https://book-store-l8lq.onrender.com'}/api/auth/google`;
-  }
+window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;  }
 };
 
 // Book catalog endpoints
