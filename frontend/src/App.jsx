@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext.jsx';
 import ProtectedRoute from './components/auth/ProtectedRoute.jsx';
 import Navbar from './components/layout/Navbar.jsx';
@@ -39,6 +40,8 @@ const App = () => {
   return (
     <Router>
       <AuthProvider>
+            <Toaster position="top-right" />
+
         <div className="min-h-screen bg-base text-text-main flex flex-col transition-colors duration-200">
           <Navbar />
           <main className="flex-grow">

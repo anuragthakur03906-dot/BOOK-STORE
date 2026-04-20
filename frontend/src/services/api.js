@@ -80,8 +80,26 @@ API.interceptors.response.use(
 
 // Authentication endpoints
 export const authAPI = {
-  register: (userData) => API.post('/auth/register', userData),
-  login: (userData) => API.post('/auth/login', userData),
+register: async (userData) => {
+  try {
+    const res = await API.post('/auth/register', userData);
+    return { success: true, ...res.data };
+  } catch (err) {
+    return handleApiError(err);
+  }
+},
+  login: async (userData) => {
+  try {
+    const res = await API.post('/auth/login', userData);
+
+    localStorage.setItem('token', res.data.accessToken);
+    localStorage.setItem('user', JSON.stringify(res.data.data));
+
+    return { success: true, ...res.data };
+  } catch (err) {
+    return handleApiError(err);
+  }
+},
   forgotPassword: (email) => API.post('/auth/forgot-password', { email }),
   resetPassword: (data) => API.post('/auth/reset-password', data),
   logout: () => API.post('/auth/logout'),

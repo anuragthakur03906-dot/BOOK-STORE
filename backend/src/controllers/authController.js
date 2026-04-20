@@ -126,26 +126,7 @@ export const register = async (req, res) => {
 // Login an existing user
 export const login = async (req, res) => {
   try {
-    const { email, password, captchaToken } = req.body;
-
-    // Verify captcha before proceeding
-    const captchaResult = await verifyGoogleCaptcha(captchaToken);
-    if (!captchaResult.success) {
-      return res.status(400).json({
-        success: false,
-        error: 'Captcha verification failed. Please try again.',
-        captchaError: captchaResult['error-codes']
-      });
-    }
-
-    //  Optional: Check captcha score
-    if (captchaResult.score && captchaResult.score < 0.5) {
-      return res.status(400).json({
-        success: false,
-        error: 'Suspicious activity detected. Please try again.',
-        captchaScore: captchaResult.score
-      });
-    }
+    const { email, password } = req.body;
 
     // Check user with password
     const user = await User.findOne({ email }).select('+password');
