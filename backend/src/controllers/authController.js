@@ -69,15 +69,6 @@ export const register = async (req, res) => {
       });
     }
 
-    // Optional: Check captcha score (for v3)
-    if (captchaResult.score && captchaResult.score < 0.5) {
-      return res.status(400).json({
-        success: false,
-        error: 'Suspicious activity detected. Please try again.',
-        captchaScore: captchaResult.score
-      });
-    }
-
     // Check if user exists
     const userExists = await User.findOne({ email });
     if (userExists) {
@@ -128,7 +119,6 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Check user with password
     const user = await User.findOne({ email }).select('+password');
     if (!user) {
       return res.status(401).json({
@@ -137,15 +127,13 @@ export const login = async (req, res) => {
       });
     }
 
-    // Check if the user account is active
     if (!user.isActive) {
       return res.status(403).json({
         success: false,
-        error: 'Your account is blocked. Please contact admin.'
+        error: 'Your account is blocked'
       });
     }
 
-    // Check password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({
@@ -154,42 +142,25 @@ export const login = async (req, res) => {
       });
     }
 
-    // Generate tokens
     const accessToken = generateAccessToken(user._id);
     const refreshToken = generateRefreshToken(user._id);
 
-    // Save tokens
     await Token.create({
       userId: user._id,
       accessToken,
       refreshToken,
-      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
     });
 
-    // Update last login
-    user.lastLogin = new Date();
-    await user.save();
-
-    // Return success
     res.json({
       success: true,
-      data: {
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        roleName: user.roleName,
-        isActive: user.isActive
-      },
-      message: 'Login successful!',
+      message: "Login successful",
       accessToken,
       refreshToken
     });
+
   } catch (error) {
-    console.error('Login error:', error);
-    res.status(500).json({
-      success: false,
-      error: error.message
-    });
+    res.status(500).json({ success: false, error: error.message });
   }
 };
 
