@@ -15,33 +15,16 @@ const API = axios.create({
   withCredentials: true,
 });
 
-/**
- * Request interceptor: Attaches the Bearer token to all non-public routes.
- */
-API.interceptors.request.use(
-  (config) => {
-    // Public auth routes that do not require an Authorization header
-    const noAuthRoutes = [
-      '/auth/forgot-password',
-      '/auth/register',
-      '/auth/login',
-      '/auth/reset-password',
-      '/auth/google',
-      '/auth/google/callback'
-    ];
+const noAuthRoutes = [
+  '/login',
+  '/register',
+  '/forgot-password',
+  '/reset-password',
+  '/google'
+];
 
-    const isAuthRoute = noAuthRoutes.some(route => config.url.includes(route));
-
-    if (!isAuthRoute) {
-      const token = localStorage.getItem('token');
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-    }
-
-    return config;
-  },
-  (error) => Promise.reject(error)
+const isAuthRoute = noAuthRoutes.some(route =>
+  config.url.includes(route)
 );
 
 /**

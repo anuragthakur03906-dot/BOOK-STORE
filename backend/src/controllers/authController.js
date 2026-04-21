@@ -107,8 +107,15 @@ export const register = async (req, res) => {
 // Login an existing user
 export const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+const { email, password, captchaToken } = req.body;
+const captchaResult = await verifyGoogleCaptcha(captchaToken);
 
+if (!captchaResult.success) {
+  return res.status(400).json({
+    success: false,
+    error: 'Captcha verification failed'
+  });
+}
     const user = await User.findOne({ email }).select('+password');
     if (!user) {
       return res.status(401).json({
