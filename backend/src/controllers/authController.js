@@ -59,16 +59,6 @@ export const register = async (req, res) => {
       });
     }
 
-    // Verify captcha before proceeding
-    const captchaResult = await verifyGoogleCaptcha(captchaToken);
-    if (!captchaResult.success) {
-      return res.status(400).json({
-        success: false,
-        error: 'Captcha verification failed. Please try again.',
-        captchaError: captchaResult['error-codes']
-      });
-    }
-
     // Check if user exists
     const userExists = await User.findOne({ email });
     if (userExists) {
