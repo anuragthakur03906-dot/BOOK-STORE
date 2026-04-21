@@ -15,17 +15,31 @@ const API = axios.create({
   withCredentials: true,
 });
 
-const noAuthRoutes = [
-  '/login',
-  '/register',
-  '/forgot-password',
-  '/reset-password',
-  '/google'
-];
+/**
+ * Request interceptor: Attaches the Bearer token to all non-public routes.
+ */
+API.interceptors.request.use((config) => {
+  const noAuthRoutes = [
+    '/auth/forgot-password',
+    '/auth/register',
+    '/auth/login',
+    '/auth/reset-password',
+    '/auth/google'
+  ];
 
-const isAuthRoute = noAuthRoutes.some(route =>
-  config.url.includes(route)
-);
+  const isAuthRoute = noAuthRoutes.some(route =>
+    config.url?.includes(route)
+  );
+
+  if (!isAuthRoute) {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+  }
+
+  return config;
+});
 
 /**
  * Response interceptor: Handles errors including connection issues and 401 Unauthorized.
