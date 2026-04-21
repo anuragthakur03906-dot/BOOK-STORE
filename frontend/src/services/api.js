@@ -93,8 +93,6 @@ register: async (userData) => {
     const res = await API.post('/auth/login', userData);
 
     localStorage.setItem('token', res.data.accessToken);
-    localStorage.setItem('user', JSON.stringify(res.data.data));
-
     return { success: true, ...res.data };
   } catch (err) {
     return handleApiError(err);
