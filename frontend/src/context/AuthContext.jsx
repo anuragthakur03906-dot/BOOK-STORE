@@ -100,34 +100,34 @@ export const AuthProvider = ({ children }) => {
    * @returns {Promise<Object>} Status of authentication
    */
   const login = async (credentials) => {
-    try {
-      const response = await authAPI.login(credentials);
-      
-      if (response.data.success) {
-        const { accessToken, data: userData } = response.data;
-        
-        // Persist session tokens locally
-        localStorage.setItem('token', accessToken);
-        localStorage.setItem('user', JSON.stringify(userData));
-        
-        // Update authorization header for active session
-        const API = (await import('../services/api.js')).default;
-        API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-        
-        setUser(userData);
-        setIsAuthenticated(true);
-        
-        toast.success('Login successful');
-        return { success: true, data: userData };
-      } else {
-        throw new Error(response.data.error || 'Login failed');
-      }
-    } catch (error) {
-      const errorMsg = error.response?.data?.error || error.message || 'Login failed';
-      toast.error(errorMsg);
-      return { success: false, error: errorMsg };
+  try {
+    const response = await authAPI.login(credentials);
+
+    if (response.success) {
+      const { accessToken, user } = response.data;
+
+      localStorage.setItem('token', accessToken);
+      localStorage.setItem('user', JSON.stringify(user));
+
+      const API = (await import('../services/api.js')).default;
+      API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+
+      setUser(user);
+      setIsAuthenticated(true);
+
+      toast.success(response.message || 'Login successful');
+
+      return { success: true, data: user };
+    } else {
+      throw new Error(response.error || 'Login failed');
     }
-  };
+
+  } catch (error) {
+    const errorMsg = error.response?.data?.error || error.message || 'Login failed';
+    toast.error(errorMsg);
+    return { success: false, error: errorMsg };
+  }
+};
 
   /**
    * Terminate active user session

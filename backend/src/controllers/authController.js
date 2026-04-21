@@ -107,16 +107,10 @@ export const register = async (req, res) => {
 // Login an existing user
 export const login = async (req, res) => {
   try {
-const { email, password, captchaToken } = req.body;
-const captchaResult = await verifyGoogleCaptcha(captchaToken);
+    const { email, password } = req.body;
 
-if (!captchaResult.success) {
-  return res.status(400).json({
-    success: false,
-    error: 'Captcha verification failed'
-  });
-}
     const user = await User.findOne({ email }).select('+password');
+
     if (!user) {
       return res.status(401).json({
         success: false,
@@ -132,6 +126,7 @@ if (!captchaResult.success) {
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
+
     if (!isMatch) {
       return res.status(401).json({
         success: false,
@@ -152,12 +147,23 @@ if (!captchaResult.success) {
     res.json({
       success: true,
       message: "Login successful",
-      accessToken,
-      refreshToken
+      data: {
+        accessToken,
+        refreshToken,
+        user: {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          roleName: user.roleName
+        }
+      }
     });
 
   } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
   }
 };
 
