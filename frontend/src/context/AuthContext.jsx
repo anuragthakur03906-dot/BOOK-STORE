@@ -65,34 +65,35 @@ export const AuthProvider = ({ children }) => {
    * @returns {Promise<Object>} Status of registration
    */
   const register = async (userData) => {
-    try {
-      const response = await authAPI.register(userData);
-      
-      if (response.data.success) {
-        toast.success('Registration successful. You can now log in.');
-        return { 
-          success: true, 
-          data: response.data.data 
-        };
-      } else {
-        throw new Error(response.data.error || 'Registration failed');
-      }
-    } catch (error) {
-      let errorMsg = error.response?.data?.error || error.message || 'Registration failed';
-      
-      // Sanitize role-related error messages
-      if (errorMsg.toLowerCase().includes('role')) {
-        errorMsg = 'Select a valid role to complete registration.';
-      }
-      
-      toast.error(errorMsg);
-      return { 
-        success: false, 
-        error: errorMsg 
-      };
-    }
-  };
+  try {
+    const response = await authAPI.register(userData);
 
+    if (response.success) {
+      toast.success(response.message || 'Registration successful');
+
+      return { 
+        success: true, 
+        data: response.data 
+      };
+    } else {
+      throw new Error(response.error || 'Registration failed');
+    }
+
+  } catch (error) {
+    let errorMsg = error.error || error.message || 'Registration failed';
+
+    if (errorMsg.toLowerCase().includes('role')) {
+      errorMsg = 'Select a valid role to complete registration.';
+    }
+
+    toast.error(errorMsg);
+
+    return { 
+      success: false, 
+      error: errorMsg 
+    };
+  }
+};
   /**
    * Authenticate user credentials
    * @param {Object} credentials - Login credentials (email, password)
